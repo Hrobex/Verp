@@ -1,12 +1,18 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
-import HomePage from "@/react-app/pages/Home";
+import { Outlet } from 'react-router-dom';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
-export default function App() {
+function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-      </Routes>
-    </Router>
+    <>
+      <Header />
+      <main>
+        {/* The Outlet component renders the current page's content */}
+        <Outlet />
+      </main>
+      <Footer />
+    </>
   );
 }
+
+export default App;
