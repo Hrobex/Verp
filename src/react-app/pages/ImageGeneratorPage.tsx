@@ -1,5 +1,3 @@
-import React from 'react';
-
 function ImageGeneratorPage() {
   return (
     <div className="p-8 text-center text-white bg-gray-900 min-h-screen">
