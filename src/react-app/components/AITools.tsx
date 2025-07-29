@@ -7,10 +7,11 @@ import {
   Zap,
   Wand2
 } from 'lucide-react';
+import { Link } from 'react-router-dom'; // <-- 1. تم استدعاء مكون "Link" هنا
 
 const tools = [
   {
-    id: 'image-generation',
+    id: 'image-generator', // <-- 2. هذا هو المعرف الفريد الذي سنستخدمه في الرابط
     title: 'AI Image Generation',
     description: 'Create stunning, high-quality images from simple text descriptions using our advanced AI models.',
     icon: Image,
@@ -115,11 +116,11 @@ export default function AITools() {
                   ))}
                 </div>
 
-                {/* CTA */}
-                <button className="group/btn flex items-center space-x-2 text-purple-600 hover:text-purple-700 font-semibold transition-colors">
+                {/* CTA - هذا هو الجزء الذي تم تعديله */}
+                <Link to={`/tools/${tool.id}`} className="group/btn flex items-center space-x-2 text-purple-600 hover:text-purple-700 font-semibold transition-colors">
                   <span>Try {tool.title}</span>
                   <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                </button>
+                </Link>
               </div>
 
               {/* Hover effect */}
