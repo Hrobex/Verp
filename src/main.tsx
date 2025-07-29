@@ -2,21 +2,20 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-// 1. استدعاء المكونات والملفات باستخدام الاسم المستعار الخاص بمشروعك
-import App from "@/react-app/App"; // المكون الرئيسي الذي يعرض تصميم موقعك
-import ImageGeneratorPage from "@/react-app/pages/ImageGeneratorPage"; // صفحة الأداة الجديدة
-import "@/react-app/index.css"; // ملف التنسيقات العامة
+import App from "@/react-app/App"; // هذا هو "الغلاف" الآن
+import HomePage from "@/react-app/pages/Home"; // هذه هي الصفحة الرئيسية
+import ImageGeneratorPage from "@/react-app/pages/ImageGeneratorPage"; // هذه هي صفحة الأداة
+import "@/react-app/index.css";
 
-// 2. إنشاء نظام التوجيه (الراوتر)
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        {/* المسار الأول: الصفحة الرئيسية */}
-        <Route path="/" element={<App />} />
-
-        {/* المسار الثاني: صفحة أداة الصور */}
-        <Route path="/tools/image-generator" element={<ImageGeneratorPage />} />
+        <Route path="/" element={<App />}> {/* "الغلاف" هو الأب لكل المسارات */}
+          {/* الصفحات التالية ستُعرض داخل "الغلاف" */}
+          <Route index element={<HomePage />} />
+          <Route path="/tools/image-generator" element={<ImageGeneratorPage />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   </StrictMode>
