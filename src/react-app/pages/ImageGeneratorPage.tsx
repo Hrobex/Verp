@@ -40,6 +40,7 @@ const faqData = [
     },
 ];
 
+
 function ImageGeneratorPage() {
   const [prompt, setPrompt] = useState('');
   const [selectedStyle, setSelectedStyle] = useState('default');
@@ -48,12 +49,79 @@ function ImageGeneratorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleGenerateClick = async () => { const userPrompt = prompt.trim(); if (!userPrompt) { setError('Please enter a description for the image.'); return; } setIsLoading(true); setError(null); setImageUrl(''); let translatedPrompt = userPrompt; try { const langPair = "ar|en"; const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(userPrompt)}&langpair=${langPair}&mt=1`; const translateResponse = await fetch(apiUrl); if (translateResponse.ok) { const translateData = await translateResponse.json(); if (translateData.responseData && translateData.responseData.translatedText && translateData.responseData.translatedText.trim().toLowerCase() !== userPrompt.toLowerCase()) { translatedPrompt = translateData.responseData.translatedText; } } } catch (err) { console.error("Translation API failed, using original prompt:", err); } const styleSuffix = styleOptions.find(s => s.value === selectedStyle)?.prompt_suffix || ''; const finalPrompt = translatedPrompt + styleSuffix; const [width, height] = selectedSize.split('x'); const encodedPrompt = encodeURIComponent(finalPrompt); const seed = Date.now(); const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`; const img = new Image(); img.src = constructedUrl; img.onload = () => { setImageUrl(constructedUrl); setIsLoading(false); }; img.onerror = () => { setError('Failed to load the image. The AI service may be busy. Please try again later.'); setIsLoading(false); }; };
-  const handleDownloadClick = async () => { if (!imageUrl) return; try { const response = await fetch(imageUrl); const blob = await response.blob(); const url = window.URL.createObjectURL(blob); const a = document.createElement('a'); a.style.display = 'none'; a.href = url; const filename = `${prompt.substring(0, 20).replace(/\s/g, '_') || 'generated'}_image.png`; a.download = filename; document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(url); document.body.removeChild(a); } catch (err) { setError('Download failed. You can try right-clicking the image and selecting "Save Image As".'); } };
+  const handleGenerateClick = async () => {
+    const userPrompt = prompt.trim();
+    if (!userPrompt) {
+      setError('Please enter a description for the image.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    setImageUrl('');
+    
+    let translatedPrompt = userPrompt;
+
+    try {
+      const langPair = "ar|en";
+      const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(userPrompt)}&langpair=${langPair}&mt=1`;
+      
+      const translateResponse = await fetch(apiUrl);
+      if (translateResponse.ok) {
+        const translateData = await translateResponse.json();
+        if (translateData.responseData && translateData.responseData.translatedText &&
+            translateData.responseData.translatedText.trim().toLowerCase() !== userPrompt.toLowerCase()) {
+          translatedPrompt = translateData.responseData.translatedText;
+        }
+      }
+    } catch (err) {
+      console.error("Translation API failed, using original prompt:", err);
+    }
+
+    const styleSuffix = styleOptions.find(s => s.value === selectedStyle)?.prompt_suffix || '';
+    const finalPrompt = translatedPrompt + styleSuffix;
+    const [width, height] = selectedSize.split('x');
+    const encodedPrompt = encodeURIComponent(finalPrompt);
+    const seed = Date.now();
+    
+    const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
+
+    const img = new Image();
+    img.src = constructedUrl;
+
+    img.onload = () => {
+      setImageUrl(constructedUrl);
+      setIsLoading(false);
+    };
+
+    img.onerror = () => {
+      setError('Failed to load the image. The AI service may be busy. Please try again later.');
+      setIsLoading(false);
+    };
+  };
+  
+  const handleDownloadClick = async () => {
+      if (!imageUrl) return;
+      try {
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        const filename = `${prompt.substring(0, 20).replace(/\s/g, '_') || 'generated'}_image.png`;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } catch (err) {
+        setError('Download failed. You can try right-clicking the image and selecting "Save Image As".');
+      }
+  };
 
   return (
     <>
-      {/* --- START: SEO CONTENT ADDED HERE --- */}
       <title>Artigen Pro: Free AI Image Generator From Text</title>
       <meta name="description" content="Generate stunning, unique images from text prompts with Artigen Pro. Our free AI image generator brings your ideas to life instantly. No sign-up required." />
       <script type="application/ld+json">
@@ -77,9 +145,7 @@ function ImageGeneratorPage() {
           }
         `}
       </script>
-      {/* --- END: SEO CONTENT ADDED HERE --- */}
       
-      {/* The rest of your component code is exactly as you provided it */}
       <div className="pt-24 bg-gray-900 text-white min-h-screen">
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
           <div className="text-center mb-12">
