@@ -6,8 +6,8 @@ function App() {
   return (
     <>
       <Header />
-      <main>
-        {/* The Outlet component renders the current page's content */}
+      {/* أضفنا الهامش العلوي هنا */}
+      <main className="pt-20"> 
         <Outlet />
       </main>
       <Footer />
