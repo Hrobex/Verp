@@ -28,7 +28,7 @@ function ImageGeneratorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleGenerateClick = () => {
+  const handleGenerateClick = async () => {
     if (!prompt) {
       setError('Please enter a description for the image.');
       return;
@@ -38,26 +38,53 @@ function ImageGeneratorPage() {
     setError(null);
     setImageUrl('');
 
-    const styleSuffix = styleOptions.find(s => s.value === selectedStyle)?.prompt_suffix || '';
-    const finalPrompt = prompt + styleSuffix;
-    const [width, height] = selectedSize.split('x');
-    const encodedPrompt = encodeURIComponent(finalPrompt);
-    const seed = Date.now();
-    
-    const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
+    try {
+      // Step 1: Translate the prompt to English automatically
+      let translatedPrompt = prompt;
+      const translateResponse = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(prompt)}&langpair=auto|en`);
+      
+      if (!translateResponse.ok) {
+        throw new Error('Translation service is currently unavailable.');
+      }
 
-    const img = new Image();
-    img.src = constructedUrl;
+      const translateData = await translateResponse.json();
+      
+      if (translateData.responseData && translateData.responseData.translatedText) {
+          // Use the translated text if it's not empty
+          if (translateData.responseData.translatedText.trim()) {
+              translatedPrompt = translateData.responseData.translatedText;
+          }
+      }
+      
+      // Step 2: Generate the image with the translated prompt
+      const styleSuffix = styleOptions.find(s => s.value === selectedStyle)?.prompt_suffix || '';
+      const finalPrompt = translatedPrompt + styleSuffix;
+      const [width, height] = selectedSize.split('x');
+      const encodedPrompt = encodeURIComponent(finalPrompt);
+      const seed = Date.now();
+      
+      const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
 
-    img.onload = () => {
-      setImageUrl(constructedUrl);
+      const img = new Image();
+      img.src = constructedUrl;
+
+      img.onload = () => {
+        setImageUrl(constructedUrl);
+        setIsLoading(false);
+      };
+
+      img.onerror = () => {
+        setError('Failed to load the image. The AI service may be busy. Please try again later.');
+        setIsLoading(false);
+      };
+
+    } catch (err) {
+      // Catch errors from the translation fetch call
+      console.error(err);
+      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred during translation.';
+      setError(`Translation Failed: ${errorMessage}`);
       setIsLoading(false);
-    };
-
-    img.onerror = () => {
-      setError('Failed to load the image. The AI service may be busy. Please try again later.');
-      setIsLoading(false);
-    };
+    }
   };
   
   const handleDownloadClick = async () => {
@@ -69,7 +96,6 @@ function ImageGeneratorPage() {
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
-        // Generate a more descriptive filename
         const filename = `${prompt.substring(0, 20).replace(/\s/g, '_') || 'generated'}_image.png`;
         a.download = filename;
         document.body.appendChild(a);
@@ -80,7 +106,6 @@ function ImageGeneratorPage() {
         setError('Download failed. You can try right-clicking the image and selecting "Save Image As".');
       }
   };
-
 
   return (
     <div className="pt-24 bg-gray-900 text-white min-h-screen">
@@ -102,7 +127,7 @@ function ImageGeneratorPage() {
           <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
             {/* Prompt Input */}
             <div>
-              <label htmlFor="prompt-input" className="block text-sm font-medium text-gray-300 mb-2">1. Describe your image</label>
+              <label htmlFor="prompt-input" className="block text-sm font-medium text-gray-300 mb-2">1. Describe your image (in any language)</label>
               <textarea
                 id="prompt-input"
                 value={prompt}
