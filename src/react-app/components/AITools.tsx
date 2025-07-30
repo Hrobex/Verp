@@ -1,7 +1,7 @@
 import { 
   Image, 
   Scissors, 
-  Volume2, // <-- الآن هذه الأيقونة مستخدمة
+  // Volume2, <-- تم حذف هذه الأيقونة لأنها غير مستخدمة
   Sparkles, 
   ArrowRight,
   Zap,
@@ -38,17 +38,6 @@ const tools = [
     features: ['Instant processing', 'Edge detection', 'Bulk processing'],
     image: 'https://images.unsplash.com/photo-1618004912476-29818d81ae2e?w=400&h=300&fit=crop'
   },
-  // --- تمت إعادة الأداة المحذوفة هنا ---
-  {
-    id: 'text-to-audio',
-    title: 'Text to Audio',
-    description: 'Convert any text into natural-sounding speech with multiple voices and languages available.',
-    icon: Volume2,
-    color: 'from-green-500 to-green-600',
-    features: ['Natural voices', '50+ languages', 'Custom speed'],
-    image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=400&h=300&fit=crop'
-  },
-  // -------------------------------------
   {
     id: 'image-enhancement',
     title: 'Image Enhancement',
@@ -59,8 +48,6 @@ const tools = [
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop'
   }
 ];
-
-// ... باقي الكود يبقى كما هو تمامًا ...
 
 export default function AITools() {
   return (
