@@ -36,12 +36,18 @@ const ImageUploadBox = ({ title, imageSrc, onFileChange, onDrop, onDragOver }: {
   );
 };
 
-// FAQ Data for LineArtify
+// FAQ Data for LineArtify - Updated with the new question
 const faqData = [
     {
       question: 'How is LineArtify different from a photo-to-sketch tool?',
       answer: 'LineArtify focuses on creating clean, distinct lines, similar to an outline or contour drawing. A sketch tool, on the other hand, often reproduces shading, texture, and a more hand-drawn pencil effect. LineArtify is perfect for creating outlines, coloring pages, or minimalist art.'
     },
+    // --- START: NEW QUESTION ADDED HERE ---
+    {
+      question: "What's the difference between the 'Simple' and 'Complex' styles?",
+      answer: "The 'Simple' style (V1) generates clean, minimalist outlines, perfect for a basic line art effect. The 'Complex' style (V2) captures more detail from your original photo, resulting in a more intricate and richer line drawing."
+    },
+    // --- END: NEW QUESTION ADDED HERE ---
     {
       question: 'Is this line drawing generator really free?',
       answer: 'Yes, 100%. LineArtify is completely free to use with no limits on the number of conversions. You can turn as many pictures into line drawings as you need, without any cost or sign-up.'
@@ -61,7 +67,7 @@ function LineArtifyPage() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourcePreview, setSourcePreview] = useState<string | null>(null);
   const [resultImage, setResultImage] = useState<string | null>(null);
-  const [version, setVersion] = useState('v2');
+  const [version, setVersion] = useState('v2'); // Default to 'Complex'
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -187,7 +193,7 @@ function LineArtifyPage() {
     a.href = resultImage;
     a.download = `lineart_${sourceFile?.name.split('.')[0] || 'image'}.png`;
     document.body.appendChild(a);
-a.click();
+    a.click();
     document.body.removeChild(a);
   };
 
@@ -214,7 +220,6 @@ a.click();
               onDrop={onDrop}
               onDragOver={onDragOver}
             />
-
             <div className="w-full flex flex-col items-center">
               <h3 className="text-lg font-semibold text-gray-300 mb-4">Line Art Result</h3>
               <div className="w-full h-64 bg-gray-800 rounded-lg flex items-center justify-center p-4 border-2 border-dashed border-gray-600">
@@ -235,13 +240,16 @@ a.click();
           </div>
 
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6">
+            
+            {/* Version Selector - UPDATED */}
             <div className="flex items-center gap-4">
-                <span className="font-medium text-gray-300">Model Version:</span>
+                <span className="font-medium text-gray-300">Style:</span>
                 <div className="flex gap-2">
-                    <button onClick={() => setVersion('v1')} className={`px-4 py-2 rounded-md transition-colors ${version === 'v1' ? 'bg-blue-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}`}>V1</button>
-                    <button onClick={() => setVersion('v2')} className={`px-4 py-2 rounded-md transition-colors ${version === 'v2' ? 'bg-blue-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}`}>V2</button>
+                    <button onClick={() => setVersion('v1')} className={`px-4 py-2 rounded-md transition-colors ${version === 'v1' ? 'bg-blue-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}`}>Simple</button>
+                    <button onClick={() => setVersion('v2')} className={`px-4 py-2 rounded-md transition-colors ${version === 'v2' ? 'bg-blue-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}`}>Complex</button>
                 </div>
             </div>
+
             <button
               onClick={handleConvertClick}
               disabled={isLoading || !sourceFile}
@@ -258,32 +266,19 @@ a.click();
                 </button>
             )}
           </div>
-
           {error && <p className="text-red-400 text-center mt-6">{error}</p>}
         </div>
         
-        {/* --- START: NEW CONTENT SECTION --- */}
+        {/* Content Section */}
         <div className="mt-24">
             <section className="text-center">
                 <h2 className="text-3xl font-bold mb-4">The Smartest Way to Create Line Drawings</h2>
                 <p className="max-w-3xl mx-auto text-gray-400 mb-12">LineArtify offers an unmatched free online tool for artists, designers, and enthusiasts to convert any picture into clean line art.</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                        <h3 className="text-xl font-bold text-cyan-400 mb-2">Instant & Free</h3>
-                        <p className="text-gray-300">Convert unlimited images to line drawings online. No fees, no sign-up, just pure creative power.</p>
-                    </div>
-                    <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                        <h3 className="text-xl font-bold text-cyan-400 mb-2">AI-Powered Precision</h3>
-                        <p className="text-gray-300">Our advanced AI intelligently identifies and extracts the key lines from your photo for a crisp, clean result.</p>
-                    </div>
-                    <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                        <h3 className="text-xl font-bold text-cyan-400 mb-2">Simple for Everyone</h3>
-                        <p className="text-gray-300">No software or skills needed. The intuitive interface makes photo to line art conversion effortless.</p>
-                    </div>
-                    <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                        <h3 className="text-xl font-bold text-cyan-400 mb-2">Unleash Creativity</h3>
-                        <p className="text-gray-300">Perfect for creating coloring pages, tattoo stencils, project outlines, or unique digital art.</p>
-                    </div>
+                    <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-cyan-400 mb-2">Instant & Free</h3><p className="text-gray-300">Convert unlimited images to line drawings online. No fees, no sign-up, just pure creative power.</p></div>
+                    <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-cyan-400 mb-2">AI-Powered Precision</h3><p className="text-gray-300">Our advanced AI intelligently identifies and extracts the key lines from your photo for a crisp, clean result.</p></div>
+                    <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-cyan-400 mb-2">Simple for Everyone</h3><p className="text-gray-300">No software or skills needed. The intuitive interface makes photo to line art conversion effortless.</p></div>
+                    <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-cyan-400 mb-2">Unleash Creativity</h3><p className="text-gray-300">Perfect for creating coloring pages, tattoo stencils, project outlines, or unique digital art.</p></div>
                 </div>
             </section>
 
@@ -295,10 +290,12 @@ a.click();
                         <p className="text-cyan-400 font-bold text-lg mb-2">Step 1: Upload Your Photo</p>
                         <p className="text-gray-300">Drag and drop or click to select any image from your device. High-contrast pictures work best!</p>
                      </div>
+                      {/* --- START: STEP 2 UPDATED HERE --- */}
                       <div className="bg-gray-800/50 p-6 rounded-lg">
-                        <p className="text-cyan-400 font-bold text-lg mb-2">Step 2: Let AI Do the Work</p>
-                        <p className="text-gray-300">Choose your preferred conversion model and click the "Create Line Art" button. Our AI analyzes your image instantly.</p>
+                        <p className="text-cyan-400 font-bold text-lg mb-2">Step 2: Choose a Style</p>
+                        <p className="text-gray-300">Select your preferred style—'Simple' for clean outlines or 'Complex' for more detail—and click the 'Create Line Art' button.</p>
                      </div>
+                     {/* --- END: STEP 2 UPDATED HERE --- */}
                       <div className="bg-gray-800/50 p-6 rounded-lg">
                         <p className="text-cyan-400 font-bold text-lg mb-2">Step 3: Download & Use</p>
                         <p className="text-gray-300">Your new line drawing will appear in moments. Download it in high quality and use it in any project you can imagine.</p>
@@ -318,7 +315,6 @@ a.click();
                 </div>
             </section>
         </div>
-        {/* --- END: NEW CONTENT SECTION --- */}
       </main>
     </div>
   );
