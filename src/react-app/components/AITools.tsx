@@ -23,8 +23,8 @@ const tools = [
   // --- START: NEW TOOL ADDED HERE ---
   {
     id: 'line-artify', // <-- 2. هذا هو المعرف المطابق للرابط
-    title: 'LineArtify: Photo to Sketch',
-    description: 'Transform your photos into elegant, clean line art with our AI-powered sketch converter.',
+    title: 'LineArtify: Photo to Lina Art',
+    description: 'Transform your photos into elegant, clean line art with our AI-powered Lina Art converter.',
     icon: Pencil, // <-- 3. استخدام الأيقونة الجديدة
     color: 'from-cyan-500 to-blue-600', // <-- 4. لون متناسق مع صفحة الأداة
     features: ['Instant conversion', 'High-quality sketch', 'For artists & creators'],
