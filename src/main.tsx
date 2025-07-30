@@ -18,10 +18,12 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/" element={<App />}>
           <Route index element={<HomePage />} />
           
-          {/* --- تم تصحيح وتوحيد كل المسارات هنا --- */}
+          {/* --- تم تصحيح وإضافة المسارات هنا --- */}
           <Route path="/artigen-pro-ai" element={<ImageGeneratorPage />} />
           <Route path="/line-drawing" element={<LineArtifyPage />} />
           <Route path="/remove-background" element={<div className="pt-24">Background Removal Page</div>} />
+          {/* تمت إضافة مسار للأداة التي كانت مفقودة */}
+          <Route path="/text-to-audio" element={<div className="pt-24">Text to Audio Page</div>} />
           {/* -------------------------------------- */}
 
         </Route>
