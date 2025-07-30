@@ -26,11 +26,13 @@ function ImageGeneratorPage() {
   const [selectedSize, setSelectedSize] = useState('1024x1024');
   const [imageUrl, setImageUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleGenerateClick = async () => {
-    if (!prompt) {
-      setError('Please enter a description for the image.');
+    const userPrompt = prompt.trim();
+    if (!userPrompt) {
+      setError('يرجى إدخال وصف للصورة. / Please enter a description for the image.');
       return;
     }
 
@@ -38,57 +40,57 @@ function ImageGeneratorPage() {
     setError(null);
     setImageUrl('');
 
+    let finalPromptForApi = userPrompt;
+
+    // --- New Translation Logic ---
     try {
-      // Step 1: Translate the prompt to English automatically
-      let translatedPrompt = prompt;
-      const translateResponse = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(prompt)}&langpair=auto|en`);
-      
-      if (!translateResponse.ok) {
-        throw new Error('Translation service is currently unavailable.');
-      }
-
+      const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(userPrompt)}&langpair=auto|en&mt=1`;
+      const translateResponse = await fetch(apiUrl);
       const translateData = await translateResponse.json();
-      
+
       if (translateData.responseData && translateData.responseData.translatedText) {
-          // Use the translated text if it's not empty
-          if (translateData.responseData.translatedText.trim()) {
-              translatedPrompt = translateData.responseData.translatedText;
-          }
+        const translatedText = translateData.responseData.translatedText;
+        // Use translation only if it's different from the original prompt
+        if (translatedText.toLowerCase() !== userPrompt.toLowerCase()) {
+          finalPromptForApi = translatedText;
+        }
       }
-      
-      // Step 2: Generate the image with the translated prompt
-      const styleSuffix = styleOptions.find(s => s.value === selectedStyle)?.prompt_suffix || '';
-      const finalPrompt = translatedPrompt + styleSuffix;
-      const [width, height] = selectedSize.split('x');
-      const encodedPrompt = encodeURIComponent(finalPrompt);
-      const seed = Date.now();
-      
-      const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
-
-      const img = new Image();
-      img.src = constructedUrl;
-
-      img.onload = () => {
-        setImageUrl(constructedUrl);
-        setIsLoading(false);
-      };
-
-      img.onerror = () => {
-        setError('Failed to load the image. The AI service may be busy. Please try again later.');
-        setIsLoading(false);
-      };
-
+      // If translation fails, the catch block is empty, and we proceed with the original userPrompt.
     } catch (err) {
-      // Catch errors from the translation fetch call
-      console.error(err);
-      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred during translation.';
-      setError(`Translation Failed: ${errorMessage}`);
-      setIsLoading(false);
+      console.error("Translation failed, using original prompt:", err);
+      // Fail-safe: proceed with original prompt
     }
+    // --- End of Translation Logic ---
+
+    const styleSuffix = styleOptions.find(s => s.value === selectedStyle)?.prompt_suffix || '';
+    const fullPrompt = finalPromptForApi + styleSuffix;
+    const [width, height] = selectedSize.split('x');
+    const encodedPrompt = encodeURIComponent(fullPrompt);
+    const seed = Date.now();
+    
+    const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
+
+    const img = new Image();
+    img.src = constructedUrl;
+    img.alt = userPrompt; // Keep original prompt for alt text
+
+    img.onload = () => {
+      setImageUrl(constructedUrl);
+      setIsLoading(false);
+    };
+
+    img.onerror = () => {
+      setError('فشل في تحميل الصورة. حاول مرة أخرى. / Failed to load the image. Please try again.');
+      setIsLoading(false);
+    };
   };
   
   const handleDownloadClick = async () => {
       if (!imageUrl) return;
+
+      setIsDownloading(true);
+      setError(null);
+      
       try {
         const response = await fetch(imageUrl);
         const blob = await response.blob();
@@ -103,14 +105,16 @@ function ImageGeneratorPage() {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       } catch (err) {
-        setError('Download failed. You can try right-clicking the image and selecting "Save Image As".');
+        console.error('Download Error:', err);
+        setError('فشل تحميل الصورة. يمكنك محاولة النقر عليها بالزر الأيمن واختيار "حفظ الصورة". / Download failed. You can try right-clicking the image and selecting "Save Image As".');
+      } finally {
+        setIsDownloading(false);
       }
   };
 
   return (
     <div className="pt-24 bg-gray-900 text-white min-h-screen">
       <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        {/* Header Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
             AI Image Generator
@@ -120,12 +124,9 @@ function ImageGeneratorPage() {
           </p>
         </div>
 
-        {/* Main Content: Grid for controls and image display */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           
-          {/* Left Column: Controls */}
           <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
-            {/* Prompt Input */}
             <div>
               <label htmlFor="prompt-input" className="block text-sm font-medium text-gray-300 mb-2">1. Describe your image (in any language)</label>
               <textarea
@@ -137,7 +138,6 @@ function ImageGeneratorPage() {
               />
             </div>
 
-            {/* Style Selector */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">2. Choose a style</label>
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
@@ -157,7 +157,6 @@ function ImageGeneratorPage() {
               </div>
             </div>
 
-            {/* Size Selector */}
             <div>
               <label htmlFor="size-select" className="block text-sm font-medium text-gray-300 mb-2">3. Select image size</label>
               <select
@@ -172,19 +171,17 @@ function ImageGeneratorPage() {
               </select>
             </div>
             
-            {/* Generate Button */}
             <button
               onClick={handleGenerateClick}
               disabled={isLoading}
               className="w-full mt-2 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-4 focus:ring-purple-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
             >
-              {isLoading ? 'Generating...' : 'Generate Image'}
+              {isLoading ? 'جاري التوليد... / Generating...' : 'Generate Image'}
             </button>
             
             {error && <p className="text-red-400 text-center mt-2">{error}</p>}
           </div>
 
-          {/* Right Column: Image Display */}
           <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col justify-center items-center h-96 lg:h-auto">
             <div className="w-full h-full flex justify-center items-center border-2 border-dashed border-gray-600 rounded-lg">
               {isLoading && (
@@ -205,9 +202,10 @@ function ImageGeneratorPage() {
             {imageUrl && !isLoading && (
                <button
                   onClick={handleDownloadClick}
-                  className="w-full mt-6 py-3 px-4 text-lg font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300"
+                  disabled={isDownloading}
+                  className="w-full mt-6 py-3 px-4 text-lg font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
                 >
-                  Download Image
+                  {isDownloading ? 'جاري التحضير... / Preparing...' : 'Download Image'}
                 </button>
             )}
           </div>
