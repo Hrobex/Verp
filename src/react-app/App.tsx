@@ -6,8 +6,8 @@ function App() {
   return (
     <>
       <Header />
-      {/* أضفنا الهامش العلوي هنا */}
-      <main className="pt-20"> 
+      {/* تأكد من أن وسم main لا يحتوي على أي className هنا */}
+      <main> 
         <Outlet />
       </main>
       <Footer />
