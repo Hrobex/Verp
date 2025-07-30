@@ -1,7 +1,7 @@
 import { 
   Image, 
   Scissors, 
-  // Volume2, <-- تم حذف هذه الأيقونة لأنها غير مستخدمة
+  Volume2, 
   Sparkles, 
   ArrowRight,
   Zap,
@@ -39,7 +39,18 @@ const tools = [
     image: 'https://images.unsplash.com/photo-1618004912476-29818d81ae2e?w=400&h=300&fit=crop'
   },
   {
-    id: 'image-enhancement',
+    // --- تمت إعادة الأداة هنا مع الرابط الصحيح ---
+    id: 'text-to-speech',
+    title: 'Text to Audio',
+    description: 'Convert any text into natural-sounding speech with multiple voices and languages available.',
+    icon: Volume2,
+    color: 'from-green-500 to-green-600',
+    features: ['Natural voices', '50+ languages', 'Custom speed'],
+    image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=400&h=300&fit=crop'
+  },
+  {
+    // --- تم تحديث رابط هذه الأداة هنا ---
+    id: 'ai-image-enhancer',
     title: 'Image Enhancement',
     description: 'Upscale and enhance your images with AI. Increase resolution while maintaining quality.',
     icon: Sparkles,
