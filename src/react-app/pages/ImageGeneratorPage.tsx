@@ -138,7 +138,7 @@ function ImageGeneratorPage() {
           {/* Left Column: Controls */}
           <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
             <div>
-              <label htmlFor="prompt-input" className="block text-sm font-medium text-gray-300 mb-2">1. Describe your image (Arabic supported)</label>
+              <label htmlFor="prompt-input" className="block text-sm font-medium text-gray-300 mb-2">1. Describe your image </label>
               <textarea
                 id="prompt-input"
                 value={prompt}
