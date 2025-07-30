@@ -1,38 +1,27 @@
 import { Sparkles, Twitter, Github, Mail, Heart } from 'lucide-react';
 
+// --- تم تعديل قائمة الروابط هنا لتعكس طلباتك ---
 const footerLinks = {
   Product: [
     { name: 'AI Tools', href: '#tools' },
     { name: 'Features', href: '#features' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'API', href: '#api' },
   ],
   Company: [
     { name: 'About', href: '#about' },
     { name: 'Blog', href: '#blog' },
-    { name: 'Careers', href: '#careers' },
-    { name: 'Contact', href: '#contact' },
-  ],
-  Resources: [
-    { name: 'Documentation', href: '#docs' },
-    { name: 'Help Center', href: '#help' },
-    { name: 'Community', href: '#community' },
-    { name: 'Status', href: '#status' },
   ],
   Legal: [
-    { name: 'Privacy', href: '#privacy' },
-    { name: 'Terms', href: '#terms' },
-    { name: 'Security', href: '#security' },
-    { name: 'Cookies', href: '#cookies' },
+    { name: 'Privacy', href: '/privacy-policy' }, // يفضل استخدام روابط فعلية لاحقًا
+    { name: 'Terms', href: '/terms-of-service' },
   ],
 };
+// ----------------------------------------------------
 
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-20">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* Logo and Description */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-2 mb-6">
@@ -63,7 +52,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Footer Links */}
+          {/* Footer Links (سيتم عرض 3 أعمدة فقط الآن) */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
               <h3 className="text-lg font-semibold mb-4">{category}</h3>
@@ -83,7 +72,7 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Newsletter Signup */}
+        {/* Newsletter Signup (أبقينا عليه لأنه ميزة جيدة) */}
         <div className="mt-16 pt-8 border-t border-gray-800">
           <div className="lg:flex lg:items-center lg:justify-between">
             <div className="mb-6 lg:mb-0">
@@ -92,7 +81,6 @@ export default function Footer() {
                 Get the latest updates on new features and AI innovations.
               </p>
             </div>
-            
             <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
               <input
                 type="email"
@@ -111,7 +99,6 @@ export default function Footer() {
           <div className="text-gray-400 text-sm">
             © 2025 AI Convert. All rights reserved.
           </div>
-          
           <div className="flex items-center space-x-1 text-gray-400 text-sm">
             <span>Made with</span>
             <Heart className="h-4 w-4 text-red-500" />
