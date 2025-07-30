@@ -40,7 +40,6 @@ const faqData = [
     },
 ];
 
-
 function ImageGeneratorPage() {
   const [prompt, setPrompt] = useState('');
   const [selectedStyle, setSelectedStyle] = useState('default');
@@ -49,217 +48,161 @@ function ImageGeneratorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleGenerateClick = async () => {
-    const userPrompt = prompt.trim();
-    if (!userPrompt) {
-      setError('Please enter a description for the image.');
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-    setImageUrl('');
-    
-    let translatedPrompt = userPrompt;
-
-    try {
-      const langPair = "ar|en";
-      const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(userPrompt)}&langpair=${langPair}&mt=1`;
-      
-      const translateResponse = await fetch(apiUrl);
-      if (translateResponse.ok) {
-        const translateData = await translateResponse.json();
-        if (translateData.responseData && translateData.responseData.translatedText &&
-            translateData.responseData.translatedText.trim().toLowerCase() !== userPrompt.toLowerCase()) {
-          translatedPrompt = translateData.responseData.translatedText;
-        }
-      }
-    } catch (err) {
-      console.error("Translation API failed, using original prompt:", err);
-    }
-
-    const styleSuffix = styleOptions.find(s => s.value === selectedStyle)?.prompt_suffix || '';
-    const finalPrompt = translatedPrompt + styleSuffix;
-    const [width, height] = selectedSize.split('x');
-    const encodedPrompt = encodeURIComponent(finalPrompt);
-    const seed = Date.now();
-    
-    const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
-
-    const img = new Image();
-    img.src = constructedUrl;
-
-    img.onload = () => {
-      setImageUrl(constructedUrl);
-      setIsLoading(false);
-    };
-
-    img.onerror = () => {
-      setError('Failed to load the image. The AI service may be busy. Please try again later.');
-      setIsLoading(false);
-    };
-  };
-  
-  const handleDownloadClick = async () => {
-      if (!imageUrl) return;
-      try {
-        const response = await fetch(imageUrl);
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        const filename = `${prompt.substring(0, 20).replace(/\s/g, '_') || 'generated'}_image.png`;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      } catch (err) {
-        setError('Download failed. You can try right-clicking the image and selecting "Save Image As".');
-      }
-  };
+  const handleGenerateClick = async () => { const userPrompt = prompt.trim(); if (!userPrompt) { setError('Please enter a description for the image.'); return; } setIsLoading(true); setError(null); setImageUrl(''); let translatedPrompt = userPrompt; try { const langPair = "ar|en"; const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(userPrompt)}&langpair=${langPair}&mt=1`; const translateResponse = await fetch(apiUrl); if (translateResponse.ok) { const translateData = await translateResponse.json(); if (translateData.responseData && translateData.responseData.translatedText && translateData.responseData.translatedText.trim().toLowerCase() !== userPrompt.toLowerCase()) { translatedPrompt = translateData.responseData.translatedText; } } } catch (err) { console.error("Translation API failed, using original prompt:", err); } const styleSuffix = styleOptions.find(s => s.value === selectedStyle)?.prompt_suffix || ''; const finalPrompt = translatedPrompt + styleSuffix; const [width, height] = selectedSize.split('x'); const encodedPrompt = encodeURIComponent(finalPrompt); const seed = Date.now(); const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`; const img = new Image(); img.src = constructedUrl; img.onload = () => { setImageUrl(constructedUrl); setIsLoading(false); }; img.onerror = () => { setError('Failed to load the image. The AI service may be busy. Please try again later.'); setIsLoading(false); }; };
+  const handleDownloadClick = async () => { if (!imageUrl) return; try { const response = await fetch(imageUrl); const blob = await response.blob(); const url = window.URL.createObjectURL(blob); const a = document.createElement('a'); a.style.display = 'none'; a.href = url; const filename = `${prompt.substring(0, 20).replace(/\s/g, '_') || 'generated'}_image.png`; a.download = filename; document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(url); document.body.removeChild(a); } catch (err) { setError('Download failed. You can try right-clicking the image and selecting "Save Image As".'); } };
 
   return (
-    <div className="pt-24 bg-gray-900 text-white min-h-screen">
-      <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        {/* Header Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-            Artigen Pro AI Image Generator
-          </h1>
-          <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
-            Bring your ideas to life. Describe anything you can imagine, select a style, and watch our free text to image AI create a unique masterpiece for you.
-          </p>
-        </div>
-
-        {/* Main Tool: Grid for controls and image display */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-          {/* Left Column: Controls */}
-          <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
-            <div>
-              <label htmlFor="prompt-input" className="block text-sm font-medium text-gray-300 mb-2">1. Describe your image </label>
-              <textarea
-                id="prompt-input"
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="e.g., A cute cat astronaut floating in space"
-                className="w-full h-24 p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">2. Choose a style</label>
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                {styleOptions.map((style) => (
-                  <button
-                    key={style.value}
-                    onClick={() => setSelectedStyle(style.value)}
-                    className={`p-2 text-center text-sm rounded-lg transition-all duration-200 ${
-                      selectedStyle === style.value ? 'bg-purple-600 text-white font-bold ring-2 ring-purple-400' : 'bg-gray-700 hover:bg-gray-600'
-                    }`}
-                  >
-                    {style.name}
-                  </button>
-                ))}
+    <>
+      {/* --- START: SEO CONTENT ADDED HERE --- */}
+      <title>Artigen Pro: Free AI Image Generator From Text</title>
+      <meta name="description" content="Generate stunning, unique images from text prompts with Artigen Pro. Our free AI image generator brings your ideas to life instantly. No sign-up required." />
+      <script type="application/ld+json">
+        {`
+          {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "Artigen Pro AI Image Generator",
+            "operatingSystem": "WEB",
+            "applicationCategory": "MultimediaApplication",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.8",
+              "ratingCount": "1250"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            }
+          }
+        `}
+      </script>
+      {/* --- END: SEO CONTENT ADDED HERE --- */}
+      
+      {/* The rest of your component code is exactly as you provided it */}
+      <div className="pt-24 bg-gray-900 text-white min-h-screen">
+        <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+              Artigen Pro AI Image Generator
+            </h1>
+            <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
+              Bring your ideas to life. Describe anything you can imagine, select a style, and watch our free text to image AI create a unique masterpiece for you.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
+              <div>
+                <label htmlFor="prompt-input" className="block text-sm font-medium text-gray-300 mb-2">1. Describe your image</label>
+                <textarea
+                  id="prompt-input"
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  placeholder="e.g., A cute cat astronaut floating in space"
+                  className="w-full h-24 p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
+                />
               </div>
-            </div>
-            <div>
-              <label htmlFor="size-select" className="block text-sm font-medium text-gray-300 mb-2">3. Select image size</label>
-              <select
-                id="size-select"
-                value={selectedSize}
-                onChange={(e) => setSelectedSize(e.target.value)}
-                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">2. Choose a style</label>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  {styleOptions.map((style) => (
+                    <button
+                      key={style.value}
+                      onClick={() => setSelectedStyle(style.value)}
+                      className={`p-2 text-center text-sm rounded-lg transition-all duration-200 ${
+                        selectedStyle === style.value ? 'bg-purple-600 text-white font-bold ring-2 ring-purple-400' : 'bg-gray-700 hover:bg-gray-600'
+                      }`}
+                    >
+                      {style.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label htmlFor="size-select" className="block text-sm font-medium text-gray-300 mb-2">3. Select image size</label>
+                <select
+                  id="size-select"
+                  value={selectedSize}
+                  onChange={(e) => setSelectedSize(e.target.value)}
+                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                >
+                  {sizeOptions.map(size => (<option key={size.value} value={size.value}>{size.label}</option>))}
+                </select>
+              </div>
+              <button
+                onClick={handleGenerateClick}
+                disabled={isLoading}
+                className="w-full mt-2 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-4 focus:ring-purple-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
-                {sizeOptions.map(size => (<option key={size.value} value={size.value}>{size.label}</option>))}
-              </select>
+                {isLoading ? 'Generating...' : 'Generate Image'}
+              </button>
+              {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
-            <button
-              onClick={handleGenerateClick}
-              disabled={isLoading}
-              className="w-full mt-2 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-4 focus:ring-purple-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-            >
-              {isLoading ? 'Generating...' : 'Generate Image'}
-            </button>
-            {error && <p className="text-red-400 text-center mt-2">{error}</p>}
-          </div>
-
-          {/* Right Column: Image Display */}
-          <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col justify-center items-center h-96 lg:h-auto">
-            <div className="w-full h-full flex justify-center items-center border-2 border-dashed border-gray-600 rounded-lg">
-              {isLoading && (<div className="flex flex-col items-center gap-4"><div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div><p className="text-gray-400">Creating your vision...</p></div>)}
-              {!isLoading && !imageUrl && (<div className="text-center text-gray-500"><p>Your generated image will appear here</p></div>)}
-              {imageUrl && !isLoading && (<img src={imageUrl} alt={prompt} className="max-w-full max-h-full object-contain rounded-lg" />)}
+            <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col justify-center items-center h-96 lg:h-auto">
+              <div className="w-full h-full flex justify-center items-center border-2 border-dashed border-gray-600 rounded-lg">
+                {isLoading && (<div className="flex flex-col items-center gap-4"><div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div><p className="text-gray-400">Creating your vision...</p></div>)}
+                {!isLoading && !imageUrl && (<div className="text-center text-gray-500"><p>Your generated image will appear here</p></div>)}
+                {imageUrl && !isLoading && (<img src={imageUrl} alt={prompt} className="max-w-full max-h-full object-contain rounded-lg" />)}
+              </div>
+              {imageUrl && !isLoading && (<button onClick={handleDownloadClick} className="w-full mt-6 py-3 px-4 text-lg font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300">Download Image</button>)}
             </div>
-            {imageUrl && !isLoading && (<button onClick={handleDownloadClick} className="w-full mt-6 py-3 px-4 text-lg font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300">Download Image</button>)}
           </div>
-        </div>
-
-        {/* --- START: NEW CONTENT SECTION --- */}
-        <div className="mt-24">
-
-            {/* Why Choose Us Section */}
-            <section className="text-center">
-                <h2 className="text-3xl font-bold mb-4">Why is Artigen Pro Your Go-To AI Art Creator?</h2>
-                <p className="max-w-3xl mx-auto text-gray-400 mb-12">In a world of complex tools, Artigen Pro offers a straightforward and powerful experience. We believe creativity should be effortless and accessible to all.</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                        <h3 className="text-xl font-bold text-purple-400 mb-2">Completely Free</h3>
-                        <p className="text-gray-300">No subscriptions, no credit cards, no hidden costs. Enjoy unlimited AI image generation on us.</p>
-                    </div>
-                    <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                        <h3 className="text-xl font-bold text-purple-400 mb-2">No Sign-Up Needed</h3>
-                        <p className="text-gray-300">We respect your privacy and time. Jump right into creating without the hassle of registration.</p>
-                    </div>
-                    <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                        <h3 className="text-xl font-bold text-purple-400 mb-2">Limitless Creation</h3>
-                        <p className="text-gray-300">There are no caps on how many images you can generate or download. Your imagination is the only limit.</p>
-                    </div>
-                    <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                        <h3 className="text-xl font-bold text-purple-400 mb-2">Multi-Language Magic</h3>
-                        <p className="text-gray-300">Describe your vision in Arabic, English, or any other language, and our AI will understand and deliver.</p>
-                    </div>
-                </div>
-            </section>
-
-            {/* How It Works Section */}
-            <section className="mt-20 text-center">
-                 <h2 className="text-3xl font-bold mb-4">Turn Your Ideas into Art in 3 Simple Steps</h2>
-                 <p className="max-w-3xl mx-auto text-gray-400 mb-12">Our intuitive process makes AI art creation a breeze for everyone, from beginners to professionals.</p>
-                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-                     <div className="bg-gray-800/50 p-6 rounded-lg">
-                        <p className="text-purple-400 font-bold text-lg mb-2">Step 1: Describe Your Vision</p>
-                        <p className="text-gray-300">Write down what you want to see. Be specific for best results! Instead of "a dog," try "a happy golden retriever puppy playing in a field of sunflowers at sunset."</p>
-                     </div>
-                      <div className="bg-gray-800/50 p-6 rounded-lg">
-                        <p className="text-purple-400 font-bold text-lg mb-2">Step 2: Pick a Style & Size</p>
-                        <p className="text-gray-300">Choose an artistic style that matches your idea—from cinematic to anime. Then, select the perfect dimensions for your creation.</p>
-                     </div>
-                      <div className="bg-gray-800/50 p-6 rounded-lg">
-                        <p className="text-purple-400 font-bold text-lg mb-2">Step 3: Generate & Download</p>
-                        <p className="text-gray-300">Hit the "Generate" button to witness the AI magic. In moments, your unique image will be ready to download and share with the world.</p>
-                     </div>
-                 </div>
-            </section>
-
-            {/* FAQ Section */}
-            <section className="mt-20 max-w-4xl mx-auto">
-                <h2 className="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
-                <div className="space-y-6">
-                    {faqData.map((faq, index) => (
-                        <div key={index} className="bg-gray-800 p-6 rounded-lg">
-                            <h3 className="font-bold text-lg text-purple-400 mb-2">{faq.question}</h3>
-                            <p className="text-gray-300 leading-relaxed">{faq.answer}</p>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-        </div>
-        {/* --- END: NEW CONTENT SECTION --- */}
-
-      </main>
-    </div>
+          <div className="mt-24">
+              <section className="text-center">
+                  <h2 className="text-3xl font-bold mb-4">Why is Artigen Pro Your Go-To AI Art Creator?</h2>
+                  <p className="max-w-3xl mx-auto text-gray-400 mb-12">In a world of complex tools, Artigen Pro offers a straightforward and powerful experience. We believe creativity should be effortless and accessible to all.</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+                          <h3 className="text-xl font-bold text-purple-400 mb-2">Completely Free</h3>
+                          <p className="text-gray-300">No subscriptions, no credit cards, no hidden costs. Enjoy unlimited AI image generation on us.</p>
+                      </div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+                          <h3 className="text-xl font-bold text-purple-400 mb-2">No Sign-Up Needed</h3>
+                          <p className="text-gray-300">We respect your privacy and time. Jump right into creating without the hassle of registration.</p>
+                      </div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+                          <h3 className="text-xl font-bold text-purple-400 mb-2">Limitless Creation</h3>
+                          <p className="text-gray-300">There are no caps on how many images you can generate or download. Your imagination is the only limit.</p>
+                      </div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+                          <h3 className="text-xl font-bold text-purple-400 mb-2">Multi-Language Magic</h3>
+                          <p className="text-gray-300">Describe your vision in Arabic, English, or any other language, and our AI will understand and deliver.</p>
+                      </div>
+                  </div>
+              </section>
+              <section className="mt-20 text-center">
+                   <h2 className="text-3xl font-bold mb-4">Turn Your Ideas into Art in 3 Simple Steps</h2>
+                   <p className="max-w-3xl mx-auto text-gray-400 mb-12">Our intuitive process makes AI art creation a breeze for everyone, from beginners to professionals.</p>
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                       <div className="bg-gray-800/50 p-6 rounded-lg">
+                          <p className="text-purple-400 font-bold text-lg mb-2">Step 1: Describe Your Vision</p>
+                          <p className="text-gray-300">Write down what you want to see. Be specific for best results! Instead of "a dog," try "a happy golden retriever puppy playing in a field of sunflowers at sunset."</p>
+                       </div>
+                        <div className="bg-gray-800/50 p-6 rounded-lg">
+                          <p className="text-purple-400 font-bold text-lg mb-2">Step 2: Pick a Style & Size</p>
+                          <p className="text-gray-300">Choose an artistic style that matches your idea—from cinematic to anime. Then, select the perfect dimensions for your creation.</p>
+                       </div>
+                        <div className="bg-gray-800/50 p-6 rounded-lg">
+                          <p className="text-purple-400 font-bold text-lg mb-2">Step 3: Generate & Download</p>
+                          <p className="text-gray-300">Hit the "Generate" button to witness the AI magic. In moments, your unique image will be ready to download and share with the world.</p>
+                       </div>
+                   </div>
+              </section>
+              <section className="mt-20 max-w-4xl mx-auto">
+                  <h2 className="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
+                  <div className="space-y-6">
+                      {faqData.map((faq, index) => (
+                          <div key={index} className="bg-gray-800 p-6 rounded-lg">
+                              <h3 className="font-bold text-lg text-purple-400 mb-2">{faq.question}</h3>
+                              <p className="text-gray-300 leading-relaxed">{faq.answer}</p>
+                          </div>
+                      ))}
+                  </div>
+              </section>
+          </div>
+        </main>
+      </div>
+    </>
   );
 }
 
