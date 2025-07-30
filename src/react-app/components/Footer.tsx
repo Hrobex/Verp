@@ -40,7 +40,7 @@ export default function Footer() {
                 <Sparkles className="h-5 w-5 text-white" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-                Vape
+                AI Convert
               </span>
             </div>
             
@@ -109,7 +109,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div className="text-gray-400 text-sm">
-            © 2024 Vape. All rights reserved.
+            © 2025 AI Convert. All rights reserved.
           </div>
           
           <div className="flex items-center space-x-1 text-gray-400 text-sm">
