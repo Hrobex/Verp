@@ -15,8 +15,6 @@ import LineArtifyPage from "@/react-app/pages/LineArtifyPage";
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
-// We will create the Arabic tool pages later
-// import ImageGeneratorPageArabic from "@/react-app/pages/ImageGeneratorPageArabic";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -35,9 +33,9 @@ createRoot(document.getElementById("root")!).render(
           <Route path="text-to-speech" element={<div className="pt-24">Text to Speech Page</div>} />
           <Route path="ai-image-enhancer" element={<div className="pt-24">Image Enhancement Page</div>} />
 
-          {/* --- Arabic Route Group --- */}
-          {/* All Arabic pages will be nested here, ensuring '/ar' is always in the URL */}
-          <Route path="/ar">
+          {/* --- Arabic Route Group (Corrected Path) --- */}
+          {/* The path is now 'ar' without a leading slash, which is the standard for nested routes. */}
+          <Route path="ar">
             <Route index element={<HomePageArabic />} />
             {/* Example for a future Arabic tool page: */}
             {/* <Route path="artigen-pro-ai" element={<ImageGeneratorPageArabic />} /> */}
