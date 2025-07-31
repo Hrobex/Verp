@@ -1,38 +1,39 @@
 // src/react-app/components/Footer.tsx
 
-import { useLocation } from 'react-router-dom';
-import { Twitter, Github, Mail, Heart } from 'lucide-react'; // Removed Sparkles
+import { useLanguage } from '@/react-app/hooks/useLanguage'; // Import the new custom hook
+import { Twitter, Github, Mail, Heart } from 'lucide-react';
 
-// Main translations for static text
+// This is the full, complete translations object.
 const translations = {
-  logoAlt: { en: 'AI Convert Logo', ar: 'شعار محول AI' },
-  brandName: { en: 'AI Convert', ar: 'محول AI' },
-  description: {
-    en: 'Unleash your creative potential with our suite of AI-powered tools. Create, enhance, and transform your content like never before.',
-    ar: 'أطلق العنان لإمكانياتك الإبداعية مع مجموعتنا من الأدوات المدعومة بالذكاء الاصطناعي. أنشئ المحتوى الخاص بك وحسّنه وحوّله كما لم يحدث من قبل.',
-  },
-  newsletterTitle: { en: 'Stay in the loop', ar: 'ابق على اطلاع' },
-  newsletterText: {
-    en: 'Get the latest updates on new features and AI innovations.',
-    ar: 'احصل على آخر التحديثات حول الميزات الجديدة وابتكارات الذكاء الاصطناعي.',
-  },
-  emailPlaceholder: { en: 'Enter your email', ar: 'أدخل بريدك الإلكتروني' },
-  subscribe: { en: 'Subscribe', ar: 'اشترك' },
-  copyright: { en: '© 2025 AI Convert. All rights reserved.', ar: '© 2025 محول AI. جميع الحقوق محفوظة.' },
-  madeWith: { en: 'Made with', ar: 'صُنع بـ' },
-  forCreators: { en: 'for creators everywhere', ar: 'للمبدعين في كل مكان' },
+    logoAlt: { en: 'AI Convert Logo', ar: 'شعار محول AI' },
+    brandName: { en: 'AI Convert', ar: 'محول AI' },
+    description: {
+        en: 'Unleash your creative potential with our suite of AI-powered tools. Create, enhance, and transform your content like never before.',
+        ar: 'أطلق العنان لإمكانياتك الإبداعية مع مجموعتنا من الأدوات المدعومة بالذكاء الاصطناعي. أنشئ المحتوى الخاص بك وحسّنه وحوّله كما لم يحدث من قبل.',
+    },
+    newsletterTitle: { en: 'Stay in the loop', ar: 'ابق على اطلاع' },
+    newsletterText: {
+        en: 'Get the latest updates on new features and AI innovations.',
+        ar: 'احصل على آخر التحديثات حول الميزات الجديدة وابتكارات الذكاء الاصطناعي.',
+    },
+    emailPlaceholder: { en: 'Enter your email', ar: 'أدخل بريدك الإلكتروني' },
+    subscribe: { en: 'Subscribe', ar: 'اشترك' },
+    copyright: { en: '© 2025 AI Convert. All rights reserved.', ar: '© 2025 محول AI. جميع الحقوق محفوظة.' },
+    madeWith: { en: 'Made with', ar: 'صُنع بـ' },
+    forCreators: { en: 'for creators everywhere', ar: 'للمبدعين في كل مكان' },
 };
 
-// Structured translations for footer links
+// This is the full, complete footer links object.
+// The links have been updated to be absolute paths to ensure they work from any page.
 const footerTranslations = {
   en: {
     Product: [
-      { name: 'AI Tools', href: '#tools' },
-      { name: 'Features', href: '#features' },
+      { name: 'AI Tools', href: '/#tools' },
+      { name: 'Features', href: '/#features' },
     ],
     Company: [
-      { name: 'About', href: '#about' },
-      { name: 'Blog', href: '#blog' },
+      { name: 'About', href: '/#about' },
+      { name: 'Blog', href: '#blog' }, // Assuming blog is a section for now
       { name: 'Contact', href: 'mailto:info@aiconvert.online' },
     ],
     Legal: [
@@ -42,12 +43,12 @@ const footerTranslations = {
   },
   ar: {
     المنتجات: [
-      { name: 'أدوات AI', href: '#tools' },
-      { name: 'المميزات', href: '#features' },
+      { name: 'أدوات AI', href: '/ar#tools' },
+      { name: 'المميزات', href: '/ar#features' },
     ],
     الشركة: [
-      { name: 'حولنا', href: '#about' },
-      { name: 'المدونة', href: '#blog' },
+      { name: 'حولنا', href: '/ar#about' },
+      { name: 'المدونة', href: '/ar#blog' }, // Assuming blog is a section for now
       { name: 'تواصل', href: 'mailto:info@aiconvert.online' },
     ],
     قانوني: [
@@ -58,9 +59,7 @@ const footerTranslations = {
 };
 
 export default function Footer() {
-  const location = useLocation();
-  const isArabic = location.pathname.startsWith('/ar');
-  const lang = isArabic ? 'ar' : 'en';
+  const { lang, isArabic } = useLanguage(); // Use the hook to get language info
   const currentLinks = footerTranslations[lang];
 
   return (
@@ -98,7 +97,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Footer Links (The rest of the component remains the same) */}
+          {/* Footer Links */}
           {Object.entries(currentLinks).map(([category, links]) => (
             <div key={category} className={isArabic ? 'text-right' : 'text-left'}>
               <h3 className="text-lg font-semibold mb-4">{category}</h3>
@@ -118,7 +117,7 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Newsletter and Bottom Bar (The rest of the component remains the same) */}
+        {/* Newsletter Signup */}
         <div className="mt-16 pt-8 border-t border-gray-800">
           <div className={`lg:flex lg:items-center lg:justify-between ${isArabic ? 'lg:flex-row-reverse' : ''}`}>
             <div className={`mb-6 lg:mb-0 ${isArabic ? 'text-right' : 'text-left'}`}>
@@ -140,6 +139,7 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Bottom Bar */}
         <div className={`mt-12 pt-8 border-t border-gray-800 flex flex-col items-center lg:flex-row lg:justify-between space-y-4 lg:space-y-0 ${isArabic ? 'lg:flex-row-reverse' : ''}`}>
           <div className="text-gray-400 text-sm">
             {translations.copyright[lang]}
