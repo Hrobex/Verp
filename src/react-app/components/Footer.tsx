@@ -1,10 +1,11 @@
 // src/react-app/components/Footer.tsx
 
 import { useLocation } from 'react-router-dom';
-import { Sparkles, Twitter, Github, Mail, Heart } from 'lucide-react';
+import { Twitter, Github, Mail, Heart } from 'lucide-react'; // Removed Sparkles
 
 // Main translations for static text
 const translations = {
+  logoAlt: { en: 'AI Convert Logo', ar: 'شعار محول AI' },
   brandName: { en: 'AI Convert', ar: 'محول AI' },
   description: {
     en: 'Unleash your creative potential with our suite of AI-powered tools. Create, enhance, and transform your content like never before.',
@@ -32,7 +33,7 @@ const footerTranslations = {
     Company: [
       { name: 'About', href: '#about' },
       { name: 'Blog', href: '#blog' },
-      { name: 'Contact', href: 'mailto:info@aiconvert.online' }, // New Contact link
+      { name: 'Contact', href: 'mailto:info@aiconvert.online' },
     ],
     Legal: [
       { name: 'Privacy', href: '/privacy-policy' },
@@ -47,7 +48,7 @@ const footerTranslations = {
     الشركة: [
       { name: 'حولنا', href: '#about' },
       { name: 'المدونة', href: '#blog' },
-      { name: 'تواصل', href: 'mailto:info@aiconvert.online' }, // New Contact link in Arabic
+      { name: 'تواصل', href: 'mailto:info@aiconvert.online' },
     ],
     قانوني: [
       { name: 'الخصوصية', href: '/ar/privacy-policy' },
@@ -55,7 +56,6 @@ const footerTranslations = {
     ],
   },
 };
-
 
 export default function Footer() {
   const location = useLocation();
@@ -70,9 +70,11 @@ export default function Footer() {
           {/* Logo and Description */}
           <div className="lg:col-span-2">
             <div className={`flex items-center mb-6 ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-blue-600">
-                <Sparkles className="h-5 w-5 text-white" />
-              </div>
+              <img 
+                src="/favicon.svg" 
+                alt={translations.logoAlt[lang]}
+                className="h-8 w-8 object-contain"
+              />
               <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
                 {translations.brandName[lang]}
               </span>
@@ -96,7 +98,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Footer Links */}
+          {/* Footer Links (The rest of the component remains the same) */}
           {Object.entries(currentLinks).map(([category, links]) => (
             <div key={category} className={isArabic ? 'text-right' : 'text-left'}>
               <h3 className="text-lg font-semibold mb-4">{category}</h3>
@@ -116,7 +118,7 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Newsletter Signup */}
+        {/* Newsletter and Bottom Bar (The rest of the component remains the same) */}
         <div className="mt-16 pt-8 border-t border-gray-800">
           <div className={`lg:flex lg:items-center lg:justify-between ${isArabic ? 'lg:flex-row-reverse' : ''}`}>
             <div className={`mb-6 lg:mb-0 ${isArabic ? 'text-right' : 'text-left'}`}>
@@ -138,7 +140,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className={`mt-12 pt-8 border-t border-gray-800 flex flex-col items-center lg:flex-row lg:justify-between space-y-4 lg:space-y-0 ${isArabic ? 'lg:flex-row-reverse' : ''}`}>
           <div className="text-gray-400 text-sm">
             {translations.copyright[lang]}
@@ -152,4 +153,4 @@ export default function Footer() {
       </div>
     </footer>
   );
-              }
+}
