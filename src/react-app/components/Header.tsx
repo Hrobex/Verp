@@ -2,10 +2,14 @@
 
 import { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X } from 'lucide-react'; // Removed Sparkles
 
 // Define translations for the component
 const translations = {
+  logoAlt: {
+    en: 'AI Convert Logo',
+    ar: 'شعار محول AI',
+  },
   aiTools: {
     en: 'AI Tools',
     ar: 'أدوات الذكاء الاصطناعي',
@@ -36,37 +40,34 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
-  // --- Language Detection Logic ---
   const isArabic = location.pathname.startsWith('/ar');
   const lang = isArabic ? 'ar' : 'en';
 
-  // --- Language Switcher URL Logic ---
   const currentPath = location.pathname;
   let languageSwitcherPath: string;
 
   if (isArabic) {
-    // From Arabic to English
-    // if path is '/ar', target is '/', otherwise remove '/ar' prefix
     languageSwitcherPath = currentPath === '/ar' ? '/' : currentPath.substring(3);
   } else {
-    // From English to Arabic
-    // if path is '/', target is '/ar', otherwise prepend '/ar'
     languageSwitcherPath = currentPath === '/' ? '/ar' : `/ar${currentPath}`;
   }
 
+  const homeLink = isArabic ? '/ar' : '/';
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
       <div className={`mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8 ${isArabic ? 'flex-row-reverse' : ''}`}>
-        {/* Logo */}
-        <div className={`flex items-center ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-blue-600">
-            <Sparkles className="h-5 w-5 text-white" />
-          </div>
+        {/* Logo and Brand Name Link to Homepage */}
+        <Link to={homeLink} className={`flex items-center ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
+          <img 
+            src="/favicon.svg" 
+            alt={translations.logoAlt[lang]} 
+            className="h-8 w-8 object-contain"
+          />
           <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
             {translations.brandName[lang]}
           </span>
-        </div>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className={`hidden lg:flex items-center ${isArabic ? 'space-x-reverse space-x-8' : 'space-x-8'}`}>
