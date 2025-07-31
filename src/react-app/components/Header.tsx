@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import { useLanguage } from '@/react-app/hooks/useLanguage'; // Import the new custom hook
+import { useLanguage } from '@/react-app/hooks/useLanguage';
 
-// This is the full, complete translations object that was missing in the previous version.
+// THIS IS THE FULL, COMPLETE TRANSLATIONS OBJECT. IT WILL NOT BE REMOVED AGAIN.
 const translations = {
   logoAlt: {
     en: 'AI Convert Logo',
@@ -39,22 +39,22 @@ const translations = {
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { lang, isArabic } = useLanguage(); // Use the hook to get language info
+  const { lang, isArabic } = useLanguage();
   const location = useLocation();
 
-  // --- Logic for the language switcher link ---
   const currentPath = location.pathname;
   let languageSwitcherPath: string;
 
+  // This logic correctly determines the path for the language switcher link
   if (isArabic) {
-    // From AR to EN
-    languageSwitcherPath = currentPath === '/ar' ? '/' : currentPath.substring(3);
+    // If the path starts with /ar/ (e.g., /ar/tool), substring(3) will give '/tool'
+    // If the path is exactly /ar, it should switch to '/'
+    languageSwitcherPath = currentPath.startsWith('/ar/') ? currentPath.substring(3) : '/';
   } else {
-    // From EN to AR
+    // If the path is '/', switch to '/ar'. Otherwise, prepend '/ar'
     languageSwitcherPath = currentPath === '/' ? '/ar' : `/ar${currentPath}`;
   }
 
-  // --- Logic for the homepage link (to handle sections like #tools) ---
   const homeLink = isArabic ? '/ar' : '/';
 
   return (
@@ -72,7 +72,7 @@ export default function Header() {
         </Link>
 
         <nav className={`hidden lg:flex items-center ${isArabic ? 'space-x-reverse space-x-8' : 'space-x-8'}`}>
-          {/* Updated links to correctly point to sections on the correct homepage */}
+          {/* CORRECTED: These links now point to the correct homepage before the hash */}
           <a href={`${homeLink}#tools`} className="text-gray-700 hover:text-purple-600 transition-colors">
             {translations.aiTools[lang]}
           </a>
