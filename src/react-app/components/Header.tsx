@@ -1,59 +1,31 @@
 // src/react-app/components/Header.tsx
 
 import { useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'; // REMOVED useLocation as it's no longer needed for the switcher
 import { Menu, X } from 'lucide-react';
 import { useLanguage } from '@/react-app/hooks/useLanguage';
 
-// THIS IS THE FULL, COMPLETE TRANSLATIONS OBJECT. IT WILL NOT BE REMOVED AGAIN.
+// ... (translations object remains the same)
 const translations = {
-  logoAlt: {
-    en: 'AI Convert Logo',
-    ar: 'شعار محول AI',
-  },
-  aiTools: {
-    en: 'AI Tools',
-    ar: 'أدوات الذكاء الاصطناعي',
-  },
-  features: {
-    en: 'Features',
-    ar: 'المميزات',
-  },
-  about: {
-    en: 'About',
-    ar: 'حولنا',
-  },
-  getStarted: {
-    en: 'Get Started Free',
-    ar: 'ابدأ مجانًا',
-  },
-  langSwitcher: {
-    en: 'العربية',
-    ar: 'English',
-  },
-  brandName: {
-    en: 'AI Convert',
-    ar: 'محول AI',
-  }
+  logoAlt: { en: 'AI Convert Logo', ar: 'شعار محول AI' },
+  aiTools: { en: 'AI Tools', ar: 'أدوات الذكاء الاصطناعي' },
+  features: { en: 'Features', ar: 'المميزات' },
+  about: { en: 'About', ar: 'حولنا' },
+  getStarted: { en: 'Get Started Free', ar: 'ابدأ مجانًا' },
+  langSwitcher: { en: 'العربية', ar: 'English' },
+  brandName: { en: 'AI Convert', ar: 'محول AI' }
 };
+
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { lang, isArabic } = useLanguage();
-  const location = useLocation();
 
-  const currentPath = location.pathname;
-  let languageSwitcherPath: string;
-
-  // This logic correctly determines the path for the language switcher link
-  if (isArabic) {
-    // If the path starts with /ar/ (e.g., /ar/tool), substring(3) will give '/tool'
-    // If the path is exactly /ar, it should switch to '/'
-    languageSwitcherPath = currentPath.startsWith('/ar/') ? currentPath.substring(3) : '/';
-  } else {
-    // If the path is '/', switch to '/ar'. Otherwise, prepend '/ar'
-    languageSwitcherPath = currentPath === '/' ? '/ar' : `/ar${currentPath}`;
-  }
+  // ====================================================================
+  // THE ONLY CHANGE IS HERE: Simplified language switcher logic
+  // This new, simpler logic ALWAYS switches to the homepage of the other language.
+  const languageSwitcherPath = isArabic ? '/' : '/ar';
+  // ====================================================================
 
   const homeLink = isArabic ? '/ar' : '/';
 
@@ -72,7 +44,6 @@ export default function Header() {
         </Link>
 
         <nav className={`hidden lg:flex items-center ${isArabic ? 'space-x-reverse space-x-8' : 'space-x-8'}`}>
-          {/* CORRECTED: These links now point to the correct homepage before the hash */}
           <a href={`${homeLink}#tools`} className="text-gray-700 hover:text-purple-600 transition-colors">
             {translations.aiTools[lang]}
           </a>
