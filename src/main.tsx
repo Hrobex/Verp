@@ -27,7 +27,7 @@ createRoot(document.getElementById("root")!).render(
 
           {/* --- English Routes --- */}
           <Route path="/" element={<HomePage />} />
-          <Route path="artigen-pro-ai" element={<ImageGeneratorPage />} />
+          <Route path="artigen-pro-aii" element={<ImageGeneratorPage />} />
           <Route path="line-drawing" element={<LineArtifyPage />} />
           <Route path="remove-background" element={<div className="pt-24">Background Removal Page</div>} />
           <Route path="text-to-speech" element={<div className="pt-24">Text to Speech Page</div>} />
