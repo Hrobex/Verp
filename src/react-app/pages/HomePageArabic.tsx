@@ -8,16 +8,17 @@ import FeaturesArabic from '@/react-app/components/FeaturesArabic';
 export default function HomePageArabic() {
   return (
     <>
-      {/* --- SEO and hreflang Tags for React 19 --- */}
+      {/* --- SEO and hreflang Tags for React 19 (CORRECTED) --- */}
       <title>محول AI: أدوات ذكاء اصطناعي لتوليد الصور وتحويل المحتوى</title>
       <meta 
         name="description" 
         content="أطلق العنان لإبداعك مع محول AI. استخدم أدواتنا لتوليد الصور بالذكاء الاصطناعي، تحويل الصور إلى فن خطي، إزالة الخلفيات، والمزيد. ابدأ مجانًا." 
       />
       <link rel="canonical" href="https://aiconvert.online/ar" />
-      <link rel="alternate" hreflang="en" href="https://aiconvert.online/" />
-      <link rel="alternate" hreflang="ar" href="https://aiconvert.online/ar" />
-      <link rel="alternate" hreflang="x-default" href="https://aiconvert.online/" />
+      {/* The attribute 'hreflang' has been corrected to 'hrefLang' below */}
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/" />
       
       {/*
         This is the main container for the page content.
