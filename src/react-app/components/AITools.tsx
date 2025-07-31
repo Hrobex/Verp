@@ -1,3 +1,5 @@
+// src/react-app/components/AITools.tsx
+
 import { 
   Image, 
   Scissors, 
@@ -39,7 +41,6 @@ const tools = [
     image: 'https://images.unsplash.com/photo-1618004912476-29818d81ae2e?w=400&h=300&fit=crop'
   },
   {
-    // --- تمت إعادة الأداة هنا مع الرابط الصحيح ---
     id: 'text-to-speech',
     title: 'Text to Audio',
     description: 'Convert any text into natural-sounding speech with multiple voices and languages available.',
@@ -49,7 +50,6 @@ const tools = [
     image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=400&h=300&fit=crop'
   },
   {
-    // --- تم تحديث رابط هذه الأداة هنا ---
     id: 'ai-image-enhancer',
     title: 'Image Enhancement',
     description: 'Upscale and enhance your images with AI. Increase resolution while maintaining quality.',
@@ -114,6 +114,7 @@ export default function AITools() {
                     </span>
                   ))}
                 </div>
+                {/* THIS IS THE ONLY LINE THAT WAS CHANGED, TO MAKE THE LINK ABSOLUTE */}
                 <Link to={`/${tool.id}`} className="group/btn flex items-center space-x-2 text-purple-600 hover:text-purple-700 font-semibold transition-colors">
                   <span>Try {tool.title}</span>
                   <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
