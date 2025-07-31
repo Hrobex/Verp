@@ -28,19 +28,8 @@ createRoot(document.getElementById("root")!).render(
           {/* --- English Routes --- */}
           <Route path="/" element={<HomePage />} />
 
-          {/* =============================================================== */}
-          {/*           START: CODE MODIFIED FOR TESTING                      */}
-          {/* We are swapping the components to see if the bug follows the    */}
-          {/* component or stays with the path.                               */}
-          {/* =============================================================== */}
-
-          <Route path="artigen-pro-ai" element={<LineArtifyPage />} />
-          <Route path="line-drawing" element={<ImageGeneratorPage />} />
-
-          {/* =============================================================== */}
-          {/*           END: CODE MODIFIED FOR TESTING                        */}
-          {/* =============================================================== */}
-          
+          <Route path="generate-image-pro" element={<ImageGeneratorPage />} /> // اسم جديد
+          <Route path="line-drawing" element={<LineArtifyPage />} />          
           <Route path="remove-background" element={<div className="pt-24">Background Removal Page</div>} />
           <Route path="text-to-speech" element={<div className="pt-24">Text to Speech Page</div>} />
           <Route path="ai-image-enhancer" element={<div className="pt-24">Image Enhancement Page</div>} />
