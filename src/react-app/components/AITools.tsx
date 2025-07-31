@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 
 const tools = [
   {
-    id: 'artigen-pro-ai',
+    id: 'artigen-pro-aii',
     title: 'AI Image Generation',
     description: 'Create stunning, high-quality images from simple text descriptions using our advanced AI models.',
     icon: Image,
