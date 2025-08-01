@@ -198,9 +198,10 @@ function LineArtifyPageArabic() {
     <>
       <title>تحويل الصور إلى رسم خطي بالذكاء الاصطناعي | LineArtify</title>
       <meta name="description" content="حوّل صورك الشخصية وأنواع الصور المختلفة إلى رسومات خطية مذهلة مجانًا في ثوانٍ باستخدام أداة الذكاء الاصطناعي المتقدمة LineArtify. بدون تسجيل دخول." />
-      <link rel="canonical" href="https://aiconvert.online/ar/lineartify-photo-to-line-art" />
-      <link rel="alternate" hreflang="en" href="https://aiconvert.online/lineartify-photo-to-line-art" />
-      <link rel="alternate" hreflang="ar" href="https://aiconvert.online/ar/lineartify-photo-to-line-art" />
+      <link rel="canonical" href="https://aiconvert.online/ar/line-drawing" />
+      <link rel="alternate" hreflang="en" href="https://aiconvert.online/line-drawing" />
+      <link rel="alternate" hreflang="ar" href="https://aiconvert.online/ar/line-drawing" />
+      <link rel="alternate" hreflang="x-default" href="https://aiconvert.online/line-drawing" />
       <script type="application/ld+json">
         {`
           {
