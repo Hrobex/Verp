@@ -168,8 +168,8 @@ function ImageBackgroundToolPage() {
             "applicationCategory": "MultimediaApplication",
             "aggregateRating": {
               "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "ratingCount": "1570"
+              "ratingValue": "4.7",
+              "ratingCount": "1549"
             },
             "offers": {
               "@type": "Offer",
@@ -261,36 +261,42 @@ function ImageBackgroundToolPage() {
                 </div>
               )}
                {error && <p className="text-red-400 text-center mt-2">{error}</p>}
-            </div>
+            </div> 
 
             {/* Output Column */}
             <div className="bg-gray-800 p-4 rounded-2xl shadow-lg flex flex-col justify-center items-center h-[28rem] lg:h-auto">
-              <div className="w-full h-full flex justify-center items-center border-2 border-dashed border-gray-600 rounded-lg overflow-hidden relative">
-                {isLoading && (
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-lime-500"></div>
-                    <p className="text-gray-400">AI is working its magic...</p>
-                  </div>
-                )}
-                {!isLoading && !originalPreviewUrl && (
-                  <div className="text-center text-gray-500 p-4">
-                    <p>Your final image will appear here</p>
-                  </div>
-                )}
-                <img 
-                  src={finalImageUrl || originalPreviewUrl} 
-                  alt={finalImageUrl ? 'Processed image' : (originalFile ? 'Original image preview' : '')} 
-                  className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${(!isLoading && (finalImageUrl || originalPreviewUrl)) ? 'opacity-100' : 'opacity-0'}`}
-                  style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Crect width=\'10\' height=\'10\' fill=\'%234A5568\'/%3E%3Crect x=\'10\' y=\'10\' width=\'10\' height=\'10\' fill=\'%234A5568\'/%3E%3Crect x=\'10\' width=\'10\' height=\'10\' fill=\'%23718096\'/%3E%3Crect y=\'10\' width=\'10\' height=\'10\' fill=\'%23718096\'/%3E%3C/svg%3E")' }}
-                />
-              </div>
-              {finalImageUrl && !isLoading && (
-                <button onClick={handleDownloadImage} className="w-full mt-4 py-3 px-4 text-lg font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all">
-                  Download Image
-                </button>
-              )}
+    <div className="w-full h-full flex justify-center items-center border-2 border-dashed border-gray-600 rounded-lg overflow-hidden relative">
+        {isLoading ? (
+            <div className="flex flex-col items-center gap-4 text-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-lime-500"></div>
+                <p className="text-gray-400">AI is working its magic...</p>
             </div>
-          </div>
+        ) : (
+            <>
+                {!finalImageUrl && !originalPreviewUrl && (
+                    <div className="text-center text-gray-500 p-4">
+                        <p>Your final image will appear here</p>
+                    </div>
+                )}
+                
+                {(finalImageUrl || originalPreviewUrl) && (
+                    <img 
+                        src={finalImageUrl || originalPreviewUrl} 
+                        alt={finalImageUrl ? 'Processed image' : (originalFile ? 'Original image preview' : '')} 
+                        className="max-w-full max-h-full object-contain"
+                        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Crect width=\'10\' height=\'10\' fill=\'%234A5568\'/%3E%3Crect x=\'10\' y=\'10\' width=\'10\' height=\'10\' fill=\'%234A5568\'/%3E%3Crect x=\'10\' width=\'10\' height=\'10\' fill=\'%23718096\'/%3E%3Crect y=\'10\' width=\'10\' height=\'10\' fill=\'%23718096\'/%3E%3C/svg%3E")' }}
+                    />
+                )}
+            </>
+        )}
+    </div>
+    {finalImageUrl && !isLoading && (
+        <button onClick={handleDownloadImage} className="w-full mt-4 py-3 px-4 text-lg font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all">
+            Download Image
+        </button>
+    )}
+</div>
+            </div>
           
           {/* Content Sections */}
           <div className="mt-24">
