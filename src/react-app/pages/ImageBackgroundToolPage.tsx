@@ -1,6 +1,4 @@
 import { useState, useRef, useEffect, ChangeEvent } from 'react';
-import { Link } from 'react-router-dom'; // Placeholder for potential future links in FAQ
-
 // FAQ Data - Tailored for this tool
 const faqData = [
   {
