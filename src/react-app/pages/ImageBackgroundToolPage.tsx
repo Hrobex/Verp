@@ -153,7 +153,7 @@ function ImageBackgroundToolPage() {
   return (
     <>
       {/* SEO Section - Following React 19 Best Practices */}
-      <title>Free AI Background Remover - Remove & Change Backgrounds</title>
+      <title>Free Online AI Background Remover - Remove & Change Backgrounds</title>
       <meta name="description" content="Instantly remove the background from any image with our free AI tool. Create transparent backgrounds or change them to a solid color or custom image." />
       <link rel="canonical" href="https://aiconvert.online/remove-background" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/remove-background" />
@@ -189,7 +189,7 @@ function ImageBackgroundToolPage() {
               AI Background Remover
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
-              Effortlessly remove image backgrounds in one click. Upload your photo to get a transparent background, or replace it with a new one.
+              Effortlessly remove & change image backgrounds in one click. Upload your photo to get a transparent background, or replace it with a new one.
             </p>
           </div>
 
