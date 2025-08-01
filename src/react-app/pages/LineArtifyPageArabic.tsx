@@ -55,10 +55,10 @@ const faqData = [
     },
     {
       question: "ما الفرق بين نمط \"بسيط\" و \"معقد\"؟",
-      answer: 'النمط "البسيط" (V1) يولد خطوطًا أساسية ونظيفة، وهو مثالي للحصول على تأثير رسم بالقلم الرصاص بسيط ومباشر. أما النمط "المعقد" (V2) فيلتقط تفاصيل أدق من صورتك الأصلية، مما ينتج عنه رسم رصاص أكثر ثراءً وتعقيدًا.'
+      answer: 'النمط "البسيط" (Simple) يولد خطوطًا أساسية ونظيفة، وهو مثالي للحصول على تأثير رسم بالقلم الرصاص بسيط ومباشر. أما النمط "المعقد" (Complex) فيلتقط تفاصيل أدق من صورتك الأصلية، مما ينتج عنه رسم رصاص أكثر ثراءً وتعقيدًا.'
     },
     {
-      question: 'هل محول الصور إلى رسم هذا مجاني حقًا؟',
+      question: 'هل هناك قيود على استخدام الأداة؟,
       answer: 'نعم، 100%. أداة LineArtify مجانية تمامًا للاستخدام وبدون أي قيود على عدد التحويلات. يمكنك تحويل أي عدد من الصور إلى رسومات رصاص حسب حاجتك، دون أي تكلفة أو تسجيل دخول.'
     },
     {
@@ -236,7 +236,7 @@ function LineArtifyPageArabic() {
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">
-              أداة تحويل الصور إلى رسم رصاص بالذكاء الاصطناعي
+              LineArtify: تحويل الصور إلى رسم رصاص بالذكاء الاصطناعي
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
               ارفع صورتك وشاهد الذكاء الاصطناعي يحولها إلى رسم بالقلم الرصاص نقي ومذهل، فورًا ومجانًا.
@@ -568,7 +568,7 @@ export default LineArtifyPageArabic;    e.stopPropagation();
                       {faqData.map((faq, index) => (
                           <div key={index} className="bg-gray-800 p-6 rounded-lg">
                               <h3 className="font-bold text-lg text-cyan-400 mb-2">{faq.question}</h3>
-                              <p className="text-gray-300 leading-relaxed">{faq.answer}</p>
+                              <div className="text-gray-300 leading-relaxed">{faq.answer}</div>
                           </div>
                       ))}
                   </div>
