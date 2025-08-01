@@ -1,6 +1,6 @@
 // src/react-app/pages/HomePageArabic.tsx
 
-import HeroArabic from '@/react-app/components/Hero';
+import Hero from '@/react-app/components/Hero';
 import AIToolsArabic from '@/react-app/components/AIToolsArabic';
 import FeaturesArabic from '@/react-app/components/FeaturesArabic';
 
