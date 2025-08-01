@@ -16,6 +16,7 @@ import LineArtifyPage from "@/react-app/pages/LineArtifyPage";
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
 import LineArtifyPageArabic from "@/react-app/pages/LineArtifyPageArabic";
+import ImageGeneratorPageArabic from "@/react-app/pages/ImageGeneratorPageArabic"; // <-- تمت إضافة الاستيراد المفقود هنا
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
