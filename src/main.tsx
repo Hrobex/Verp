@@ -12,12 +12,12 @@ import "@/react-app/index.css";
 import HomePage from "@/react-app/pages/Home";
 import ImageGeneratorPage from "@/react-app/pages/ImageGeneratorPage";
 import LineArtifyPage from "@/react-app/pages/LineArtifyPage";
-import ImageBackgroundToolPage from "@/react-app/pages/ImageBackgroundToolPage";
+import ImageBackgroundToolPage from "@/react-app/pages/ImageBackgroundToolPage"; // <-- 1. تم استيراد المكون الجديد
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
 import LineArtifyPageArabic from "@/react-app/pages/LineArtifyPageArabic";
-import ImageGeneratorPageArabic from "@/react-app/pages/ImageGeneratorPageArabic"; // <-- تمت إضافة الاستيراد المفقود هنا
+import ImageGeneratorPageArabic from "@/react-app/pages/ImageGeneratorPageArabic";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -32,7 +32,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/" element={<HomePage />} />
           <Route path="generate-image-pro" element={<ImageGeneratorPage />} />
           <Route path="line-drawing" element={<LineArtifyPage />} />          
-          <Route path="remove-background" element={<ImageBackgroundToolPage />} />    
+          <Route path="remove-background" element={<ImageBackgroundToolPage />} /> {/* <-- 2. تم تحديث المسار هنا */}
           <Route path="text-to-speech" element={<div className="pt-24">Text to Speech Page</div>} />
           <Route path="ai-image-enhancer" element={<div className="pt-24">Image Enhancement Page</div>} />
 
