@@ -48,43 +48,6 @@ function ImageBackgroundToolPage() {
     };
   }, [originalPreviewUrl, processedImageUrl, finalImageUrl]);
 
-  // Main effect to apply background whenever the source or options change
-  useEffect(() => {
-    if (!processedImageUrl) return;
-
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const img = new Image();
-    img.crossOrigin = "Anonymous"; // Important for loading images from other domains (like the API)
-    img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-
-      if (backgroundOption === 'color') {
-        ctx.fillStyle = backgroundColor;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      } else if (backgroundOption === 'custom' && customBgFile) {
-        const bgImg = new Image();
-        bgImg.onload = () => {
-          ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
-          ctx.drawImage(img, 0, 0); // Draw main image on top
-          setFinalImageUrl(canvas.toDataURL('image/png'));
-        };
-        bgImg.src = URL.createObjectURL(customBgFile);
-        return; // Exit to wait for bgImg to load
-      }
-      
-      // For 'transparent' or if custom bg not selected yet
-      ctx.drawImage(img, 0, 0);
-      setFinalImageUrl(canvas.toDataURL('image/png'));
-    };
-    img.src = processedImageUrl;
-
-  }, [processedImageUrl, backgroundOption, backgroundColor, customBgFile]);
-
-
   const handleMainFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -129,7 +92,9 @@ function ImageBackgroundToolPage() {
       }
 
       const blob = await response.blob();
-      setProcessedImageUrl(URL.createObjectURL(blob));
+      const processedUrl = URL.createObjectURL(blob);
+      setProcessedImageUrl(processedUrl);
+      setFinalImageUrl(processedUrl); // Set final image to processed initially
 
     } catch (err: any) {
       setError(err.message || 'An unknown error occurred.');
@@ -137,6 +102,42 @@ function ImageBackgroundToolPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleApplyBackground = () => {
+    if (!processedImageUrl) {
+      setError('Please process an image first to get the cutout.');
+      return;
+    }
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      if (backgroundOption === 'color') {
+        ctx.fillStyle = backgroundColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      } else if (backgroundOption === 'custom' && customBgFile) {
+        const bgImg = new Image();
+        bgImg.onload = () => {
+          ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+          setFinalImageUrl(canvas.toDataURL('image/png'));
+        };
+        bgImg.src = URL.createObjectURL(customBgFile);
+        return;
+      }
+      
+      ctx.drawImage(img, 0, 0);
+      setFinalImageUrl(canvas.toDataURL('image/png'));
+    };
+    img.src = processedImageUrl;
   };
 
   const handleDownloadImage = () => {
