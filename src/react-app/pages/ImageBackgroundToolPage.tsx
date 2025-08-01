@@ -330,6 +330,36 @@ function ImageBackgroundToolPage() {
                   </div>
               </section>
 
+            {/* How to Use Section */}
+<section className="mt-20">
+    <div className="text-center">
+        <h2 className="text-3xl font-bold mb-4">Your Quick Guide to a Perfect Image Cutout</h2>
+        <p className="max-w-3xl mx-auto text-gray-400 mb-12">
+            Forget complex software and tedious manual editing. Our free background eraser is designed for speed and simplicity. In just a few clicks, you can transform your photo, making the background transparent or swapping it for something entirely new. Here's how to achieve a professional-grade result effortlessly.
+        </p>
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+        <div className="bg-gray-800/50 p-6 rounded-lg">
+            <p className="text-lime-400 font-bold text-lg mb-2">Step 1: Upload Your Photo</p>
+            <p className="text-gray-300">
+                Start by clicking 'Select Image' and choosing the photo you want to edit. For the cleanest results, images with a clear subject (like a person, a product, or a pet) against a relatively distinct background work best.
+            </p>
+        </div>
+        <div className="bg-gray-800/50 p-6 rounded-lg">
+            <p className="text-lime-400 font-bold text-lg mb-2">Step 2: One-Click Background Removal</p>
+            <p className="text-gray-300">
+                Once your image is ready, simply hit the 'Remove Background' button. In an instant, our AI will analyze your photo, identify the foreground, and precisely erase the background, leaving you with a high-quality transparent image (PNG).
+            </p>
+        </div>
+        <div className="bg-gray-800/50 p-6 rounded-lg">
+            <p className="text-lime-400 font-bold text-lg mb-2">Step 3: Customize & Download</p>
+            <p className="text-gray-300">
+                This is where you get creative! Add a fresh solid color or upload a custom image. After selecting your new background, click the <strong>"Apply Background"</strong> button to see the changes. Once you're happy, just click "Download"!
+            </p>
+        </div>
+    </div>
+</section>
+            
               <section className="mt-20 max-w-4xl mx-auto">
                   <h2 className="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
                   <div className="space-y-6">
