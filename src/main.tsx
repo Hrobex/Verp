@@ -13,12 +13,13 @@ import HomePage from "@/react-app/pages/Home";
 import ImageGeneratorPage from "@/react-app/pages/ImageGeneratorPage";
 import LineArtifyPage from "@/react-app/pages/LineArtifyPage";
 import ImageBackgroundToolPage from "@/react-app/pages/ImageBackgroundToolPage";
+import TextToSpeechPage from "@/react-app/pages/TextToSpeechPage"; // <-- 1. تم استيراد المكون الجديد
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
 import LineArtifyPageArabic from "@/react-app/pages/LineArtifyPageArabic";
 import ImageGeneratorPageArabic from "@/react-app/pages/ImageGeneratorPageArabic";
-import ImageBackgroundToolPageArabic from "@/react-app/pages/ImageBackgroundToolPageArabic"; // <-- 1. تم استيراد المكون الجديد
+import ImageBackgroundToolPageArabic from "@/react-app/pages/ImageBackgroundToolPageArabic";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -34,7 +35,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="generate-image-pro" element={<ImageGeneratorPage />} />
           <Route path="line-drawing" element={<LineArtifyPage />} />          
           <Route path="remove-background" element={<ImageBackgroundToolPage />} />
-          <Route path="text-to-speech" element={<div className="pt-24">Text to Speech Page</div>} />
+          <Route path="text-to-speech" element={<TextToSpeechPage />} /> {/* <-- 2. تم تحديث المسار هنا */}
           <Route path="ai-image-enhancer" element={<div className="pt-24">Image Enhancement Page</div>} />
 
           {/* --- Arabic Route Group --- */}
@@ -42,7 +43,7 @@ createRoot(document.getElementById("root")!).render(
             <Route index element={<HomePageArabic />} />
             <Route path="line-drawing" element={<LineArtifyPageArabic />} />
             <Route path="generate-image-pro" element={<ImageGeneratorPageArabic />} />
-            <Route path="remove-background" element={<ImageBackgroundToolPageArabic />} /> {/* <-- 2. تم إضافة المسار الجديد هنا */}
+            <Route path="remove-background" element={<ImageBackgroundToolPageArabic />} />
           </Route>
           
         </Route>
