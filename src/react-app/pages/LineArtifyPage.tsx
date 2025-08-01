@@ -199,6 +199,10 @@ a.href = resultImage;
       {/* --- START: SEO CONTENT ADDED HERE --- */}
       <title>LineArtify: Free AI Photo to Line Art Converter Online</title>
       <meta name="description" content="Instantly convert your photos into clean, beautiful line drawings with LineArtify. Our free online AI tool makes it easy to create line art for any project. No sign-up required." />
+      <link rel="canonical" href="https://aiconvert.online/line-drawing" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/line-drawing" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/line-drawing" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/line-drawing" />
       <script type="application/ld+json">
         {`
           {
