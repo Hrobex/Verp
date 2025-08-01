@@ -15,7 +15,7 @@ import LineArtifyPage from "@/react-app/pages/LineArtifyPage";
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
-import LineArtifyPageArabic from "@/react-app/pages/LineArtifyPageArabic"; // <-- استيراد الصفحة الجديدة
+import LineArtifyPageArabic from "@/react-app/pages/LineArtifyPageArabic";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -37,8 +37,8 @@ createRoot(document.getElementById("root")!).render(
           {/* --- Arabic Route Group --- */}
           <Route path="ar">
             <Route index element={<HomePageArabic />} />
-            <Route path="line-drawing" element={<LineArtifyPageArabic />} /> // <-- تمت إضافة المسار العربي الصحيح هنا
-            {/* Example for a future Arabic tool page: */}
+            <Route path="line-drawing" element={<LineArtifyPageArabic />} />
+            {/* You can add future Arabic tool pages here, for example: */}
             {/* <Route path="generate-image-pro" element={<ImageGeneratorPageArabic />} /> */}
           </Route>
           
