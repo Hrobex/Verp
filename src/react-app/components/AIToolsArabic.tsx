@@ -24,7 +24,7 @@ const toolsArabic = [
   },
   {
     id: 'line-drawing',
-    title: 'LineArtify: تحويل الصور لفن خطي',
+    title: 'LineArtify: تحويل الصور إلى رسم رصاص',
     description: 'حوّل صورك إلى فن خطي أنيق ونظيف باستخدام محول الرسم المدعوم بالذكاء الاصطناعي.',
     icon: Pencil,
     color: 'from-cyan-500 to-blue-600',
