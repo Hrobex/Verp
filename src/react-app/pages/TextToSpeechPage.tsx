@@ -380,28 +380,32 @@ function TextToSpeechPage() {
 
           {/* Content Sections */}
           <div className="mt-24">
-              <section className="text-center">
-                  <h2 className="text-3xl font-bold mb-4">A Powerful AI Voice Generator at Your Fingertips</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-red-400 mb-2">Completely Free</h3>
-                          <p className="text-gray-300">Unlimited text-to-speech conversion without any cost. No subscriptions, no hidden fees.</p>
-                      </div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-red-400 mb-2">{totalVoices}+ Natural Voices</h3>
-                          <p className="text-gray-300">Access a huge library of high-quality, human-like voices for any project or purpose.</p>
-                      </div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-red-400 mb-2">{totalLanguages}+ Languages & Dialects</h3>
-                          <p className="text-gray-300">From English and Spanish to Arabic and Mandarin, create audio for a global audience.</p>
-                      </div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-red-400 mb-2">No Sign-Up Required</h3>
-                          <p className="text-gray-300">Generate and download your audio instantly. We value your time and privacy.</p>
-                      </div>
-                  </div>
-              </section>
-
+            <section className="text-center">
+    <h2 className="text-3xl font-bold mb-4">A Powerful AI Voice Generator at Your Fingertips</h2>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mt-12">
+        <div className="bg-gray-800 p-6 rounded-lg shadow-md flex flex-col">
+            <h3 className="text-xl font-bold text-red-400 mb-2">Completely Free</h3>
+            <p className="text-gray-300">Unlimited text-to-speech conversion without any cost. No subscriptions, no hidden fees.</p>
+        </div>
+        <div className="bg-gray-800 p-6 rounded-lg shadow-md flex flex-col">
+            <h3 className="text-xl font-bold text-red-400 mb-2">315+ Natural Voices</h3>
+            <p className="text-gray-300">Access a huge library of high-quality, human-like voices for any project or purpose.</p>
+        </div>
+        <div className="bg-gray-800 p-6 rounded-lg shadow-md flex flex-col">
+            <h3 className="text-xl font-bold text-red-400 mb-2">{totalLanguages}+ Languages & Dialects</h3>
+            <p className="text-gray-300">From English and Spanish to Arabic and Mandarin, create audio for a global audience.</p>
+        </div>
+        <div className="bg-gray-800 p-6 rounded-lg shadow-md flex flex-col">
+            <h3 className="text-xl font-bold text-red-400 mb-2">Full Voice Control</h3>
+            <p className="text-gray-300">Fine-tune the speech rate and pitch to match the exact tone and style you need for your content.</p>
+        </div>
+        <div className="bg-gray-800 p-6 rounded-lg shadow-md flex flex-col">
+            <h3 className="text-xl font-bold text-red-400 mb-2">No Sign-Up Required</h3>
+            <p className="text-gray-300">Generate and download your audio instantly. We value your time and privacy.</p>
+        </div>
+    </div>
+</section>
+              
             <section className="mt-20">
                 <div className="text-center">
                     <h2 className="text-3xl font-bold mb-4">How to Convert Text to Speech in 3 Easy Steps</h2>
