@@ -1,6 +1,6 @@
 // src/react-app/pages/HomePageArabic.tsx
 
-import HeroArabic from '@/react-app/components/HeroArabic';
+import HeroArabic from '@/react-app/components/Hero';
 import AIToolsArabic from '@/react-app/components/AIToolsArabic';
 import FeaturesArabic from '@/react-app/components/FeaturesArabic';
 
@@ -36,7 +36,7 @@ export default function HomePageArabic() {
       {/* Optional: <meta name="twitter:site" content="@YourTwitterHandle" /> */}
       
       <div className="min-h-screen bg-white">
-        <HeroArabic />
+        <Hero />
         <AIToolsArabic />
         <FeaturesArabic />
       </div>
