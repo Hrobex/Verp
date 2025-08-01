@@ -15,6 +15,7 @@ import LineArtifyPage from "@/react-app/pages/LineArtifyPage";
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
+import LineArtifyPageArabic from "@/react-app/pages/LineArtifyPageArabic"; // <-- استيراد الصفحة الجديدة
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -27,8 +28,7 @@ createRoot(document.getElementById("root")!).render(
 
           {/* --- English Routes --- */}
           <Route path="/" element={<HomePage />} />
-
-          <Route path="generate-image-pro" element={<ImageGeneratorPage />} /> // اسم جديد
+          <Route path="generate-image-pro" element={<ImageGeneratorPage />} />
           <Route path="line-drawing" element={<LineArtifyPage />} />          
           <Route path="remove-background" element={<div className="pt-24">Background Removal Page</div>} />
           <Route path="text-to-speech" element={<div className="pt-24">Text to Speech Page</div>} />
@@ -37,8 +37,9 @@ createRoot(document.getElementById("root")!).render(
           {/* --- Arabic Route Group --- */}
           <Route path="ar">
             <Route index element={<HomePageArabic />} />
+            <Route path="line-drawing" element={<LineArtifyPageArabic />} /> // <-- تمت إضافة المسار العربي الصحيح هنا
             {/* Example for a future Arabic tool page: */}
-            {/* <Route path="artigen-pro-ai" element={<ImageGeneratorPageArabic />} /> */}
+            {/* <Route path="generate-image-pro" element={<ImageGeneratorPageArabic />} /> */}
           </Route>
           
         </Route>
