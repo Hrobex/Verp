@@ -14,13 +14,14 @@ import ImageGeneratorPage from "@/react-app/pages/ImageGeneratorPage";
 import LineArtifyPage from "@/react-app/pages/LineArtifyPage";
 import ImageBackgroundToolPage from "@/react-app/pages/ImageBackgroundToolPage";
 import TextToSpeechPage from "@/react-app/pages/TextToSpeechPage";
+import ImageEnhancerPage from "@/react-app/pages/ImageEnhancerPage"; // <-- 1. تم استيراد المكون الجديد
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
 import LineArtifyPageArabic from "@/react-app/pages/LineArtifyPageArabic";
 import ImageGeneratorPageArabic from "@/react-app/pages/ImageGeneratorPageArabic";
 import ImageBackgroundToolPageArabic from "@/react-app/pages/ImageBackgroundToolPageArabic";
-import TextToSpeechPageArabic from "@/react-app/pages/TextToSpeechPageArabic"; // <-- 1. تم استيراد المكون العربي الجديد
+import TextToSpeechPageArabic from "@/react-app/pages/TextToSpeechPageArabic";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -37,7 +38,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="line-drawing" element={<LineArtifyPage />} />          
           <Route path="remove-background" element={<ImageBackgroundToolPage />} />
           <Route path="text-to-speech" element={<TextToSpeechPage />} />
-          <Route path="ai-image-enhancer" element={<div className="pt-24">Image Enhancement Page</div>} />
+          <Route path="ai-image-enhancer" element={<ImageEnhancerPage />} /> {/* <-- 2. تم تحديث المسار هنا */}
 
           {/* --- Arabic Route Group --- */}
           <Route path="ar">
@@ -45,7 +46,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="line-drawing" element={<LineArtifyPageArabic />} />
             <Route path="generate-image-pro" element={<ImageGeneratorPageArabic />} />
             <Route path="remove-background" element={<ImageBackgroundToolPageArabic />} />
-            <Route path="text-to-speech" element={<TextToSpeechPageArabic />} /> {/* <-- 2. تم إضافة المسار العربي الجديد هنا */}
+            <Route path="text-to-speech" element={<TextToSpeechPageArabic />} />
           </Route>
           
         </Route>
