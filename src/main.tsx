@@ -38,6 +38,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="ar">
             <Route index element={<HomePageArabic />} />
             <Route path="line-drawing" element={<LineArtifyPageArabic />} />
+            <Route path="generate-image-pro" element={<ImageGeneratorPageArabic />}
             {/* You can add future Arabic tool pages here, for example: */}
             {/* <Route path="generate-image-pro" element={<ImageGeneratorPageArabic />} /> */}
           </Route>
