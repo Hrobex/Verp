@@ -39,12 +39,12 @@ const ImageUploadBox = ({ title, imageSrc, onFileChange, onDrop, onDragOver }: {
 // FAQ Data for LineArtify
 const faqData = [
     {
-      question: 'How is LineArtify different from a photo-to-sketch tool?',
-      answer: 'LineArtify focuses on creating clean, distinct lines, similar to an outline or contour drawing. A sketch tool, on the other hand, often reproduces shading, texture, and a more hand-drawn pencil effect. LineArtify is perfect for creating outlines, coloring pages, or minimalist art.'
+      question: 'How is LineArtify different from ArtifyPro?',
+      answer: 'LineArtify focuses on creating clean, distinct lines, similar to an outline or contour drawing. A sketch tool (ArtifyPro), on the other hand, often reproduces shading, texture, and a more hand-drawn pencil effect. LineArtify is perfect for creating outlines, coloring pages, or minimalist art.'
     },
     {
       question: "What's the difference between the 'Simple' and 'Complex' styles?",
-      answer: "The 'Simple' style (V1) generates clean, minimalist outlines, perfect for a basic line art effect. The 'Complex' style (V2) captures more detail from your original photo, resulting in a more intricate and richer line drawing."
+      answer: "The 'Simple' style generates clean, minimalist outlines, perfect for a basic line art effect. The 'Complex' style captures more detail from your original photo, resulting in a more intricate and richer line drawing."
     },
     {
       question: 'Is this line drawing generator really free?',
