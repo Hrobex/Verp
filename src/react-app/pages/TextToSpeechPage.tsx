@@ -43,33 +43,55 @@ const getNextEndpoint = () => {
     return endpoint;
 };
 
-function TextToSpeechPage() {
+                 function TextToSpeechPage() {
+  // --- Type Definitions ---
+  // We define the shape of our data for TypeScript
+  type Genders = {
+    Male?: string[];
+    Female?: string[];
+  };
+  type VoicesData = {
+    [languageCode: string]: Genders;
+  };
+  // This is the most specific type for our gender keys.
+  type GenderKey = 'Male' | 'Female';
+
+  // --- Component State ---
   const [text, setText] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('en-US');
+  // The state is now correctly typed, and we initialize it to a valid key.
   const [selectedGender, setSelectedGender] = useState<GenderKey>('Female');
   const [selectedVoice, setSelectedVoice] = useState('en-US-AriaNeural');
   const [rate, setRate] = useState(1);
   const [pitch, setPitch] = useState(1);
   
-  const [genders, setGenders] = useState<string[]>([]);
+  const [genders, setGenders] = useState<GenderKey[]>([]);
   const [voices, setVoices] = useState<string[]>([]);
   
   const [isLoading, setIsLoading] = useState(false);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // --- Effects to Update Dropdowns ---
+
+  // When language changes, update the available genders and reset the selection
   useEffect(() => {
-    const availableGenders = Object.keys(voicesData[selectedLanguage] || {});
+    const availableGenders = Object.keys(voicesData[selectedLanguage] || {}) as GenderKey[];
     setGenders(availableGenders);
+    // Automatically select the first available gender for the new language
     if (availableGenders.length > 0) {
-      const newGender = availableGenders.includes(selectedGender) ? selectedGender : availableGenders[0];
-      setSelectedGender(newGender);
-    } else {
-      setSelectedGender(newGender as GenderKey);
+      setSelectedGender(availableGenders[0]);
     }
   }, [selectedLanguage]);
 
+  // When gender (or language) changes, update the available voices
   useEffect(() => {
+    // This check is crucial. It prevents crashing if a language has no genders.
+    if (!selectedGender) {
+        setVoices([]);
+        setSelectedVoice('');
+        return;
+    }
     const availableVoices = voicesData[selectedLanguage]?.[selectedGender] || [];
     setVoices(availableVoices);
     if (availableVoices.length > 0) {
@@ -79,11 +101,18 @@ function TextToSpeechPage() {
     }
   }, [selectedLanguage, selectedGender]);
 
+  // --- Event Handlers ---
+
   const handleTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
     if (newText.length <= 1500) {
       setText(newText);
     }
+  };
+  
+  // This is the FIX for the onChange handler. We cast the value to our specific type.
+  const handleGenderChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setSelectedGender(e.target.value as GenderKey);
   };
 
   const handleGenerateAudio = async () => {
@@ -125,6 +154,7 @@ function TextToSpeechPage() {
     }
   };
   
+  // --- JSX (The returned component) ---
   return (
     <>
       <title>Free AI Text to Speech (TTS) - AI Voice Generator</title>
@@ -191,7 +221,8 @@ function TextToSpeechPage() {
                     <select id="language" value={selectedLanguage} onChange={(e) => setSelectedLanguage(e.target.value)} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500">
                         {languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
                     </select>
-                    <select id="gender" value={selectedGender} onChange={(e) => setSelectedGender(e.target.value)} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500">
+                    {/* THIS IS THE FIX IN ACTION. We use the new handler here. */}
+                    <select id="gender" value={selectedGender} onChange={handleGenderChange} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500">
                         {genders.map(gender => <option key={gender} value={gender}>{gender}</option>)}
                     </select>
                     <select id="voice" value={selectedVoice} onChange={(e) => setSelectedVoice(e.target.value)} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500">
