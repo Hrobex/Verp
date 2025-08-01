@@ -156,10 +156,10 @@ function ImageBackgroundToolPage() {
       {/* SEO Section - Following React 19 Best Practices */}
       <title>Free AI Background Remover - Remove & Change Backgrounds</title>
       <meta name="description" content="Instantly remove the background from any image with our free AI tool. Create transparent backgrounds or change them to a solid color or custom image." />
-      <link rel="canonical" href="https://aiconvert.online/ai-background-remover" />
-      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/ai-background-remover" />
-      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-background-remover" />
-      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/ai-background-remover" />
+      <link rel="canonical" href="https://aiconvert.online/remove-background" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/remove-background" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/remove-background" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/remove-background" />
       <script type="application/ld+json">
         {`
           {
