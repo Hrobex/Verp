@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 
 const toolsArabic = [
   {
-    id: 'artigen-pro-ai',
+    id: 'generate-image-pro',
     title: 'توليد الصور بالذكاء الاصطناعي',
     description: 'أنشئ صورًا مذهلة وعالية الجودة من أوصاف نصية بسيطة باستخدام نماذج الذكاء الاصطناعي المتقدمة لدينا.',
     icon: Image,
