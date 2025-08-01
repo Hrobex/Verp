@@ -228,42 +228,49 @@ function ImageBackgroundToolPage() {
               </div>
 
               {/* Step 3: Customize (Appears after processing) */}
-              {processedImageUrl && (
-                <div className="space-y-3 border-t border-gray-700 pt-4">
-                  <h3 className="text-lg font-semibold text-gray-200">
-                      <span className="text-lime-400 font-bold">Step 3:</span> Customize New Background
-                  </h3>
-                  <select
-                    value={backgroundOption}
-                    onChange={(e) => setBackgroundOption(e.target.value as any)}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-lime-500"
-                  >
-                    <option value="transparent">Transparent Background</option>
-                    <option value="color">Solid Color</option>
-                    <option value="custom">Custom Image</option>
-                  </select>
+{processedImageUrl && (
+    <div className="space-y-4 border-t border-gray-700 pt-4">
+        <h3 className="text-lg font-semibold text-gray-200">
+            <span className="text-lime-400 font-bold">Step 3:</span> Customize New Background
+        </h3>
+        <select
+            value={backgroundOption}
+            onChange={(e) => setBackgroundOption(e.target.value as any)}
+            className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-lime-500"
+        >
+            <option value="transparent">Transparent Background</option>
+            <option value="color">Solid Color</option>
+            <option value="custom">Custom Image</option>
+        </select>
 
-                  {backgroundOption === 'color' && (
-                    <input
-                      type="color"
-                      value={backgroundColor}
-                      onChange={(e) => setBackgroundColor(e.target.value)}
-                      className="w-full h-12 p-1 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer"
-                    />
-                  )}
-                  {backgroundOption === 'custom' && (
-                    <>
-                      <input type="file" accept="image/*" onChange={handleCustomBgFileSelect} ref={bgFileInputRef} className="hidden" />
-                      <button onClick={() => bgFileInputRef.current?.click()} className="w-full py-2 text-sm bg-gray-600 hover:bg-gray-500 rounded-lg">
-                        {customBgFile ? 'Change Background Image' : 'Upload Background Image'}
-                      </button>
-                    </>
-                  )}
-                </div>
-              )}
-               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
-            </div> 
-
+        {backgroundOption === 'color' && (
+            <input
+                type="color"
+                value={backgroundColor}
+                onChange={(e) => setBackgroundColor(e.target.value)}
+                className="w-full h-12 p-1 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer"
+            />
+        )}
+        {backgroundOption === 'custom' && (
+            <>
+                <input type="file" accept="image/*" onChange={handleCustomBgFileSelect} ref={bgFileInputRef} className="hidden" />
+                <button onClick={() => bgFileInputRef.current?.click()} className="w-full py-2 text-sm bg-gray-600 hover:bg-gray-500 rounded-lg">
+                    {customBgFile ? `Selected: ${customBgFile.name}` : 'Upload Background Image'}
+                </button>
+            </>
+        )}
+        
+        <button
+            onClick={handleApplyBackground}
+            className="w-full py-2.5 px-4 font-semibold text-white bg-gray-600 rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-lime-400 transition-all"
+        >
+            Apply Background
+        </button>
+    </div>
+)}
+{error && <p className="text-red-400 text-center mt-2">{error}</p>}
+</div>
+              
             {/* Output Column */}
             <div className="bg-gray-800 p-4 rounded-2xl shadow-lg flex flex-col justify-center items-center h-[28rem] lg:h-auto">
     <div className="w-full h-full flex justify-center items-center border-2 border-dashed border-gray-600 rounded-lg overflow-hidden relative">
@@ -277,7 +284,7 @@ function ImageBackgroundToolPage() {
                 {!finalImageUrl && !originalPreviewUrl && (
                     <div className="text-center text-gray-500 p-4">
                         <p>Your final image will appear here</p>
-                    </div>
+                    </div> 
                 )}
                 
                 {(finalImageUrl || originalPreviewUrl) && (
