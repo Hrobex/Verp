@@ -19,7 +19,7 @@ const tools = [
     id: 'artigenv2',
     title: 'Artigen V2: AI Art Generator',
     description: 'An AI artist that transforms your text into unique, high-quality artwork with a distinct aesthetic.',
-    icon: Palette, // Make sure to import Palette from your icon library
+    icon: Palette, 
     color: 'from-yellow-500 to-orange-600',
     features: ['Distinct Artistic Style', 'High-Quality Results', 'Completely Free'],
     image: 'https://images.unsplash.com/photo-1620421680280-d02b54174780?w=400&h=300&fit=crop'
