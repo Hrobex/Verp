@@ -136,6 +136,9 @@ function ImageEnhancerPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Controls Column */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
+              {/* FIX: Added visually hidden h2 for accessibility and SEO structure */}
+              <h2 className="sr-only">Image Enhancement Tool</h2>
+              
               <div>
                   <h3 className="text-lg font-semibold text-gray-200 mb-2">1. Upload Your Image</h3>
                   <input type="file" accept="image/*" onChange={handleFileSelect} ref={fileInputRef} className="hidden" />
@@ -191,13 +194,15 @@ function ImageEnhancerPage() {
                   <div className="flex flex-col items-center">
                       <h4 className="text-lg font-bold mb-2 text-gray-400">Before</h4>
                       <div className="w-full h-64 sm:h-80 bg-gray-700/50 rounded-lg flex justify-center items-center border border-gray-600">
-                          {originalPreviewUrl ? <img src={originalPreviewUrl} alt="Original" className="max-h-full max-w-full object-contain"/> : <p className="text-gray-500 text-sm">Original image</p>}
+                          {/* FIX: Changed text-gray-500 to text-gray-400 for better contrast */}
+                          {originalPreviewUrl ? <img src={originalPreviewUrl} alt="Original" className="max-h-full max-w-full object-contain"/> : <p className="text-gray-400 text-sm">Original image</p>}
                       </div>
                   </div>
                   <div className="flex flex-col items-center">
                       <h4 className="text-lg font-bold mb-2 text-cyan-400">After</h4>
                       <div className="w-full h-64 sm:h-80 bg-gray-700/50 rounded-lg flex justify-center items-center border border-cyan-500/50">
-                         {enhancedImageUrl ? <img src={enhancedImageUrl} alt="Enhanced" className="max-h-full max-w-full object-contain"/> : <p className="text-gray-500 text-sm">Enhanced result</p>}
+                         {/* FIX: Changed text-gray-500 to text-gray-400 for better contrast */}
+                         {enhancedImageUrl ? <img src={enhancedImageUrl} alt="Enhanced" className="max-h-full max-w-full object-contain"/> : <p className="text-gray-400 text-sm">Enhanced result</p>}
                       </div>
                   </div>
               </div>
@@ -264,36 +269,36 @@ function ImageEnhancerPage() {
             </section>
 
             <section className="mt-20">
-    <div className="text-center">
-        <h2 className="text-3xl font-bold mb-4">Choosing the Right AI Model for Your Photo</h2>
-        <p className="max-w-3xl mx-auto text-gray-400 mb-12">
-            Our tool is powered by versions of the acclaimed <strong>GFPGAN</strong> model, an AI specifically designed for stunning photo restoration and enhancement. Each version offers a different level of refinement to give you the best result for your specific needs. Here’s a quick guide:
-        </p>
-    </div>
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-        <div className="bg-gray-800/50 p-6 rounded-lg">
-            <p className="text-cyan-400 font-bold text-lg mb-2">Model v1.4 (Clarity & Faces)</p>
-            <p className="text-gray-300">
-                This version is excellent for general-purpose enhancement. It focuses on significantly improving overall image clarity and is particularly effective at restoring details in facial features, making it a great starting point for portraits and social media photos.
-            </p>
-        </div>
-        <div className="bg-gray-800/50 p-6 rounded-lg">
-            <p className="text-cyan-400 font-bold text-lg mb-2">Model v2.1 (Detailed Enhancement)</p>
-            <p className="text-gray-300">
-                Building upon the previous version, this model incorporates more advanced techniques to augment fine details and textures across the entire image. Choose this option for a more comprehensive enhancement that improves both the subject and its surroundings.
-            </p>
-        </div>
-        <div className="bg-gray-800/50 p-6 rounded-lg">
-            <p className="text-cyan-400 font-bold text-lg mb-2">Model v3.0 (Maximum Quality & Precision)</p>
-            <p className="text-gray-300">
-                This is our latest and most powerful model. It uses the most advanced improvements in enhancement techniques, delivering superior image quality, precise detail refinement, and the best overall noise reduction. This is the ultimate choice for professional work, printing, or when you need the absolute highest fidelity.
-            </p>
-        </div>
-    </div>
-    <p className="text-center text-gray-400 mt-8">
-        <strong>Our Recommendation:</strong> Start with <strong>v2.1</strong> for a fantastic balance of detail and performance. For professional results or restoring precious old photos, <strong>v3.0</strong> will provide the highest quality.
-    </p>
-</section>
+                <div className="text-center">
+                    <h2 className="text-3xl font-bold mb-4">Choosing the Right AI Model for Your Photo</h2>
+                    <p className="max-w-3xl mx-auto text-gray-400 mb-12">
+                        Our tool is powered by versions of the acclaimed <strong>GFPGAN</strong> model, an AI specifically designed for stunning photo restoration and enhancement. Each version offers a different level of refinement to give you the best result for your specific needs. Here’s a quick guide:
+                    </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                    <div className="bg-gray-800/50 p-6 rounded-lg">
+                        <p className="text-cyan-400 font-bold text-lg mb-2">Model v1.4 (Clarity & Faces)</p>
+                        <p className="text-gray-300">
+                            This version is excellent for general-purpose enhancement. It focuses on significantly improving overall image clarity and is particularly effective at restoring details in facial features, making it a great starting point for portraits and social media photos.
+                        </p>
+                    </div>
+                    <div className="bg-gray-800/50 p-6 rounded-lg">
+                        <p className="text-cyan-400 font-bold text-lg mb-2">Model v2.1 (Detailed Enhancement)</p>
+                        <p className="text-gray-300">
+                            Building upon the previous version, this model incorporates more advanced techniques to augment fine details and textures across the entire image. Choose this option for a more comprehensive enhancement that improves both the subject and its surroundings.
+                        </p>
+                    </div>
+                    <div className="bg-gray-800/50 p-6 rounded-lg">
+                        <p className="text-cyan-400 font-bold text-lg mb-2">Model v3.0 (Maximum Quality & Precision)</p>
+                        <p className="text-gray-300">
+                            This is our latest and most powerful model. It uses the most advanced improvements in enhancement techniques, delivering superior image quality, precise detail refinement, and the best overall noise reduction. This is the ultimate choice for professional work, printing, or when you need the absolute highest fidelity.
+                        </p>
+                    </div>
+                </div>
+                <p className="text-center text-gray-400 mt-8">
+                    <strong>Our Recommendation:</strong> Start with <strong>v2.1</strong> for a fantastic balance of detail and performance. For professional results or restoring precious old photos, <strong>v3.0</strong> will provide the highest quality.
+                </p>
+            </section>
             
               <section className="mt-20 max-w-4xl mx-auto">
                   <h2 className="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
