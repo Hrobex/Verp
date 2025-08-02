@@ -16,6 +16,7 @@ import ImageBackgroundToolPage from "@/react-app/pages/ImageBackgroundToolPage";
 import TextToSpeechPage from "@/react-app/pages/TextToSpeechPage";
 import ImageEnhancerPage from "@/react-app/pages/ImageEnhancerPage";
 import FaceMergePage from "@/react-app/pages/FaceMergePage";
+import ArtigenV2Page from "@/react-app/pages/ArtigenV2Page"; // <-- 1. تم استيراد المكون الجديد
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -24,7 +25,7 @@ import ImageGeneratorPageArabic from "@/react-app/pages/ImageGeneratorPageArabic
 import ImageBackgroundToolPageArabic from "@/react-app/pages/ImageBackgroundToolPageArabic";
 import TextToSpeechPageArabic from "@/react-app/pages/TextToSpeechPageArabic";
 import ImageEnhancerPageArabic from "@/react-app/pages/ImageEnhancerPageArabic";
-import FaceMergePageArabic from "@/react-app/pages/FaceMergePageArabic"; // <-- 1. تم استيراد المكون العربي الجديد
+import FaceMergePageArabic from "@/react-app/pages/FaceMergePageArabic";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -43,6 +44,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="text-to-speech" element={<TextToSpeechPage />} />
           <Route path="ai-image-enhancer" element={<ImageEnhancerPage />} />
           <Route path="ai-face-merge" element={<FaceMergePage />} />
+          <Route path="artigenv2" element={<ArtigenV2Page />} /> {/* <-- 2. تم إضافة المسار الجديد هنا */}
 
 
           {/* --- Arabic Route Group --- */}
@@ -53,7 +55,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="remove-background" element={<ImageBackgroundToolPageArabic />} />
             <Route path="text-to-speech" element={<TextToSpeechPageArabic />} />
             <Route path="ai-image-enhancer" element={<ImageEnhancerPageArabic />} />
-            <Route path="ai-face-merge" element={<FaceMergePageArabic />} /> {/* <-- 2. تم إضافة المسار العربي الجديد هنا */}
+            <Route path="ai-face-merge" element={<FaceMergePageArabic />} />
           </Route>
           
         </Route>
