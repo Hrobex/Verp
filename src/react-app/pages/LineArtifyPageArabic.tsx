@@ -307,7 +307,7 @@ function LineArtifyPageArabic() {
               <section className="mt-20 text-center">
                    <h2 className="text-3xl font-bold mb-4">احصل على رسمتك بالرصاص في ثلاث خطوات</h2>
                    <p className="max-w-3xl mx-auto text-gray-400 mb-12">تم تصميم عمليتنا لتعطيك رسمًا مثاليًا بأقل جهد ممكن.</p>
-                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-right">
                        <div className="bg-gray-800/50 p-6 rounded-lg">
                           <p className="text-cyan-400 font-bold text-lg mb-2">الخطوة 1: ارفع صورتك</p>
                           <p className="text-gray-300">اسحب وأفلت أو انقر لاختيار أي صورة من جهازك. الصور ذات التباين العالي تعمل بشكل أفضل!</p>
