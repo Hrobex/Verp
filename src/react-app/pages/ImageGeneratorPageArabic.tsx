@@ -252,7 +252,7 @@ function ImageGeneratorPageArabic() {
               <section className="mt-20 text-center">
                    <h2 className="text-3xl font-bold mb-4">من الوصف إلى صورة في 3 خطوات بسيطة</h2>
                    <p className="max-w-3xl mx-auto text-gray-400 mb-12">عمليتنا البديهية تجعل إنشاء الصور بالذكاء الاصطناعي أمرًا سهلاً للجميع، من المبتدئين إلى المحترفين.</p>
-                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-right">
                        <div className="bg-gray-800/50 p-6 rounded-lg">
                           <p className="text-purple-400 font-bold text-lg mb-2">الخطوة 1: صِف رؤيتك</p>
                           <p className="text-gray-300">اكتب ما تريد رؤيته. كن محددًا للحصول على أفضل النتائج! بدلاً من "كلب"، جرب "جرو جولدن ريتريفر سعيد يلعب في حقل من زهور عباد الشمس عند غروب الشمس."</p>
