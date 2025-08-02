@@ -26,7 +26,7 @@ const tools = [
   },
   {
     id: 'generate-image-pro',
-    title: 'Artigen Pro:AI Image Generation',
+    title: 'Artigen Pro: AI Image Generation',
     description: 'Create stunning, high-quality images from simple text descriptions using our advanced AI models.',
     icon: Image,
     color: 'from-purple-500 to-purple-600',
@@ -35,7 +35,7 @@ const tools = [
   },
   {
     id: 'line-drawing',
-    title: 'LineArtify: Photo to Sketch',
+    title: 'LineArtify: Photo to Line Art',
     description: 'Transform your photos into elegant, clean line art with our AI-powered sketch converter.',
     icon: Pencil,
     color: 'from-cyan-500 to-blue-600',
