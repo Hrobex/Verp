@@ -15,7 +15,7 @@ import LineArtifyPage from "@/react-app/pages/LineArtifyPage";
 import ImageBackgroundToolPage from "@/react-app/pages/ImageBackgroundToolPage";
 import TextToSpeechPage from "@/react-app/pages/TextToSpeechPage";
 import ImageEnhancerPage from "@/react-app/pages/ImageEnhancerPage";
-import FaceMergePage from "@/react-app/pages/FaceMergePage"; // <-- 1. تم استيراد المكون الجديد
+import FaceMergePage from "@/react-app/pages/FaceMergePage";
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -24,6 +24,7 @@ import ImageGeneratorPageArabic from "@/react-app/pages/ImageGeneratorPageArabic
 import ImageBackgroundToolPageArabic from "@/react-app/pages/ImageBackgroundToolPageArabic";
 import TextToSpeechPageArabic from "@/react-app/pages/TextToSpeechPageArabic";
 import ImageEnhancerPageArabic from "@/react-app/pages/ImageEnhancerPageArabic";
+import FaceMergePageArabic from "@/react-app/pages/FaceMergePageArabic"; // <-- 1. تم استيراد المكون العربي الجديد
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -41,7 +42,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="remove-background" element={<ImageBackgroundToolPage />} />
           <Route path="text-to-speech" element={<TextToSpeechPage />} />
           <Route path="ai-image-enhancer" element={<ImageEnhancerPage />} />
-          <Route path="ai-face-merge" element={<FaceMergePage />} /> {/* <-- 2. تم إضافة المسار الجديد هنا */}
+          <Route path="ai-face-merge" element={<FaceMergePage />} />
 
 
           {/* --- Arabic Route Group --- */}
@@ -52,6 +53,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="remove-background" element={<ImageBackgroundToolPageArabic />} />
             <Route path="text-to-speech" element={<TextToSpeechPageArabic />} />
             <Route path="ai-image-enhancer" element={<ImageEnhancerPageArabic />} />
+            <Route path="ai-face-merge" element={<FaceMergePageArabic />} /> {/* <-- 2. تم إضافة المسار العربي الجديد هنا */}
           </Route>
           
         </Route>
