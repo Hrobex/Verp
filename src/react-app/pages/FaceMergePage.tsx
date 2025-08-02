@@ -175,7 +175,7 @@ function FaceMergePage() {
                 onClick={handleMergeClick} disabled={isLoading || !sourceFile || !destinationFile}
                 className="w-full mt-2 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg hover:from-purple-700 hover:to-fuchsia-700 focus:outline-none focus:ring-4 focus:ring-purple-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
-                {isLoading ? 'Merging Faces...' : 'Merge Faces'}
+                {isLoading ? 'Swapping Faces...' : 'Swap Faces'}
               </button>
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
@@ -185,7 +185,7 @@ function FaceMergePage() {
               {isLoading && (
                   <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-2xl">
                     <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-fuchsia-500"></div>
-                    <p className="text-gray-300 mt-4">AI is performing the merge...</p>
+                    <p className="text-gray-300 mt-4">AI is performing the swap...</p>
                   </div>
               )}
               
@@ -198,7 +198,7 @@ function FaceMergePage() {
                     </a>
                   </>
                 ) : (
-                  <p className="text-gray-400 text-center">Your merged image will appear here</p>
+                  <p className="text-gray-400 text-center">Your swapped image will appear here</p>
                 )}
               </div>
             </div>
