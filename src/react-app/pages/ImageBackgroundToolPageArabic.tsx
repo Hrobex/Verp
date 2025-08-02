@@ -335,7 +335,7 @@ function ImageBackgroundToolPageArabic() {
                       وداعاً للبرامج المعقدة والتعديل اليدوي الممل. تم تصميم أداتنا المجانية لتفريغ الصور لتكون سريعة وبسيطة. ببضع نقرات فقط، يمكنك تحويل صورتك وجعل خلفيتها شفافة أو استبدالها بخلفية جديدة تمامًا. إليك كيف تحصل على نتيجة احترافية دون عناء.
                   </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-right">
                   <div className="bg-gray-800/50 p-6 rounded-lg">
                       <p className="text-lime-400 font-bold text-lg mb-2">الخطوة 1: ارفع صورتك</p>
                       <p className="text-gray-300">
