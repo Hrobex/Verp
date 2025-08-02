@@ -35,7 +35,7 @@ const tools = [
   },
   {
     id: 'line-drawing',
-    title: 'LineArtify: Photo to Line Drawing,
+    title: 'LineArtify: Photo to Line Drawing',
     description: 'Transform your photos into elegant, clean line art with our AI-powered sketch converter.',
     icon: Pencil,
     color: 'from-cyan-500 to-blue-600',
