@@ -445,7 +445,7 @@ function TextToSpeechPageArabic() {
                         أداتنا البسيطة تجعل عملية إنشاء ملفات صوتية عالية الجودة من النصوص سهلة للجميع، من صناع المحتوى إلى الطلاب.
                     </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-right">
                     <div className="bg-gray-800/50 p-6 rounded-lg">
                         <p className="text-red-400 font-bold text-lg mb-2">1. أدخل النص</p>
                         <p className="text-gray-300">
