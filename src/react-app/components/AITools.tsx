@@ -30,7 +30,7 @@ const tools = [
     icon: Pencil,
     color: 'from-cyan-500 to-blue-600',
     features: ['Instant conversion', 'High-quality sketch', 'For artists & creators'],
-    image: 'https://images.unsplash.com/photo-1608447047976-50a1b6a71404?w=400&h=300&fit=crop'
+    image: 'https://images.unsplash.com/photo-1569336415962-a4294509e385?w=400&h=300&fit=crop'
   },
   {
     id: 'remove-background',
