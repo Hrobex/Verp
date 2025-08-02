@@ -18,7 +18,7 @@ const translations = {
     },
     emailPlaceholder: { en: 'Enter your email', ar: 'أدخل بريدك الإلكتروني' },
     subscribe: { en: 'Subscribe', ar: 'اشترك' },
-    copyright: { en: '© 2025 AI Convert. All rights reserved.', ar: '© 2025 محول AI. جميع الحقوق محفوظة.' },
+    copyright: { en: '© 2025 AI Convert. All rights reserved.', ar: '© 2025 AI Convert. جميع الحقوق محفوظة.' },
     madeWith: { en: 'Made with', ar: 'صُنع بـ' },
     forCreators: { en: 'for creators everywhere', ar: 'للمبدعين في كل مكان' },
 };
