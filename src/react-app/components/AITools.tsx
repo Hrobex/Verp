@@ -57,7 +57,7 @@ const tools = [
   color: 'from-purple-500 to-fuchsia-600',
   features: ['Realistic AI Swaps', 'Group Photo Support', 'Privacy Focused'],
   image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop' // صورة مقترحة، يمكن تغييرها
-  }
+  },
   {
     id: 'ai-image-enhancer',
     title: 'Image Enhancement',
