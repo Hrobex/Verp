@@ -37,7 +37,7 @@ const tools = [
     description: 'Remove backgrounds from any image instantly with precision AI that handles complex edges perfectly.',
     icon: Scissors,
     color: 'from-blue-500 to-blue-600',
-    features: ['Instant processing', 'Edge detection', 'Bulk processing'],
+    features: ['Instant processing', 'Edge detection', 'Custom Backgrounds'],
     image: 'https://images.unsplash.com/photo-1618004912476-29818d81ae2e?w=400&h=300&fit=crop'
   },
   {
@@ -46,9 +46,18 @@ const tools = [
     description: 'Convert any text into natural-sounding speech with multiple voices and languages available.',
     icon: Volume2,
     color: 'from-green-500 to-green-600',
-    features: ['Natural voices', '50+ languages', 'Custom speed'],
+    features: ['Natural voices', '138+ languages', 'Custom speed'],
     image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=400&h=300&fit=crop'
   },
+  {
+  id: 'ai-face-merge',
+  title: 'Mergify: AI Face Swap',
+  description: 'Swap faces in any photo with surprising realism. Create fun and creative images by merging faces instantly with our advanced AI face swapper.',
+  icon: Users, // أيقونة مناسبة من Lucide React، يمكن تغييرها
+  color: 'from-purple-500 to-fuchsia-600',
+  features: ['Realistic AI Swaps', 'Group Photo Support', 'Privacy Focused'],
+  image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop' // صورة مقترحة، يمكن تغييرها
+  }
   {
     id: 'ai-image-enhancer',
     title: 'Image Enhancement',
