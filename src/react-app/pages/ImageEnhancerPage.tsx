@@ -262,6 +262,38 @@ function ImageEnhancerPage() {
                     </div>
                 </div>
             </section>
+
+            <section className="mt-20">
+    <div className="text-center">
+        <h2 className="text-3xl font-bold mb-4">Choosing the Right AI Model for Your Photo</h2>
+        <p className="max-w-3xl mx-auto text-gray-400 mb-12">
+            Our tool is powered by versions of the acclaimed <strong>GFPGAN</strong> model, an AI specifically designed for stunning photo restoration and enhancement. Each version offers a different level of refinement to give you the best result for your specific needs. Here’s a quick guide:
+        </p>
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+        <div className="bg-gray-800/50 p-6 rounded-lg">
+            <p className="text-cyan-400 font-bold text-lg mb-2">Model v1.4 (Clarity & Faces)</p>
+            <p className="text-gray-300">
+                This version is excellent for general-purpose enhancement. It focuses on significantly improving overall image clarity and is particularly effective at restoring details in facial features, making it a great starting point for portraits and social media photos.
+            </p>
+        </div>
+        <div className="bg-gray-800/50 p-6 rounded-lg">
+            <p className="text-cyan-400 font-bold text-lg mb-2">Model v2.1 (Detailed Enhancement)</p>
+            <p className="text-gray-300">
+                Building upon the previous version, this model incorporates more advanced techniques to augment fine details and textures across the entire image. Choose this option for a more comprehensive enhancement that improves both the subject and its surroundings.
+            </p>
+        </div>
+        <div className="bg-gray-800/50 p-6 rounded-lg">
+            <p className="text-cyan-400 font-bold text-lg mb-2">Model v3.0 (Maximum Quality & Precision)</p>
+            <p className="text-gray-300">
+                This is our latest and most powerful model. It uses the most advanced improvements in enhancement techniques, delivering superior image quality, precise detail refinement, and the best overall noise reduction. This is the ultimate choice for professional work, printing, or when you need the absolute highest fidelity.
+            </p>
+        </div>
+    </div>
+    <p className="text-center text-gray-400 mt-8">
+        <strong>Our Recommendation:</strong> Start with <strong>v2.1</strong> for a fantastic balance of detail and performance. For professional results or restoring precious old photos, <strong>v3.0</strong> will provide the highest quality.
+    </p>
+</section>
             
               <section className="mt-20 max-w-4xl mx-auto">
                   <h2 className="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
