@@ -7,13 +7,13 @@ import { useLanguage } from '@/react-app/hooks/useLanguage';
 
 // ... (translations object remains the same)
 const translations = {
-  logoAlt: { en: 'AI Convert Logo', ar: 'شعار محول AI' },
+  logoAlt: { en: 'AI Convert Logo', ar: 'شعار AI Convert' },
   aiTools: { en: 'AI Tools', ar: 'أدوات الذكاء الاصطناعي' },
   features: { en: 'Features', ar: 'المميزات' },
   about: { en: 'About', ar: 'حولنا' },
   getStarted: { en: 'Get Started Free', ar: 'ابدأ مجانًا' },
   langSwitcher: { en: 'العربية', ar: 'English' },
-  brandName: { en: 'AI Convert', ar: 'محول AI' }
+  brandName: { en: 'AI Convert', ar: 'AI Convert' }
 };
 
 
