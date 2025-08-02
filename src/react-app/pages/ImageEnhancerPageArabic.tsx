@@ -243,7 +243,7 @@ function ImageEnhancerPageArabic() {
                         لم يكن تحسين صورك أسهل من أي وقت مضى. تعمل أداتنا على تبسيط العملية إلى ثلاث خطوات مباشرة للحصول على نتيجة احترافية في كل مرة.
                     </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-right">
                     <div className="bg-gray-800/50 p-6 rounded-lg">
                         <p className="text-cyan-400 font-bold text-lg mb-2">1. ارفع صورتك</p>
                         <p className="text-gray-300">
@@ -272,7 +272,7 @@ function ImageEnhancerPageArabic() {
                         أداتنا مدعومة بإصدارات من نموذج <strong>GFPGAN</strong> المشهور، وهو ذكاء اصطناعي مصمم خصيصًا لترميم الصور وتحسينها بشكل مذهل. يقدم كل إصدار مستوى مختلفًا من التحسين لمنحك أفضل نتيجة لاحتياجاتك الخاصة. إليك دليل سريع:
                     </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-right">
                     <div className="bg-gray-800/50 p-6 rounded-lg">
                         <p className="text-cyan-400 font-bold text-lg mb-2">نموذج v1.4 (الوضوح والوجوه)</p>
                         <p className="text-gray-300">
