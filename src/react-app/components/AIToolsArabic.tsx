@@ -14,6 +14,15 @@ import {
 import { Link } from 'react-router-dom';
 
 const toolsArabic = [
+    {
+    id: 'artigenv2',
+    title: 'Artigen V2: مولد الفن بالذكاء الاصطناعي',
+    description: 'فنان ذكاء اصطناعي يحول نصوصك إلى أعمال فنية فريدة وعالية الجودة بلمسة جمالية مميزة.',
+    icon: Palette, 
+    color: 'from-yellow-500 to-orange-600',
+    features: ['أسلوب فني مميز', 'نتائج فائقة الجودة', 'مجاني بالكامل'],
+    image: 'https://images.unsplash.com/photo-1620421680280-d02b54174780?w=400&h=300&fit=crop'
+  },
   {
     id: 'generate-image-pro',
     title: 'توليد الصور بالذكاء الاصطناعي',
