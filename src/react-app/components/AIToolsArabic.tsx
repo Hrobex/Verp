@@ -9,7 +9,8 @@ import {
   Zap,
   Wand2,
   Pencil,
-  Users
+  Users,
+  Palette
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
