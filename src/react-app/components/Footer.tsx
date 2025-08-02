@@ -5,8 +5,8 @@ import { Twitter, Github, Mail, Heart } from 'lucide-react';
 
 // This is the full, complete translations object.
 const translations = {
-    logoAlt: { en: 'AI Convert Logo', ar: 'شعار محول AI' },
-    brandName: { en: 'AI Convert', ar: 'محول AI' },
+    logoAlt: { en: 'AI Convert Logo', ar: 'شعار AI Convert' },
+    brandName: { en: 'AI Convert', ar: 'AI Convert' },
     description: {
         en: 'Unleash your creative potential with our suite of AI-powered tools. Create, enhance, and transform your content like never before.',
         ar: 'أطلق العنان لإمكانياتك الإبداعية مع مجموعتنا من الأدوات المدعومة بالذكاء الاصطناعي. أنشئ المحتوى الخاص بك وحسّنه وحوّله كما لم يحدث من قبل.',
