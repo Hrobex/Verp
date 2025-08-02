@@ -211,7 +211,7 @@ function ImageGeneratorPage() {
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col justify-center items-center h-96 lg:h-auto">
               <div className="w-full h-full flex justify-center items-center border-2 border-dashed border-gray-600 rounded-lg">
                 {isLoading && (<div className="flex flex-col items-center gap-4"><div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div><p className="text-gray-400">Creating your vision...</p></div>)}
-                {!isLoading && !imageUrl && (<div className="text-center text-gray-500"><p>Your generated image will appear here</p></div>)}
+                {!isLoading && !imageUrl && (<div className="text-center text-gray-400"><p>Your generated image will appear here</p></div>)}
                 {imageUrl && !isLoading && (<img src={imageUrl} alt={prompt} className="max-w-full max-h-full object-contain rounded-lg" />)}
               </div>
               {imageUrl && !isLoading && (<button onClick={handleDownloadClick} className="w-full mt-6 py-3 px-4 text-lg font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300">Download Image</button>)}
