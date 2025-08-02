@@ -3,15 +3,16 @@ import { Link } from 'react-router-dom';
 
 // --- Data Constants ---
 
-// Size options remain consistent for user familiarity
 const sizeOptions = [
   { label: 'Square (1024x1024)', value: '1024x1024' },
   { label: 'Widescreen (1024x576)', value: '1024x576' },
   { label: 'Portrait (576x1024)', value: '576x1024' },
 ];
 
-// New FAQ data tailored for Artigen V2
+const ARTISTIC_SUFFIX = ', masterpiece, concept art, high detail, sharp focus, cinematic lighting';
+
 const faqData = [
+    // ... (FAQ data remains unchanged from the previous version) ...
     {
         question: 'What makes Artigen V2 different from other AI image generators?',
         answer: 'Artigen V2 is specialized for artistic expression. While other tools focus on providing many styles, Artigen V2 uses a fine-tuned model that excels at creating images with a distinct, high-quality artistic aesthetic. Think of it as an expert artist’s brush, designed to turn your text into unique digital art.'
@@ -34,7 +35,6 @@ const faqData = [
     },
 ];
 
-
 function ArtigenV2Page() {
   const [prompt, setPrompt] = useState('');
   const [selectedSize, setSelectedSize] = useState('1024x1024');
@@ -54,20 +54,13 @@ function ArtigenV2Page() {
     setImageUrl('');
 
     // --- Prepare data for the API ---
+    const finalPrompt = userPrompt + ARTISTIC_SUFFIX;
     const [width, height] = selectedSize.split('x');
-    const encodedPrompt = encodeURIComponent(userPrompt);
-    const seed = Date.now(); // To ensure a unique image every time
+    const encodedPrompt = encodeURIComponent(finalPrompt);
+    const seed = Date.now();
 
     // --- Construct the API URL ---
-    // This is the placeholder you will replace with the actual Artigen V2 endpoint.
-    const constructedUrl = ``; 
-
-    // Basic check to prevent fetch error with an empty URL
-    if (!constructedUrl) {
-        setError("The API endpoint is not configured. This is a developer placeholder.");
-        setIsLoading(false);
-        return;
-    }
+    const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
 
     const img = new Image();
     img.src = constructedUrl;
@@ -84,6 +77,7 @@ function ArtigenV2Page() {
   };
   
   const handleDownloadClick = async () => {
+      // ... (Download handler remains unchanged) ...
       if (!imageUrl) return;
       try {
         const response = await fetch(imageUrl);
@@ -104,13 +98,13 @@ function ArtigenV2Page() {
   };
 
   return (
+     
     <>
       <title>Artigen V2: AI Art Generator for Unique & Creative Images</title>
       <meta name="description" content="Transform your text into unique, high-quality digital art with Artigen V2. Our free AI art generator is tuned for a distinct artistic aesthetic. No sign-up required." />
       <link rel="canonical" href="https://aiconvert.online/artigenv2" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/artigenv2" />
-      {/* Add the 'ar' alternate link when the Arabic version is created */}
-      {/* <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/artigenv2" /> */}
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/artigenv2" /> 
       <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/artigenv2" />
       <script type="application/ld+json">
         {`
