@@ -9,7 +9,6 @@ const sizeOptions = [
   { label: 'Portrait (576x1024)', value: '576x1024' },
 ];
 
-// NEW: Art style options with their respective hidden prompts
 const artStyleOptions = [
     { 
         id: 'artistic', 
@@ -23,7 +22,6 @@ const artStyleOptions = [
     }
 ];
 
-// Updated FAQ data
 const faqData = [
     {
         question: 'What makes Artigen V2 different from other AI image generators?',
@@ -50,7 +48,7 @@ const faqData = [
 function ArtigenV2Page() {
   const [prompt, setPrompt] = useState('');
   const [selectedSize, setSelectedSize] = useState('1024x1024');
-  const [selectedArtStyle, setSelectedArtStyle] = useState('artistic'); // Default to 'artistic'
+  const [selectedArtStyle, setSelectedArtStyle] = useState('artistic');
   const [imageUrl, setImageUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,8 +64,26 @@ function ArtigenV2Page() {
     setError(null);
     setImageUrl('');
 
+    // --- ADDED: Translation logic to handle non-English prompts ---
+    let translatedPrompt = userPrompt;
+    try {
+      const langPair = "ar|en"; // Can be adapted if more source languages are common
+      const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(userPrompt)}&langpair=${langPair}&mt=1`;
+      
+      const translateResponse = await fetch(apiUrl);
+      if (translateResponse.ok) {
+        const translateData = await translateResponse.json();
+        if (translateData.responseData && translateData.responseData.translatedText &&
+            translateData.responseData.translatedText.trim().toLowerCase() !== userPrompt.toLowerCase()) {
+          translatedPrompt = translateData.responseData.translatedText;
+        }
+      }
+    } catch (err) {
+      console.error("Translation API failed, using original prompt:", err);
+    }
+
     const styleSuffix = artStyleOptions.find(s => s.id === selectedArtStyle)?.prompt_suffix || '';
-    const finalPrompt = userPrompt + styleSuffix;
+    const finalPrompt = translatedPrompt + styleSuffix; // Use the translated prompt
     const [width, height] = selectedSize.split('x');
     const encodedPrompt = encodeURIComponent(finalPrompt);
     const seed = Date.now();
@@ -114,13 +130,12 @@ function ArtigenV2Page() {
       <meta name="description" content="Transform your text into unique, high-quality digital art with Artigen V2. Our free AI art generator is tuned for a distinct artistic aesthetic. No sign-up required." />
       <link rel="canonical" href="https://aiconvert.online/artigenv2" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/artigenv2" />
-      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/artigenv2" /> 
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/artigenv2" />
       <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/artigenv2" />
       <script type="application/ld+json">
         {`
           {
             "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
             "name": "Artigen V2 AI Art Generator",
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
@@ -174,7 +189,8 @@ function ArtigenV2Page() {
                       onClick={() => setSelectedArtStyle(style.id)}
                       className={`py-3 px-2 text-center rounded-lg transition-all duration-200 ${
                         selectedArtStyle === style.id 
-                        ? 'bg-yellow-600 text-white font-bold ring-2 ring-yellow-400' 
+                        // UPDATED: Darkened the active button color
+                        ? 'bg-yellow-700 text-white font-bold ring-2 ring-yellow-400' 
                         : 'bg-gray-700 hover:bg-gray-600/70'
                       }`}
                     >
