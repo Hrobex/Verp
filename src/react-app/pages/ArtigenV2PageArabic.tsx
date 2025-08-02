@@ -10,20 +10,31 @@ const sizeOptions = [
   { label: 'صورة طولية (576x1024)', value: '576x1024' },
 ];
 
-// النص الخفي الذي يضاف للـ prompt لتحقيق الأسلوب الفني (يبقى بالإنجليزية للـ API)
-const ARTISTIC_SUFFIX = ', masterpiece, concept art, high detail, sharp focus, cinematic lighting';
+// تمت الإضافة: خيارات النمط الفني مع المطالبات الخفية بالإنجليزية
+const artStyleOptions = [
+    { 
+        id: 'artistic', 
+        name: 'النمط الفني', 
+        prompt_suffix: ', masterpiece, digital painting, stylized, intricate details, vibrant colors, high quality' 
+    },
+    { 
+        id: 'cinematic', 
+        name: 'الفن السينمائي', 
+        prompt_suffix: ', masterpiece, concept art, high detail, sharp focus, cinematic lighting' 
+    }
+];
 
-// بيانات الأسئلة الشائعة - مترجمة ومكيفة لـ Artigen V2
+// تم التحديث: بيانات الأسئلة الشائعة
 const faqData = [
     {
         question: 'ما الذي يميز Artigen V2 عن أدوات توليد الصور الأخرى؟',
-        answer: 'Artigen V2 هو أداة فنية متخصصة ومميزة. بينما تركز الأدوات الأخرى على توفير أنماط متعددة، تم تصميم Artigen V2 بعناية فائقة لإنتاج أعمال فنية فريدة وعالية الجودة بلمسة جمالية خاصة. فكر فيه كفرشاة فنان خبير، مصممة لتحويل كلماتك إلى لوحة فنية رقمية.'
+        answer: 'Artigen V2 هو أداة فنية متخصصة. بدلاً من تقديم عشرات الأنماط، يركز على مسارين إبداعيين مميزين: "النمط الفني" الغني للوحات الرقمية، و"الفن السينمائي" الدرامي للمشاهد الملحمية. إنه حقًا فرشاة فنان خبير، تم ضبطها من أجل الجودة.'
     },
     {
         question: 'متى أستخدم Artigen V2 ومتى أستخدم Artigen Pro؟',
         answer: (
             <>
-                الأمر يعتمد على هدفك. استخدم <strong className="text-yellow-400">Artigen V2</strong> عندما تبحث عن تفسير فني فريد لفكرتك بجمالية مميزة. واستخدم <Link to="/ar/generate-image-pro" className="text-purple-400 hover:underline">Artigen Pro</Link> عندما تحتاج إلى تحكم أكبر في أنماط محددة مثل "فوتوغرافي" أو "سينمائي" وتريد أداة شاملة ومتعددة الاستخدامات.
+                الأمر يعتمد على هدفك. استخدم <strong className="text-yellow-400">Artigen V2</strong> عندما تبحث عن تفسير فني فريد وعالي الجودة لفكرتك. واستخدم <Link to="/ar/generate-image-pro" className="text-purple-400 hover:underline">Artigen Pro</Link> عندما تحتاج إلى أنماط أكثر تحديدًا مثل "فوتوغرافي"، "أنمي"، أو "فن البكسل".
             </>
         )
     },
@@ -40,6 +51,7 @@ const faqData = [
 function ArtigenV2PageArabic() {
   const [prompt, setPrompt] = useState('');
   const [selectedSize, setSelectedSize] = useState('1024x1024');
+  const [selectedArtStyle, setSelectedArtStyle] = useState('artistic'); // القيمة الافتراضية هي النمط الفني
   const [imageUrl, setImageUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +67,6 @@ function ArtigenV2PageArabic() {
     setError(null);
     setImageUrl('');
 
-    // --- ترجمة النص إلى الإنجليزية قبل إرساله للـ API ---
     let translatedPrompt = userPrompt;
     try {
       const langPair = "ar|en";
@@ -69,17 +80,17 @@ function ArtigenV2PageArabic() {
           translatedPrompt = translateData.responseData.translatedText;
         }
       }
-    } catch (err) {
+    } catch (err)      {
       console.error("Translation API failed, using original prompt:", err);
     }
     
-    // --- تجهيز البيانات للـ API ---
-    const finalPrompt = translatedPrompt + ARTISTIC_SUFFIX;
+    // تم التحديث: استخدام النص الخفي بناءً على النمط المختار
+    const styleSuffix = artStyleOptions.find(s => s.id === selectedArtStyle)?.prompt_suffix || '';
+    const finalPrompt = translatedPrompt + styleSuffix;
     const [width, height] = selectedSize.split('x');
     const encodedPrompt = encodeURIComponent(finalPrompt);
     const seed = Date.now();
 
-    // --- بناء رابط الـ API ---
     const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
 
     const img = new Image();
@@ -169,12 +180,31 @@ function ArtigenV2PageArabic() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="مثال: أسد مهيب يرتدي تاجًا من النجوم، لوحة رقمية"
-                  className="w-full h-36 p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition"
+                  className="w-full h-28 p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition"
                 />
+              </div>
+
+              <div>
+                <label className="block text-lg font-semibold text-gray-200 mb-2">٢. اختر الأسلوب الفني</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {artStyleOptions.map((style) => (
+                    <button
+                      key={style.id}
+                      onClick={() => setSelectedArtStyle(style.id)}
+                      className={`py-3 px-2 text-center rounded-lg transition-all duration-200 ${
+                        selectedArtStyle === style.id 
+                        ? 'bg-yellow-700 text-white font-bold ring-2 ring-yellow-400' 
+                        : 'bg-gray-700 hover:bg-gray-600/70'
+                      }`}
+                    >
+                      {style.name}
+                    </button>
+                  ))}
+                </div>
               </div>
               
               <div>
-                <label htmlFor="size-select" className="block text-lg font-semibold text-gray-200 mb-2">٢. اختر أبعاد اللوحة</label>
+                <label htmlFor="size-select" className="block text-lg font-semibold text-gray-200 mb-2">٣. اختر أبعاد اللوحة</label>
                 <select
                   id="size-select"
                   value={selectedSize}
@@ -195,7 +225,7 @@ function ArtigenV2PageArabic() {
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
 
-            {/* --- عمود النتائج --- */}
+            {/* --- عمود النتائج (بدون تغيير) --- */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col justify-center items-center h-96 lg:h-auto min-h-[28rem]">
               <div className="w-full h-full flex justify-center items-center border-2 border-dashed border-gray-600 rounded-lg relative">
                 {isLoading && (
@@ -212,6 +242,7 @@ function ArtigenV2PageArabic() {
           </div>
 
           <div className="mt-24">
+              {/* --- قسم المزايا (بدون تغيير) --- */}
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">فنان ذكاء اصطناعي لأفكارك الإبداعية</h2>
                   <p className="max-w-3xl mx-auto text-gray-400 mb-12">Artigen V2 هو أكثر من مجرد أداة؛ إنه شريكك في الإبداع. لقد ركزنا على الجودة الفنية لتتمكن أنت من التركيز على رؤيتك.</p>
@@ -222,17 +253,19 @@ function ArtigenV2PageArabic() {
                       <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-yellow-400 mb-2">مجاني بالكامل</h3><p className="text-gray-300">أطلق العنان لإبداعك بلا حدود. Artigen V2 مجاني، بدون الحاجة للتسجيل أو دفع اشتراكات.</p></div>
                   </div>
               </section>
-
+              
+              {/* --- تم التحديث: قسم كيفية الاستخدام --- */}
               <section className="mt-20 text-center">
                    <h2 className="text-3xl font-bold mb-4">كيف تنشئ لوحة فنية مع Artigen V2</h2>
-                   <p className="max-w-3xl mx-auto text-gray-400 mb-12">خطوتان فقط تفصلان بين خيالك وعمل فني مكتمل.</p>
+                   <p className="max-w-3xl mx-auto text-gray-400 mb-12">ثلاث خطوات بسيطة فقط تفصل بين خيالك وعمل فني مكتمل.</p>
                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-right">
-                       <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-yellow-400 font-bold text-lg mb-2">الخطوة ١: اكتب وصاً فنياً</p><p className="text-gray-300">صِف العمل الفني الذي تريد إنشاءه. كن مبدعًا ومفصلاً قدر الإمكان. الذكاء الاصطناعي يزدهر على الأوصاف الغنية.</p></div>
-                       <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-yellow-400 font-bold text-lg mb-2">الخطوة ٢: اختر الأبعاد</p><p className="text-gray-300">حدد الأبعاد المثالية لقطعتك الفنية—مربعة، عريضة، أو طولية—لتناسب احتياجاتك بشكل مثالي.</p></div>
-                       <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-yellow-400 font-bold text-lg mb-2">الخطوة ٣: أنشئ وحمّل</p><p className="text-gray-300">اضغط على "حوّل إلى فن" وشاهد الذكاء الاصطناعي يجسد مفهومك. عملك الفني الفريد سيكون جاهزًا للتحميل.</p></div>
+                       <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-yellow-400 font-bold text-lg mb-2">الخطوة ١: اكتب وصفًا فنيًا</p><p className="text-gray-300">صِف العمل الفني الذي تريد إنشاءه. كن مبدعًا ومفصلاً قدر الإمكان. الذكاء الاصطناعي يزدهر على الأوصاف الغنية.</p></div>
+                       <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-yellow-400 font-bold text-lg mb-2">الخطوة ٢: اختر أسلوبك</p><p className="text-gray-300">حدد التوجه الفني لعملك. اختر "النمط الفني" لإحساس اللوحة الرقمية أو "الفن السينمائي" للمشاهد الملحمية والدرامية.</p></div>
+                       <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-yellow-400 font-bold text-lg mb-2">الخطوة ٣: أنشئ وحمّل</p><p className="text-gray-300">اختر أبعادك المفضلة، اضغط على "حوّل إلى فن"، وشاهد الذكاء الاصطناعي يجسد مفهومك، جاهزًا للتحميل.</p></div>
                    </div>
               </section>
 
+              {/* --- تم التحديث: قسم الأسئلة الشائعة --- */}
               <section className="mt-20 max-w-4xl mx-auto">
                   <h2 className="text-3xl font-bold text-center mb-10">أسئلة شائعة</h2>
                   <div className="space-y-6">
