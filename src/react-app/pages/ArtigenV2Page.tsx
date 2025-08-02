@@ -9,19 +9,31 @@ const sizeOptions = [
   { label: 'Portrait (576x1024)', value: '576x1024' },
 ];
 
-const ARTISTIC_SUFFIX = ', masterpiece, concept art, high detail, sharp focus, cinematic lighting';
+// NEW: Art style options with their respective hidden prompts
+const artStyleOptions = [
+    { 
+        id: 'artistic', 
+        name: 'Artistic Style', 
+        prompt_suffix: ', masterpiece, digital painting, stylized, intricate details, vibrant colors, high quality' 
+    },
+    { 
+        id: 'cinematic', 
+        name: 'Cinematic Art', 
+        prompt_suffix: ', masterpiece, concept art, high detail, sharp focus, cinematic lighting' 
+    }
+];
 
+// Updated FAQ data
 const faqData = [
-    // ... (FAQ data remains unchanged from the previous version) ...
     {
         question: 'What makes Artigen V2 different from other AI image generators?',
-        answer: 'Artigen V2 is specialized for artistic expression. While other tools focus on providing many styles, Artigen V2 uses a fine-tuned model that excels at creating images with a distinct, high-quality artistic aesthetic. Think of it as an expert artist’s brush, designed to turn your text into unique digital art.'
+        answer: 'Artigen V2 is specialized for artistic expression. Instead of offering dozens of styles, it focuses on two distinct creative paths: a rich "Artistic Style" for digital paintings, and a dramatic "Cinematic Art" for epic scenes. It’s an expert artist’s brush, tuned for quality.'
     },
     {
         question: `Should I use Artigen V2 or Artigen Pro?`,
         answer: (
             <>
-                It depends on your goal. Use <strong className="text-yellow-400">Artigen V2</strong> when you want a unique, artistic interpretation of your idea with a signature aesthetic. Use <Link to="/generate-image-pro" className="text-purple-400 hover:underline">Artigen Pro</Link> when you need more control over specific styles like "Photographic," "Anime," or "Cinematic" and want a versatile, all-in-one tool.
+                It depends on your goal. Use <strong className="text-yellow-400">Artigen V2</strong> when you want a unique, high-quality artistic interpretation of your idea. Use <Link to="/generate-image-pro" className="text-purple-400 hover:underline">Artigen Pro</Link> when you need more specific, genre-based styles like "Photographic," "Anime," or "Pixel Art."
             </>
         )
     },
@@ -38,6 +50,7 @@ const faqData = [
 function ArtigenV2Page() {
   const [prompt, setPrompt] = useState('');
   const [selectedSize, setSelectedSize] = useState('1024x1024');
+  const [selectedArtStyle, setSelectedArtStyle] = useState('artistic'); // Default to 'artistic'
   const [imageUrl, setImageUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,13 +66,12 @@ function ArtigenV2Page() {
     setError(null);
     setImageUrl('');
 
-    // --- Prepare data for the API ---
-    const finalPrompt = userPrompt + ARTISTIC_SUFFIX;
+    const styleSuffix = artStyleOptions.find(s => s.id === selectedArtStyle)?.prompt_suffix || '';
+    const finalPrompt = userPrompt + styleSuffix;
     const [width, height] = selectedSize.split('x');
     const encodedPrompt = encodeURIComponent(finalPrompt);
     const seed = Date.now();
 
-    // --- Construct the API URL ---
     const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
 
     const img = new Image();
@@ -77,7 +89,6 @@ function ArtigenV2Page() {
   };
   
   const handleDownloadClick = async () => {
-      // ... (Download handler remains unchanged) ...
       if (!imageUrl) return;
       try {
         const response = await fetch(imageUrl);
@@ -98,7 +109,6 @@ function ArtigenV2Page() {
   };
 
   return (
-     
     <>
       <title>Artigen V2: AI Art Generator for Unique & Creative Images</title>
       <meta name="description" content="Transform your text into unique, high-quality digital art with Artigen V2. Our free AI art generator is tuned for a distinct artistic aesthetic. No sign-up required." />
@@ -114,7 +124,7 @@ function ArtigenV2Page() {
             "name": "Artigen V2 AI Art Generator",
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
-            "description": "A free AI art generator specialized in producing unique and high-quality images with a distinct artistic aesthetic from text prompts.",
+            "description": "A free AI art generator specialized in producing unique and high-quality images with distinct artistic styles from text prompts.",
             "aggregateRating": {
               "@type": "AggregateRating",
               "ratingValue": "4.9",
@@ -151,12 +161,31 @@ function ArtigenV2Page() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="e.g., A majestic lion with a crown of stars, digital art"
-                  className="w-full h-36 p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition"
+                  className="w-full h-28 p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition"
                 />
+              </div>
+
+              <div>
+                <label className="block text-lg font-semibold text-gray-200 mb-2">2. Choose the Artistic Style</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {artStyleOptions.map((style) => (
+                    <button
+                      key={style.id}
+                      onClick={() => setSelectedArtStyle(style.id)}
+                      className={`py-3 px-2 text-center rounded-lg transition-all duration-200 ${
+                        selectedArtStyle === style.id 
+                        ? 'bg-yellow-600 text-white font-bold ring-2 ring-yellow-400' 
+                        : 'bg-gray-700 hover:bg-gray-600/70'
+                      }`}
+                    >
+                      {style.name}
+                    </button>
+                  ))}
+                </div>
               </div>
               
               <div>
-                <label htmlFor="size-select" className="block text-lg font-semibold text-gray-200 mb-2">2. Choose a Size</label>
+                <label htmlFor="size-select" className="block text-lg font-semibold text-gray-200 mb-2">3. Choose a Size</label>
                 <select
                   id="size-select"
                   value={selectedSize}
@@ -177,7 +206,7 @@ function ArtigenV2Page() {
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
 
-            {/* --- Output Column --- */}
+            {/* --- Output Column (remains unchanged) --- */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col justify-center items-center h-96 lg:h-auto min-h-[28rem]">
               <div className="w-full h-full flex justify-center items-center border-2 border-dashed border-gray-600 rounded-lg relative">
                 {isLoading && (
@@ -194,6 +223,7 @@ function ArtigenV2Page() {
           </div>
 
           <div className="mt-24">
+              {/* --- Why Us Section (remains unchanged) --- */}
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">An AI Artist for Your Creative Ideas</h2>
                   <p className="max-w-3xl mx-auto text-gray-400 mb-12">Artigen V2 is more than a tool; it's a creative partner. We focused on artistic quality so you can focus on your vision.</p>
@@ -205,16 +235,18 @@ function ArtigenV2Page() {
                   </div>
               </section>
 
+              {/* --- UPDATED How to Section --- */}
               <section className="mt-20 text-center">
                    <h2 className="text-3xl font-bold mb-4">How to Create with Artigen V2</h2>
-                   <p className="max-w-3xl mx-auto text-gray-400 mb-12">Just two steps stand between your imagination and a finished piece of art.</p>
+                   <p className="max-w-3xl mx-auto text-gray-400 mb-12">Just three simple steps stand between your imagination and a finished piece of art.</p>
                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                        <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-yellow-400 font-bold text-lg mb-2">Step 1: Write Your Prompt</p><p className="text-gray-300">Describe the artwork you want to create. Be as imaginative and detailed as you like. The AI thrives on creativity.</p></div>
-                       <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-yellow-400 font-bold text-lg mb-2">Step 2: Choose Your Size</p><p className="text-gray-300">Select the ideal dimensions for your artwork—square, widescreen, or portrait—to perfectly fit your needs.</p></div>
-                       <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-yellow-400 font-bold text-lg mb-2">Step 3: Generate & Download</p><p className="text-gray-300">Click "Generate Art" and watch the AI bring your concept to life. Your unique artwork is then ready to download.</p></div>
+                       <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-yellow-400 font-bold text-lg mb-2">Step 2: Choose Your Style</p><p className="text-gray-300">Select the artistic direction for your piece. Choose "Artistic Style" for a digital painting feel or "Cinematic Art" for epic, dramatic scenes.</p></div>
+                       <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-yellow-400 font-bold text-lg mb-2">Step 3: Generate & Download</p><p className="text-gray-300">Select your preferred size, hit "Generate Art," and watch the AI bring your concept to life, ready for download.</p></div>
                    </div>
               </section>
 
+              {/* --- FAQ Section (with updated answers) --- */}
               <section className="mt-20 max-w-4xl mx-auto">
                   <h2 className="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
                   <div className="space-y-6">
