@@ -75,9 +75,9 @@ function FaceMergePage() {
     const formData = new FormData();
     formData.append('source_file', sourceFile);
     formData.append('destination_file', destinationFile);
-    formData.append('source_person_number', sourcePersonNumber);
-    formData.append('destination_person_number', destinationPersonNumber);
-
+    formData.append('source_face_index', sourcePersonNumber);
+    formData.append('destination_face_index', destinationPersonNumber);
+    
     try {
       const response = await fetch(apiEndpoint, {
         method: 'POST',
