@@ -93,7 +93,7 @@ function ImageEnhancerPageArabic() {
 
   return (
     <>
-      <title>تحسين جودة الصور ورفع دقتها بالذكاء الاصطناعي مجاناً</title>
+      <title>EnhanceX AI: تحسين جودة الصور ورفع دقتها بالذكاء الاصطناعي مجاناً</title>
       <meta name="description" content="قم بتحسين جودة الصور فورًا مع EnhanceX AI. أداتنا المجانية لرفع دقة الصور تزيد من حدة التفاصيل، تزيل التشويش، وترفع الدقة حتى 4x أونلاين." />
       <link rel="canonical" href="https://aiconvert.online/ar/ai-image-enhancer" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-image-enhancer" />
