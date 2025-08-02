@@ -198,7 +198,7 @@ function FaceMergePage() {
                     </a>
                   </>
                 ) : (
-                  <p className="text-gray-500 text-center">Your merged image will appear here</p>
+                  <p className="text-gray-400 text-center">Your merged image will appear here</p>
                 )}
               </div>
             </div>
@@ -257,7 +257,7 @@ function FaceMergePage() {
                     </div>
                   ))}
                 </div>
-                 <p className="text-xs text-gray-500 mt-8">We adhere to all platform policies, including preserving user privacy and not compromising personal data. We do not endorse any usage that conflicts with these principles.</p>
+                 <p className="text-xs text-gray-400 mt-8">We adhere to all platform policies, including preserving user privacy and not compromising personal data. We do not endorse any usage that conflicts with these principles.</p>
               </section>
           </div>
         </main>
