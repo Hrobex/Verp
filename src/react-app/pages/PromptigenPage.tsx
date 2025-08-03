@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 
-// --- مفتاح API الخاص بك ---
+// --- الثوابت ---
 const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
 const SCRIPT_URL = "https://esm.run/@google/generative-ai";
 
@@ -16,10 +16,9 @@ async function fileToGenerativePart(file: File) {
   };
 }
 
-
 function PromptigenPage() {
-  // --- States for UI and data ---
-  const [isScriptReady, setIsScriptReady] = useState(false); // حالة جديدة لتتبع تحميل المكتبة
+  // --- حالات الواجهة الرسومية والبيانات ---
+  const [isAiReady, setIsAiReady] = useState(false); // حالة لتتبع جاهزية الذكاء الاصطناعي
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
@@ -27,62 +26,51 @@ function PromptigenPage() {
   const [error, setError] = useState<string | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const modelRef = useRef<any>(null); // Ref لحفظ الموديل بعد تهيئته
+  const modelRef = useRef<any>(null); // Ref لحفظ نموذج الذكاء الاصطناعي
+  const aiModuleRef = useRef<any>(null); // Ref لحفظ وحدة الذكاء الاصطناعي بأكملها
 
-  // --- التأثير الجانبي لتحميل المكتبة عند تحميل المكون ---
+  // --- التأثير الجانبي لتهيئة الذكاء الاصطناعي عند تحميل المكون ---
   useEffect(() => {
-    // إذا كانت المكتبة موجودة بالفعل، قم بتفعيل الأداة
-    if ((window as any).google?.generativeai) {
-      setIsScriptReady(true);
-      return;
-    }
+    const initializeAI = async () => {
+      try {
+        // الخطوة 1: استيراد المكتبة ديناميكيًا (الطريقة الصحيحة)
+        const module = await import(SCRIPT_URL);
+        aiModuleRef.current = module; // حفظ الوحدة بأكملها للوصول إلى HarmCategory لاحقًا
 
-    // ابحث عن السكربت في الصفحة لتجنب إضافته مرتين
-    if (document.querySelector(`script[src="${SCRIPT_URL}"]`)) {
-        return;
-    }
-
-    // إذا لم يكن موجودًا، قم بإنشائه وإضافته
-    const script = document.createElement('script');
-    script.type = 'module';
-    script.src = SCRIPT_URL;
-    script.async = true;
-
-    // عند اكتمال التحميل بنجاح
-    script.onload = () => {
-      console.log("AI Library loaded successfully.");
-      setIsScriptReady(true);
+        // الخطوة 2: تهيئة النموذج وحفظه
+        const genAI = new module.GoogleGenerativeAI(API_KEY);
+        modelRef.current = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
+        
+        console.log("AI Initialized Successfully.");
+        setIsAiReady(true); // الإشارة إلى أن كل شيء جاهز
+      } catch (e) {
+        console.error("AI Initialization Failed:", e);
+        setError("Could not initialize the AI model. Please refresh the page.");
+      }
     };
-
-    // في حالة فشل التحميل
-    script.onerror = () => {
-      console.error("Failed to load the AI library script.");
-      setError("Failed to load AI library. Check your connection or ad-blocker.");
-    };
-
-    document.body.appendChild(script);
-
+    
+    initializeAI();
   }, []); // [] تضمن تشغيل هذا الكود مرة واحدة فقط
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-        if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
-            setError('Please select a valid image file (PNG, JPG, WEBP).');
-            return;
-        }
-        setSelectedFile(file);
-        setError(null);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setImagePreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
+      if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+        setError('Please select a valid image file (PNG, JPG, WEBP).');
+        return;
+      }
+      setSelectedFile(file);
+      setError(null);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handleGeneratePrompt = async () => {
-    if (!selectedFile || !isScriptReady) {
+    if (!selectedFile || !isAiReady) {
       setError('Please upload an image first and wait for the AI to initialize.');
       return;
     }
@@ -92,27 +80,20 @@ function PromptigenPage() {
     setGeneratedPrompt('');
 
     try {
-      // تهيئة الموديل عند أول استخدام فقط
-      if (!modelRef.current) {
-        const googleAI = (window as any).google.generativeai;
-        const genAI = new googleAI.GoogleGenerativeAI(API_KEY);
-        modelRef.current = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
-      }
-      
-      const googleAI = (window as any).google.generativeai;
+      const { HarmCategory, HarmBlockThreshold } = aiModuleRef.current;
       const safetySettings = [
-        { category: googleAI.HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: googleAI.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-        { category: googleAI.HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: googleAI.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-        { category: googleAI.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: googleAI.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-        { category: googleAI.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: googleAI.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
       ];
       
       const masterPrompt = `Your mission is to act as an expert prompt engineer for AI image generators like Midjourney or Stable Diffusion. Analyze the uploaded image with extreme detail. Generate a single, coherent, and rich descriptive prompt that can replicate the image. **CRITICAL:** Focus on subject, environment, art style, composition, lighting, and color palette. End with a list of powerful keywords like "highly detailed, 4k, cinematic". Output ONLY the final, ready-to-use prompt.`;
-
+      
       const imagePart = await fileToGenerativePart(selectedFile);
 
       const result = await modelRef.current.generateContent({
-        contents: [{ role: "user", parts: [imagePart, {text: masterPrompt}] }],
+        contents: [{ role: "user", parts: [imagePart, { text: masterPrompt }] }],
         safetySettings,
       });
 
@@ -145,10 +126,9 @@ function PromptigenPage() {
     });
   };
 
-  // تحديد رسالة الزر بناءً على الحالات المختلفة
   const getButtonText = () => {
     if (isLoading) return 'Analyzing Image...';
-    if (!isScriptReady) return 'Initializing AI...';
+    if (!isAiReady) return 'Initializing AI...';
     return 'Generate Prompt';
   };
 
@@ -195,7 +175,7 @@ function PromptigenPage() {
               </div>
               <button
                 onClick={handleGeneratePrompt}
-                disabled={!isScriptReady || isLoading || !selectedFile}
+                disabled={!isAiReady || isLoading || !selectedFile}
                 className="w-full mt-2 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg hover:from-purple-600 hover:to-cyan-600 focus:outline-none focus:ring-4 focus:ring-purple-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
                 {getButtonText()}
