@@ -11,7 +11,9 @@ import {
   Pencil,
   Palette,
   SprayCan,
-  Drama
+  Drama,
+  Smile,
+  Paintbrush
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -79,6 +81,24 @@ const toolsArabic = [
   features: ['دمج واقعي بالذكاء الاصطناعي', 'دعم الصور الجماعية', 'خصوصية وأمان'],
   image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop'
 },
+  {
+    id: 'cartoonify',
+    title: 'حوّل صورتك إلى كرتون',
+    description: 'حوّل صورتك فورًا إلى كرتون ممتع بأسلوب ثنائي الأبعاد بنقرة واحدة. مثالية لصور البروفايل ووسائل التواصل الاجتماعي!',
+    icon: Smile, 
+    color: 'from-rose-400 to-purple-600',
+    features: ['تحويل فوري', 'أسلوب كرتوني كلاسيكي', 'مجاني وبسيط'],
+    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop'
+  },
+  {
+    id: 'cartoony-art',
+    title: 'DigiCartoony: تحويل الصور لفن رقمي',
+    description: 'ارتقِ بصورك إلى مستوى اللوحات الرقمية عالية الجودة بأسلوب فني فريد وتفاصيل دقيقة.',
+    icon: Paintbrush, 
+    color: 'from-teal-500 to-cyan-600',
+    features: ['أسلوب الرسم الرقمي', 'تحديد الوجه', 'فن عالي الجودة'],
+    image: 'https://images.unsplash.com/photo-1582573514932-349103231f16?w=400&h=300&fit=crop'
+  },
   {
     id: 'ai-image-enhancer',
     title: 'تحسين جودة الصور',
