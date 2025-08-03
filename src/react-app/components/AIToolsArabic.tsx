@@ -10,6 +10,7 @@ import {
   Wand2,
   Pencil,
   Palette,
+  SprayCan,
   Drama
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -32,6 +33,15 @@ const toolsArabic = [
     color: 'from-purple-500 to-purple-600',
     features: ['أنماط متعددة', 'دقة عالية', 'استخدام تجاري'],
     image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop'
+  },
+    {
+    id: 'ai-anime-generator',
+    title: 'مولد صور الأنمي',
+    description: 'أنشئ شخصيات ورسومات أنمي أصلية بأنماط متنوعة مثل الحديث، التسعينات، تشيبي، وغيرها.',
+    icon: SprayCan, 
+    color: 'from-pink-500 to-orange-600',
+    features: ['أنماط متنوعة', 'شخصيات أصلية', 'مجاني وبلا حدود'],
+    image: 'https://images.unsplash.com/photo-1613376023733-0a752709423d?w=400&h=300&fit=crop'
   },
   {
     id: 'line-drawing',
