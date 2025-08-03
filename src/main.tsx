@@ -18,6 +18,8 @@ import ImageEnhancerPage from "@/react-app/pages/ImageEnhancerPage";
 import FaceMergePage from "@/react-app/pages/FaceMergePage";
 import ArtigenV2Page from "@/react-app/pages/ArtigenV2Page";
 import AnimeGeneratorPage from "@/react-app/pages/AnimeGeneratorPage";
+import CartoonifyPage from "@/react-app/pages/CartoonifyPage"; // <-- 1. تم استيراد المكون الجديد
+import DigiCartoonyPage from "@/react-app/pages/DigiCartoonyPage"; // <-- 2. تم استيراد المكون الجديد
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -28,7 +30,7 @@ import TextToSpeechPageArabic from "@/react-app/pages/TextToSpeechPageArabic";
 import ImageEnhancerPageArabic from "@/react-app/pages/ImageEnhancerPageArabic";
 import FaceMergePageArabic from "@/react-app/pages/FaceMergePageArabic";
 import ArtigenV2PageArabic from "@/react-app/pages/ArtigenV2PageArabic";
-import AnimeGeneratorPageArabic from "@/react-app/pages/AnimeGeneratorPageArabic"; // <-- 1. تم استيراد المكون العربي الجديد
+import AnimeGeneratorPageArabic from "@/react-app/pages/AnimeGeneratorPageArabic";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -49,6 +51,8 @@ createRoot(document.getElementById("root")!).render(
           <Route path="ai-face-merge" element={<FaceMergePage />} />
           <Route path="artigenv2" element={<ArtigenV2Page />} />
           <Route path="anime-ai" element={<AnimeGeneratorPage />} />
+          <Route path="cartoonify" element={<CartoonifyPage />} /> {/* <-- 3. تم إضافة المسار الجديد هنا */}
+          <Route path="cartoony-art" element={<DigiCartoonyPage />} /> {/* <-- 4. تم إضافة المسار الجديد هنا */}
 
 
           {/* --- Arabic Route Group --- */}
@@ -61,7 +65,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="ai-image-enhancer" element={<ImageEnhancerPageArabic />} />
             <Route path="ai-face-merge" element={<FaceMergePageArabic />} />
             <Route path="artigenv2" element={<ArtigenV2PageArabic />} />
-            <Route path="anime-ai" element={<AnimeGeneratorPageArabic />} /> {/* <-- 2. تم إضافة المسار العربي الجديد هنا */}
+            <Route path="anime-ai" element={<AnimeGeneratorPageArabic />} />
           </Route>
           
         </Route>
