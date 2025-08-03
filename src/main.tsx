@@ -20,6 +20,7 @@ import ArtigenV2Page from "@/react-app/pages/ArtigenV2Page";
 import AnimeGeneratorPage from "@/react-app/pages/AnimeGeneratorPage";
 import CartoonifyPage from "@/react-app/pages/CartoonifyPage";
 import DigiCartoonyPage from "@/react-app/pages/DigiCartoonyPage";
+import PromptigenPage from "@/react-app/pages/PromptigenPage"; // <-- 1. تم استيراد المكون الجديد
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -31,8 +32,8 @@ import ImageEnhancerPageArabic from "@/react-app/pages/ImageEnhancerPageArabic";
 import FaceMergePageArabic from "@/react-app/pages/FaceMergePageArabic";
 import ArtigenV2PageArabic from "@/react-app/pages/ArtigenV2PageArabic";
 import AnimeGeneratorPageArabic from "@/react-app/pages/AnimeGeneratorPageArabic";
-import CartoonifyPageArabic from "@/react-app/pages/CartoonifyPageArabic"; // <-- 1. تم استيراد المكون العربي الجديد
-import DigiCartoonyPageArabic from "@/react-app/pages/DigiCartoonyPageArabic"; // <-- 2. تم استيراد المكون العربي الجديد
+import CartoonifyPageArabic from "@/react-app/pages/CartoonifyPageArabic";
+import DigiCartoonyPageArabic from "@/react-app/pages/DigiCartoonyPageArabic";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -55,6 +56,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="anime-ai" element={<AnimeGeneratorPage />} />
           <Route path="cartoonify" element={<CartoonifyPage />} />
           <Route path="cartoony-art" element={<DigiCartoonyPage />} />
+          <Route path="prompt-generator" element={<PromptigenPage />} /> {/* <-- 2. تم إضافة المسار الجديد هنا */}
 
 
           {/* --- Arabic Route Group --- */}
@@ -68,8 +70,8 @@ createRoot(document.getElementById("root")!).render(
             <Route path="ai-face-merge" element={<FaceMergePageArabic />} />
             <Route path="artigenv2" element={<ArtigenV2PageArabic />} />
             <Route path="anime-ai" element={<AnimeGeneratorPageArabic />} />
-            <Route path="cartoonify" element={<CartoonifyPageArabic />} /> {/* <-- 3. تم إضافة المسار العربي الجديد هنا */}
-            <Route path="cartoony-art" element={<DigiCartoonyPageArabic />} /> {/* <-- 4. تم إضافة المسار العربي الجديد هنا */}
+            <Route path="cartoonify" element={<CartoonifyPageArabic />} />
+            <Route path="cartoony-art" element={<DigiCartoonyPageArabic />} />
           </Route>
           
         </Route>
