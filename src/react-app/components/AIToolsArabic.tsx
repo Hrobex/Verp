@@ -9,7 +9,8 @@ import {
   Zap,
   Wand2,
   Pencil,
-  Palette
+  Palette,
+  Drama
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -63,7 +64,7 @@ const toolsArabic = [
   id: 'ai-face-merge',
   title: 'Mergify: تبديل ودمج الوجوه',
   description: 'بدّل الوجوه في أي صورة بواقعية مدهشة. أنشئ صورًا مرحة ومبتكرة عبر دمج الوجوه فورًا باستخدام أداتنا المتقدمة.',
-  icon: Users,
+  icon: Drama,
   color: 'from-purple-500 to-fuchsia-600',
   features: ['دمج واقعي بالذكاء الاصطناعي', 'دعم الصور الجماعية', 'خصوصية وأمان'],
   image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop'
