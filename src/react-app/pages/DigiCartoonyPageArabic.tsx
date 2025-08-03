@@ -81,7 +81,7 @@ const faqData = [
 function DigiCartoonyPageArabic() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourcePreview, setSourcePreview] = useState<string | null>(null);
-  const [detectFace, setDetectFace] = useState(false);
+  const [detectFace, setDetectFace] = useState(true);
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -191,7 +191,6 @@ function DigiCartoonyPageArabic() {
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
               <div className="text-center">
                   <h2 className="text-2xl font-bold">١. ارفع صورتك</h2>
-                  <p className="text-sm text-gray-400">سيتم ضغط صورتك لمعالجة أسرع.</p>
               </div>
               <div 
                 onClick={() => sourceFileInputRef.current?.click()} 
@@ -210,7 +209,7 @@ function DigiCartoonyPageArabic() {
                   onChange={(e) => setDetectFace(e.target.checked)}
                   className="h-5 w-5 rounded border-gray-500 bg-gray-800 text-teal-500 focus:ring-teal-400"
                 />
-                <label htmlFor="face-detect" className="text-gray-200">٢. التركيز على الوجه فقط (اختياري)</label>
+                <label htmlFor="face-detect" className="text-gray-200">٢. تحديد الوجه</label>
               </div>
 
               <button
