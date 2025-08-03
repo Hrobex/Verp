@@ -16,7 +16,6 @@ function PromptigenPage() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Validate file type
       if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
         setError('Please select a valid image file (PNG, JPG, WEBP).');
         return;
@@ -42,7 +41,6 @@ function PromptigenPage() {
     setError(null);
     setGeneratedPrompt('');
 
-    // **CORRECT METHOD: Convert image to Base64 and send in one API call.**
     const reader = new FileReader();
     reader.readAsDataURL(selectedFile);
 
@@ -51,7 +49,8 @@ function PromptigenPage() {
 
       try {
         const payload = {
-          model: "claude-hybridspace", // Using the fast and reliable model
+          // --- FIXED: Switched to a valid vision model from the documentation ---
+          model: "openai-large", 
           messages: [
             {
               role: "user",
@@ -63,7 +62,6 @@ function PromptigenPage() {
                 {
                   type: "image_url",
                   image_url: {
-                    // Send the Base64 data URI directly
                     url: base64Image
                   }
                 }
