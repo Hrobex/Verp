@@ -1,17 +1,44 @@
 import { useState, useRef } from 'react';
 
+// --- مفتاح API الخاص بك مدمج هنا مباشرة كما طلبت ---
+const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
+
+// --- الوصول إلى المكتبة التي تم تحميلها في الخطوة 1 ---
+// @ts-ignore - نتجاهل خطأ 타입 سكريبت لأننا نعلم أن المكتبة محملة في window
+const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = window.google.generativeai;
+
+// --- تهيئة الموديل ---
+const genAI = new GoogleGenerativeAI(API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
+
+// --- إعدادات السلامة ---
+const safetySettings = [
+  { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+];
+
+// --- دالة مساعدة لتحويل الصورة ---
+async function fileToGenerativePart(file: File) {
+  const base64EncodedDataPromise = new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
+    reader.readAsDataURL(file);
+  });
+  return {
+    inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
+  };
+}
+
+
 function PromptigenPage() {
-  // --- State Management ---
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Ref for the hidden file input
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // --- Event Handlers ---
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -22,7 +49,6 @@ function PromptigenPage() {
       }
       setSelectedFile(file);
       setError(null);
-      
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -36,82 +62,55 @@ function PromptigenPage() {
       setError('Please upload an image first.');
       return;
     }
+    // التأكد من أن المكتبة قد تم تحميلها قبل المتابعة
+    if (!window.google?.generativeai) {
+        setError("AI library is not loaded. Please refresh the page.");
+        return;
+    }
 
     setIsLoading(true);
     setError(null);
     setGeneratedPrompt('');
 
-    const reader = new FileReader();
-    reader.readAsDataURL(selectedFile);
+    try {
+      // الـ "Prompt الخفي" الاحترافي
+      const masterPrompt = `Your mission is to act as an expert prompt engineer for AI image generators like Midjourney or Stable Diffusion. Analyze the uploaded image with extreme detail. Generate a single, coherent, and rich descriptive prompt that can replicate the image. **CRITICAL:** Focus on subject, environment, art style, composition, lighting, and color palette. End with a list of powerful keywords like "highly detailed, 4k, cinematic". Output ONLY the final, ready-to-use prompt.`;
 
-    reader.onload = async () => {
-      const base64Image = reader.result as string;
+      const imagePart = await fileToGenerativePart(selectedFile);
 
-      try {
-        const payload = {
-          // --- FIXED: Switched to a valid vision model from the documentation ---
-          model: "openai-large", 
-          messages: [
-            {
-              role: "user",
-              content: [
-                {
-                  type: "text",
-                  text: "Analyze this image and generate a detailed, descriptive prompt suitable for an AI image generator like Midjourney or Stable Diffusion. Focus on describing the main subjects, the environment, the art style (e.g., photograph, digital painting), lighting, colors, and overall mood."
-                },
-                {
-                  type: "image_url",
-                  image_url: {
-                    url: base64Image
-                  }
-                }
-              ]
-            }
-          ]
-        };
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts: [imagePart, {text: masterPrompt}] }],
+        safetySettings,
+      });
 
-        const response = await fetch('https://text.pollinations.ai/openai', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
+      const response = result.response;
+      const promptText = response.text();
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`The AI model failed to respond. Details: ${errorText}`);
-        }
-
-        const result = await response.json();
-        const promptText = result.choices[0]?.message?.content;
-
-        if (!promptText) {
-          throw new Error("Received an empty response from the AI model.");
-        }
-        
-        setGeneratedPrompt(promptText);
-
-      } catch (err: any) {
-         console.error("Prompt Generation Error:", err);
-         setError(err.message || 'An unknown error occurred during analysis.');
-      } finally {
-         setIsLoading(false);
+      if (!promptText) {
+        throw new Error("Received an empty response from the AI model.");
       }
-    };
+      setGeneratedPrompt(promptText);
 
-    reader.onerror = () => {
-      console.error("FileReader error");
-      setError("Failed to read the image file. Please try again.");
-      setIsLoading(false);
-    };
+    } catch (err: any) {
+       console.error("Prompt Generation Error:", err);
+       let errorMessage = 'An unknown error occurred during analysis.';
+       if (err.message.includes('API key not valid')) {
+          errorMessage = "Authentication failed. The API key is not valid.";
+       } else if (err.message.includes('safety')) {
+          errorMessage = "The image could not be processed due to safety restrictions.";
+       }
+       setError(errorMessage);
+    } finally {
+       setIsLoading(false);
+    }
   };
 
   const handleCopyPrompt = () => {
     if (!generatedPrompt) return;
-    navigator.clipboard.writeText(generatedPrompt)
-      .catch(err => {
-        console.error('Failed to copy prompt:', err); 
-        setError('Failed to copy prompt to clipboard.');
-      });
+    navigator.clipboard.writeText(generatedPrompt).catch(err => {
+      console.error('Failed to copy prompt:', err);
+      setError('Failed to copy prompt to clipboard.');
+    });
   };
 
   return (
@@ -119,11 +118,9 @@ function PromptigenPage() {
       <title>Promptigen: AI Image to Prompt Generator</title>
       <meta name="description" content="Turn any image into a detailed descriptive prompt. Use our free AI tool to analyze a picture and generate the perfect text prompt for AI image generators." />
       <link rel="canonical" href="https://aiconvert.online/promptigen" />
-      {/* Add other meta/link tags as needed */}
 
       <div className="pt-24 bg-gray-900 text-white min-h-screen">
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
               Promptigen: AI Image to Prompt
@@ -132,9 +129,7 @@ function PromptigenPage() {
               Upload any image and let our AI analyze it to generate a detailed, ready-to-use prompt for your favorite image generator.
             </p>
           </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* --- Controls Column --- */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
               <div>
                 <label className="block text-lg font-semibold text-gray-200 mb-2">1. Upload Your Image</label>
@@ -159,7 +154,6 @@ function PromptigenPage() {
                   )}
                 </div>
               </div>
-
               <button
                 onClick={handleGeneratePrompt}
                 disabled={isLoading || !selectedFile}
@@ -169,8 +163,6 @@ function PromptigenPage() {
               </button>
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
-
-            {/* --- Output Column --- */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col justify-center items-center min-h-[24rem]">
               <div className="w-full h-full flex flex-col">
                 <label className="block text-lg font-semibold text-gray-200 mb-2">Generated Prompt</label>
@@ -191,9 +183,6 @@ function PromptigenPage() {
               </div>
             </div>
           </div>
-          
-          {/* Your additional content will go here */}
-          
         </main>
       </div>
     </>
