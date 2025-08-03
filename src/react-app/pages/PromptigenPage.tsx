@@ -1,9 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
-// --- مفتاح API الخاص بك مدمج هنا مباشرة ---
+// --- مفتاح API الخاص بك ---
 const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
+const SCRIPT_URL = "https://esm.run/@google/generative-ai";
 
-// --- دالة مساعدة لتحويل الصورة (تبقى كما هي) ---
+// --- دالة مساعدة لتحويل الصورة ---
 async function fileToGenerativePart(file: File) {
   const base64EncodedDataPromise = new Promise((resolve) => {
     const reader = new FileReader();
@@ -17,34 +18,72 @@ async function fileToGenerativePart(file: File) {
 
 
 function PromptigenPage() {
+  // --- States for UI and data ---
+  const [isScriptReady, setIsScriptReady] = useState(false); // حالة جديدة لتتبع تحميل المكتبة
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const modelRef = useRef<any>(null);
+  const modelRef = useRef<any>(null); // Ref لحفظ الموديل بعد تهيئته
+
+  // --- التأثير الجانبي لتحميل المكتبة عند تحميل المكون ---
+  useEffect(() => {
+    // إذا كانت المكتبة موجودة بالفعل، قم بتفعيل الأداة
+    if ((window as any).google?.generativeai) {
+      setIsScriptReady(true);
+      return;
+    }
+
+    // ابحث عن السكربت في الصفحة لتجنب إضافته مرتين
+    if (document.querySelector(`script[src="${SCRIPT_URL}"]`)) {
+        return;
+    }
+
+    // إذا لم يكن موجودًا، قم بإنشائه وإضافته
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = SCRIPT_URL;
+    script.async = true;
+
+    // عند اكتمال التحميل بنجاح
+    script.onload = () => {
+      console.log("AI Library loaded successfully.");
+      setIsScriptReady(true);
+    };
+
+    // في حالة فشل التحميل
+    script.onerror = () => {
+      console.error("Failed to load the AI library script.");
+      setError("Failed to load AI library. Check your connection or ad-blocker.");
+    };
+
+    document.body.appendChild(script);
+
+  }, []); // [] تضمن تشغيل هذا الكود مرة واحدة فقط
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
-        setError('Please select a valid image file (PNG, JPG, WEBP).');
-        return;
-      }
-      setSelectedFile(file);
-      setError(null);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+        if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+            setError('Please select a valid image file (PNG, JPG, WEBP).');
+            return;
+        }
+        setSelectedFile(file);
+        setError(null);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImagePreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
     }
   };
 
   const handleGeneratePrompt = async () => {
-    if (!selectedFile) {
-      setError('Please upload an image first.');
+    if (!selectedFile || !isScriptReady) {
+      setError('Please upload an image first and wait for the AI to initialize.');
       return;
     }
     
@@ -53,29 +92,20 @@ function PromptigenPage() {
     setGeneratedPrompt('');
 
     try {
+      // تهيئة الموديل عند أول استخدام فقط
       if (!modelRef.current) {
-        if (!(window as any).google?.generativeai) {
-          throw new Error("AI library not loaded. Please wait a moment and try again, or refresh the page.");
-        }
-        const { GoogleGenerativeAI } = (window as any).google.generativeai;
-        const genAI = new GoogleGenerativeAI(API_KEY);
+        const googleAI = (window as any).google.generativeai;
+        const genAI = new googleAI.GoogleGenerativeAI(API_KEY);
         modelRef.current = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
       }
-
-      // ===================================================================
-      // !!! هذا هو الجزء الذي تم تعديله لحل مشكلة Vercel build !!!
-      // ===================================================================
-      // نحصل على المكتبة من الـ window
-      const googleAI = (window as any).google.generativeai;
       
-      // نستخدمها مباشرة هنا دون تعريف متغيرات غير ضرورية
+      const googleAI = (window as any).google.generativeai;
       const safetySettings = [
         { category: googleAI.HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: googleAI.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
         { category: googleAI.HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: googleAI.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
         { category: googleAI.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: googleAI.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
         { category: googleAI.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: googleAI.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
       ];
-      // ===================================================================
       
       const masterPrompt = `Your mission is to act as an expert prompt engineer for AI image generators like Midjourney or Stable Diffusion. Analyze the uploaded image with extreme detail. Generate a single, coherent, and rich descriptive prompt that can replicate the image. **CRITICAL:** Focus on subject, environment, art style, composition, lighting, and color palette. End with a list of powerful keywords like "highly detailed, 4k, cinematic". Output ONLY the final, ready-to-use prompt.`;
 
@@ -86,8 +116,7 @@ function PromptigenPage() {
         safetySettings,
       });
 
-      const response = result.response;
-      const promptText = response.text();
+      const promptText = result.response.text();
 
       if (!promptText) {
         throw new Error("Received an empty response from the AI model.");
@@ -96,7 +125,7 @@ function PromptigenPage() {
 
     } catch (err: any) {
        console.error("Prompt Generation Error:", err);
-       let errorMessage = err.message || 'An unknown error occurred during analysis.';
+       let errorMessage = err.message || 'An unknown error occurred.';
        if (String(errorMessage).includes('API key not valid')) {
           errorMessage = "Authentication failed. The API key is not valid.";
        } else if (String(errorMessage).includes('safety')) {
@@ -116,8 +145,14 @@ function PromptigenPage() {
     });
   };
 
+  // تحديد رسالة الزر بناءً على الحالات المختلفة
+  const getButtonText = () => {
+    if (isLoading) return 'Analyzing Image...';
+    if (!isScriptReady) return 'Initializing AI...';
+    return 'Generate Prompt';
+  };
+
   return (
-    // ... محتوى الـ JSX لم يتغير ...
     <>
       <title>Promptigen: AI Image to Prompt Generator</title>
       <meta name="description" content="Turn any image into a detailed descriptive prompt. Use our free AI tool to analyze a picture and generate the perfect text prompt for AI image generators." />
@@ -160,10 +195,10 @@ function PromptigenPage() {
               </div>
               <button
                 onClick={handleGeneratePrompt}
-                disabled={isLoading || !selectedFile}
+                disabled={!isScriptReady || isLoading || !selectedFile}
                 className="w-full mt-2 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg hover:from-purple-600 hover:to-cyan-600 focus:outline-none focus:ring-4 focus:ring-purple-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
-                {isLoading ? 'Analyzing Image...' : 'Generate Prompt'}
+                {getButtonText()}
               </button>
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
