@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
 function PromptigenPage() {
   // --- State Management ---
@@ -16,6 +17,11 @@ function PromptigenPage() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Validate file type
+      if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+        setError('Please select a valid image file (PNG, JPG, WEBP).');
+        return;
+      }
       setSelectedFile(file);
       setError(null);
       
@@ -36,81 +42,81 @@ function PromptigenPage() {
     setIsLoading(true);
     setError(null);
     setGeneratedPrompt('');
-    let imageUrl = '';
 
-    try {
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-      const uploadResponse = await fetch('https://image.pollinations.ai/upload', {
-        method: 'POST',
-        body: formData,
-      });
-      if (!uploadResponse.ok) {
-        throw new Error(`Image upload failed with status: ${uploadResponse.status}`);
+    // **CORRECT METHOD: Convert image to Base64 and send in one API call.**
+    const reader = new FileReader();
+    reader.readAsDataURL(selectedFile);
+
+    reader.onload = async () => {
+      const base64Image = reader.result as string;
+
+      try {
+        const payload = {
+          model: "claude-hybridspace", // Using the fast and reliable model
+          messages: [
+            {
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: "Analyze this image and generate a detailed, descriptive prompt suitable for an AI image generator like Midjourney or Stable Diffusion. Focus on describing the main subjects, the environment, the art style (e.g., photograph, digital painting), lighting, colors, and overall mood."
+                },
+                {
+                  type: "image_url",
+                  image_url: {
+                    // Send the Base64 data URI directly
+                    url: base64Image
+                  }
+                }
+              ]
+            }
+          ]
+        };
+
+        const response = await fetch('https://text.pollinations.ai/openai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`The AI model failed to respond. Details: ${errorText}`);
+        }
+
+        const result = await response.json();
+        const promptText = result.choices[0]?.message?.content;
+
+        if (!promptText) {
+          throw new Error("Received an empty response from the AI model.");
+        }
+        
+        setGeneratedPrompt(promptText);
+
+      } catch (err: any) {
+         console.error("Prompt Generation Error:", err);
+         setError(err.message || 'An unknown error occurred during analysis.');
+      } finally {
+         setIsLoading(false);
       }
-      const uploadResult = await uploadResponse.json();
-      imageUrl = uploadResult.url || uploadResult.ipfs_url;
-      if (!imageUrl) {
-          throw new Error('Could not retrieve a public URL for the uploaded image.');
-      }
-    } catch (err) {
-      console.error("Image Upload Error:", err);
-      setError('Failed to prepare the image for analysis. Please try again.');
+    };
+
+    reader.onerror = () => {
+      console.error("FileReader error");
+      setError("Failed to read the image file. Please try again.");
       setIsLoading(false);
-      return;
-    }
-    
-    try {
-      const payload = {
-        model: "claude-hybridspace",
-        messages: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "text",
-                text: "Analyze this image and generate a detailed, descriptive prompt suitable for an AI image generator like Midjourney or Stable Diffusion. Focus on describing the main subjects, the environment, the art style (e.g., photograph, digital painting), lighting, colors, and overall mood."
-              },
-              {
-                type: "image_url",
-                image_url: { url: imageUrl }
-              }
-            ]
-          }
-        ]
-      };
-      const promptResponse = await fetch('https://text.pollinations.ai/openai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      if (!promptResponse.ok) {
-         throw new Error(`The AI model failed with status: ${promptResponse.status}`);
-      }
-      const promptResult = await promptResponse.json();
-      const promptText = promptResult.choices[0].message.content;
-      setGeneratedPrompt(promptText);
-    } catch (err: any) {
-       console.error("Prompt Generation Error:", err);
-       setError(err.message || 'An unknown error occurred during prompt generation.');
-    } finally {
-       setIsLoading(false);
-    }
+    };
   };
 
   const handleCopyPrompt = () => {
     if (!generatedPrompt) return;
     navigator.clipboard.writeText(generatedPrompt)
-      .then(() => {
-        // You can add a "Copied!" confirmation message here if you like
-      })
-      .catch(err => { // FIXED: The 'err' variable is now used
+      .catch(err => {
         console.error('Failed to copy prompt:', err); 
         setError('Failed to copy prompt to clipboard.');
       });
   };
 
-  // --- JSX ---
   return (
     <>
       <title>Promptigen: AI Image to Prompt Generator</title>
@@ -173,7 +179,7 @@ function PromptigenPage() {
                 <label className="block text-lg font-semibold text-gray-200 mb-2">Generated Prompt</label>
                 <textarea
                   readOnly
-                  value={isLoading ? "The AI is thinking..." : generatedPrompt}
+                  value={isLoading ? "The AI is analyzing the image..." : generatedPrompt}
                   placeholder="Your generated prompt will appear here..."
                   className="w-full flex-grow p-3 bg-gray-700 border border-gray-600 rounded-lg resize-none"
                 />
