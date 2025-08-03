@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
 const SCRIPT_URL = "https://esm.run/@google/generative-ai";
 
-// 1. تسلسل الموديلات بالترتيب الذي طلبته
 const MODEL_FALLBACK_CHAIN = [
   "gemini-2.5-flash-lite",
   "gemini-2.0-flash-lite",
@@ -33,10 +32,10 @@ function PromptigenPage() {
   const [error, setError] = useState<string | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const genAiInstanceRef = useRef<any>(null); // Ref لحفظ النسخة الرئيسية من GoogleGenerativeAI
-  const aiModuleRef = useRef<any>(null); // Ref لحفظ وحدة الذكاء الاصطناعي بأكملها
+  const genAiInstanceRef = useRef<any>(null);
+  const aiModuleRef = useRef<any>(null);
 
-  // --- التأثير الجانبي لتهيئة الذكاء الاصطناعي عند تحميل المكون ---
+  // --- التأثير الجانبي لتهيئة الذكاء الاصطناعي ---
   useEffect(() => {
     const initializeAI = async () => {
       try {
@@ -82,15 +81,12 @@ function PromptigenPage() {
     setError(null);
     setGeneratedPrompt('');
 
-    // 2. تعديل الـ "Prompt الخفي" ليتضمن حد الكلمات
     const masterPrompt = `Your mission is to act as an expert prompt engineer for AI image generators like Midjourney or Stable Diffusion. Analyze the uploaded image with extreme detail. Generate a single, coherent, and rich descriptive prompt that can replicate the image. 
     **CRITICAL CONSTRAINT: The final output prompt must NOT exceed 70 words. This is a strict limit. Be concise, impactful, and stay strictly within the word limit.**
     Focus on subject, environment, art style, composition, lighting, and color palette. End with powerful keywords like "highly detailed, 4k, cinematic". Output ONLY the final, ready-to-use prompt.`;
 
     const imagePart = await fileToGenerativePart(selectedFile);
-    let successful = false;
 
-    // --- حلقة الانتقال التلقائي بين الموديلات ---
     for (let i = 0; i < MODEL_FALLBACK_CHAIN.length; i++) {
       const modelName = MODEL_FALLBACK_CHAIN[i];
       try {
@@ -117,40 +113,32 @@ function PromptigenPage() {
         }
         
         setGeneratedPrompt(promptText);
-        successful = true;
         console.log(`Success with model: ${modelName}`);
-        break; // اخرج من الحلقة عند النجاح
+        break; 
 
       } catch (err: any) {
         const errorString = String(err);
         console.error(`Error with model ${modelName}:`, errorString);
 
-        // 3. نظام رسائل الأخطاء الاحترافي
-        // إذا كان الخطأ بسبب انتهاء الباقة
         if (errorString.includes('quota') || errorString.includes('429')) {
-          // إذا كان هذا هو آخر موديل في السلسلة، أظهر رسالة للمستخدم
           if (i === MODEL_FALLBACK_CHAIN.length - 1) {
             setError("The tool is currently experiencing high demand. Please try again in a few minutes.");
           }
-          // إذا لم يكن الأخير، لا تفعل شيئًا، ستستمر الحلقة للموديل التالي (fallback صامت)
           continue; 
         }
         
-        // إذا كان الخطأ بسبب مفتاح API غير صالح
         if (errorString.includes('API key not valid')) {
           setError("Tool is currently under re-activation. Please try again in 1 minute.");
-          break; // لا فائدة من المحاولة مرة أخرى
+          break;
         }
 
-        // إذا كان الخطأ بسبب اسم موديل غير صحيح أو غير متاح
         if (errorString.includes('400')) {
             setError("Invalid request. The AI model configuration is incorrect. Please contact support.");
             break; 
         }
 
-        // لأي خطأ آخر غير متوقع
         setError("An unexpected error occurred. Please try again.");
-        break; // اخرج من الحلقة
+        break;
       }
     }
 
