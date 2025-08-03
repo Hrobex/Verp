@@ -9,7 +9,6 @@ import {
   Zap,
   Wand2,
   Pencil,
-  Users, 
   Palette,
   SprayCan,
   Drama,   
