@@ -130,10 +130,10 @@ function AnimeGeneratorPage() {
     <>
       <title>Free AI Anime Generator | Create Anime Art From Text</title>
       <meta name="description" content="Bring your anime characters to life with our free AI anime generator. Turn text into high-quality anime art, illustrations, and characters in various styles." />
-      <link rel="canonical" href="https://aiconvert.online/ai-anime-generator" />
-      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/ai-anime-generator" />
-      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-anime-generator" /> 
-      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/ai-anime-generator" />
+      <link rel="canonical" href="https://aiconvert.online/anime-ai" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/anime-ai" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/anime-ai" /> 
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/anime-ai" />
       <script type="application/ld+json">
         {`
           {
