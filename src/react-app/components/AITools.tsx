@@ -10,7 +10,9 @@ import {
   Wand2,
   Pencil,
   Users, 
-  Palette
+  Palette,
+  drama, 
+  spray-can
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -32,6 +34,15 @@ const tools = [
     color: 'from-purple-500 to-purple-600',
     features: ['Multiple styles', 'High resolution', 'Commercial use'],
     image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop'
+  },
+    {
+    id: 'ai-anime-generator',
+    title: 'AI Anime Generator',
+    description: 'Create original anime characters and illustrations in various styles like Modern, 90s Retro, Chibi, and more.',
+    icon: spray-can,
+    color: 'from-pink-500 to-orange-600',
+    features: ['Multiple Styles', 'OC Creation', 'Free & Unlimited'],
+    image: 'https://images.unsplash.com/photo-1613376023733-0a752709423d?w=400&h=300&fit=crop'
   },
   {
     id: 'line-drawing',
@@ -64,7 +75,7 @@ const tools = [
   id: 'ai-face-merge',
   title: 'Mergify: AI Face Swap',
   description: 'Swap faces in any photo with surprising realism. Create fun and creative images by merging faces instantly with our advanced AI face swapper.',
-  icon: Users, // أيقونة مناسبة من Lucide React، يمكن تغييرها
+  icon: drama, 
   color: 'from-purple-500 to-fuchsia-600',
   features: ['Realistic AI Swaps', 'Group Photo Support', 'Privacy Focused'],
   image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop' // صورة مقترحة، يمكن تغييرها
