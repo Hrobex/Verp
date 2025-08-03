@@ -192,7 +192,6 @@ function DigiCartoonyPage() {
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
               <div className="text-center">
                   <h2 className="text-2xl font-bold">1. Upload Your Photo</h2>
-                  <p className="text-sm text-gray-400">Your image will be compressed for faster processing.</p>
               </div>
               <div 
                 onClick={() => sourceFileInputRef.current?.click()} 
@@ -211,7 +210,7 @@ function DigiCartoonyPage() {
                   onChange={(e) => setDetectFace(e.target.checked)}
                   className="h-5 w-5 rounded border-gray-500 bg-gray-800 text-teal-500 focus:ring-teal-400"
                 />
-                <label htmlFor="face-detect" className="text-gray-200">2. Focus on Face Only (Optional)</label>
+                <label htmlFor="face-detect" className="text-gray-200">2. Face Detect</label>
               </div>
 
               <button
