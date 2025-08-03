@@ -1,11 +1,13 @@
 import { useState, useRef } from 'react';
 
-// --- مفتاح API الخاص بك مدمج هنا مباشرة كما طلبت ---
+// --- مفتاح API الخاص بك مدمج هنا مباشرة ---
 const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
 
-// --- الوصول إلى المكتبة التي تم تحميلها في الخطوة 1 ---
-// @ts-ignore - نتجاهل خطأ 타입 سكريبت لأننا نعلم أن المكتبة محملة في window
-const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = window.google.generativeai;
+// ===================================================================
+// !!! هذا هو السطر الذي تم تعديله لحل مشكلة Vercel build !!!
+// ===================================================================
+const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = (window as any).google.generativeai;
+// ===================================================================
 
 // --- تهيئة الموديل ---
 const genAI = new GoogleGenerativeAI(API_KEY);
@@ -63,7 +65,7 @@ function PromptigenPage() {
       return;
     }
     // التأكد من أن المكتبة قد تم تحميلها قبل المتابعة
-    if (!window.google?.generativeai) {
+    if (!(window as any).google?.generativeai) {
         setError("AI library is not loaded. Please refresh the page.");
         return;
     }
