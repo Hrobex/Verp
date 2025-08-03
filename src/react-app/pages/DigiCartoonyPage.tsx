@@ -81,7 +81,7 @@ const faqData = [
 function DigiCartoonyPage() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourcePreview, setSourcePreview] = useState<string | null>(null);
-  const [detectFace, setDetectFace] = useState(false);
+  const [detectFace, setDetectFace] = useState(true);
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
