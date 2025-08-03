@@ -31,7 +31,7 @@ const faqData = [
         question: `Should I use Artigen V2 or Artigen Pro?`,
         answer: (
             <>
-                It depends on your goal. Use <strong className="text-yellow-400">Artigen V2</strong> when you want a unique, high-quality artistic interpretation of your idea. Use <Link to="/generate-image-pro" className="text-purple-400 hover:underline">Artigen Pro</Link> when you need more specific, genre-based styles like "Photographic," "Anime," or "Pixel Art."
+                It depends on your goal. Use <strong className="text-yellow-400">Artigen V2</strong> when you want a unique, high-quality artistic interpretation of your idea. Use <Link to="/generate-image-pro" className="text-purple-400 underline">Artigen Pro</Link> when you need more specific, genre-based styles like "Photographic," "Anime," or "Pixel Art."
             </>
         )
     },
@@ -222,7 +222,7 @@ function ArtigenV2Page() {
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
 
-            {/* --- Output Column (remains unchanged) --- */}
+            {/* --- Output Column --- */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col justify-center items-center h-96 lg:h-auto min-h-[28rem]">
               <div className="w-full h-full flex justify-center items-center border-2 border-dashed border-gray-600 rounded-lg relative">
                 {isLoading && (
@@ -251,7 +251,7 @@ function ArtigenV2Page() {
                   </div>
               </section>
 
-              {/* --- UPDATED How to Section --- */}
+              {/* --- How to Section --- */}
               <section className="mt-20 text-center">
                    <h2 className="text-3xl font-bold mb-4">How to Create with Artigen V2</h2>
                    <p className="max-w-3xl mx-auto text-gray-400 mb-12">Just three simple steps stand between your imagination and a finished piece of art.</p>
@@ -262,7 +262,7 @@ function ArtigenV2Page() {
                    </div>
               </section>
 
-              {/* --- FAQ Section (with updated answers) --- */}
+              {/* --- FAQ Section --- */}
               <section className="mt-20 max-w-4xl mx-auto">
                   <h2 className="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
                   <div className="space-y-6">
