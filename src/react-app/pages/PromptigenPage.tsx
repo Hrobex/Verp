@@ -18,7 +18,7 @@ async function fileToGenerativePart(file: File) {
 
 function PromptigenPage() {
   // --- حالات الواجهة الرسومية والبيانات ---
-  const [isAiReady, setIsAiReady] = useState(false); // حالة لتتبع جاهزية الذكاء الاصطناعي
+  const [isAiReady, setIsAiReady] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
@@ -26,23 +26,25 @@ function PromptigenPage() {
   const [error, setError] = useState<string | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const modelRef = useRef<any>(null); // Ref لحفظ نموذج الذكاء الاصطناعي
-  const aiModuleRef = useRef<any>(null); // Ref لحفظ وحدة الذكاء الاصطناعي بأكملها
+  const modelRef = useRef<any>(null);
+  const aiModuleRef = useRef<any>(null);
 
-  // --- التأثير الجانبي لتهيئة الذكاء الاصطناعي عند تحميل المكون ---
+  // --- التأثير الجانبي لتهيئة الذكاء الاصطناعي ---
   useEffect(() => {
     const initializeAI = async () => {
       try {
-        // الخطوة 1: استيراد المكتبة ديناميكيًا (الطريقة الصحيحة)
         const module = await import(SCRIPT_URL);
-        aiModuleRef.current = module; // حفظ الوحدة بأكملها للوصول إلى HarmCategory لاحقًا
-
-        // الخطوة 2: تهيئة النموذج وحفظه
-        const genAI = new module.GoogleGenerativeAI(API_KEY);
-        modelRef.current = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
+        aiModuleRef.current = module;
         
-        console.log("AI Initialized Successfully.");
-        setIsAiReady(true); // الإشارة إلى أن كل شيء جاهز
+        const genAI = new module.GoogleGenerativeAI(API_KEY);
+
+        // ===================================================================
+        // !!! أعتذر بشدة. هذا هو السطر الصحيح الذي طلبته أنت من البداية !!!
+        // ===================================================================
+        modelRef.current = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+        
+        console.log("AI Initialized Successfully with the CORRECT model: gemini-2.5-flash-lite.");
+        setIsAiReady(true);
       } catch (e) {
         console.error("AI Initialization Failed:", e);
         setError("Could not initialize the AI model. Please refresh the page.");
@@ -50,7 +52,7 @@ function PromptigenPage() {
     };
     
     initializeAI();
-  }, []); // [] تضمن تشغيل هذا الكود مرة واحدة فقط
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -109,8 +111,12 @@ function PromptigenPage() {
        let errorMessage = err.message || 'An unknown error occurred.';
        if (String(errorMessage).includes('API key not valid')) {
           errorMessage = "Authentication failed. The API key is not valid.";
+       } else if (String(errorMessage).includes('quota')) {
+          errorMessage = "Quota exceeded for the current model. Please try again later.";
        } else if (String(errorMessage).includes('safety')) {
           errorMessage = "The image could not be processed due to safety restrictions.";
+       } else if (String(errorMessage).includes('400')) {
+          errorMessage = "Invalid request. The AI model might not exist or is not available. Please check the model name."
        }
        setError(errorMessage);
     } finally {
