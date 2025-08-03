@@ -1,8 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 
-// --- الثوابت ---
+// --- الثوابت الأساسية ---
 const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
 const SCRIPT_URL = "https://esm.run/@google/generative-ai";
+
+// 1. تسلسل الموديلات بالترتيب الذي طلبته
+const MODEL_FALLBACK_CHAIN = [
+  "gemini-2.5-flash-lite",
+  "gemini-2.0-flash-lite",
+  "gemini-2.5-flash"
+];
 
 // --- دالة مساعدة لتحويل الصورة ---
 async function fileToGenerativePart(file: File) {
@@ -26,24 +33,18 @@ function PromptigenPage() {
   const [error, setError] = useState<string | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const modelRef = useRef<any>(null);
-  const aiModuleRef = useRef<any>(null);
+  const genAiInstanceRef = useRef<any>(null); // Ref لحفظ النسخة الرئيسية من GoogleGenerativeAI
+  const aiModuleRef = useRef<any>(null); // Ref لحفظ وحدة الذكاء الاصطناعي بأكملها
 
-  // --- التأثير الجانبي لتهيئة الذكاء الاصطناعي ---
+  // --- التأثير الجانبي لتهيئة الذكاء الاصطناعي عند تحميل المكون ---
   useEffect(() => {
     const initializeAI = async () => {
       try {
         const module = await import(SCRIPT_URL);
         aiModuleRef.current = module;
+        genAiInstanceRef.current = new module.GoogleGenerativeAI(API_KEY);
         
-        const genAI = new module.GoogleGenerativeAI(API_KEY);
-
-        // ===================================================================
-        // !!! أعتذر بشدة. هذا هو السطر الصحيح الذي طلبته أنت من البداية !!!
-        // ===================================================================
-        modelRef.current = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
-        
-        console.log("AI Initialized Successfully with the CORRECT model: gemini-2.5-flash-lite.");
+        console.log("AI Services Initialized Successfully.");
         setIsAiReady(true);
       } catch (e) {
         console.error("AI Initialization Failed:", e);
@@ -81,47 +82,79 @@ function PromptigenPage() {
     setError(null);
     setGeneratedPrompt('');
 
-    try {
-      const { HarmCategory, HarmBlockThreshold } = aiModuleRef.current;
-      const safetySettings = [
-        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-      ];
-      
-      const masterPrompt = `Your mission is to act as an expert prompt engineer for AI image generators like Midjourney or Stable Diffusion. Analyze the uploaded image with extreme detail. Generate a single, coherent, and rich descriptive prompt that can replicate the image. **CRITICAL:** Focus on subject, environment, art style, composition, lighting, and color palette. End with a list of powerful keywords like "highly detailed, 4k, cinematic". Output ONLY the final, ready-to-use prompt.`;
-      
-      const imagePart = await fileToGenerativePart(selectedFile);
+    // 2. تعديل الـ "Prompt الخفي" ليتضمن حد الكلمات
+    const masterPrompt = `Your mission is to act as an expert prompt engineer for AI image generators like Midjourney or Stable Diffusion. Analyze the uploaded image with extreme detail. Generate a single, coherent, and rich descriptive prompt that can replicate the image. 
+    **CRITICAL CONSTRAINT: The final output prompt must NOT exceed 70 words. This is a strict limit. Be concise, impactful, and stay strictly within the word limit.**
+    Focus on subject, environment, art style, composition, lighting, and color palette. End with powerful keywords like "highly detailed, 4k, cinematic". Output ONLY the final, ready-to-use prompt.`;
 
-      const result = await modelRef.current.generateContent({
-        contents: [{ role: "user", parts: [imagePart, { text: masterPrompt }] }],
-        safetySettings,
-      });
+    const imagePart = await fileToGenerativePart(selectedFile);
+    let successful = false;
 
-      const promptText = result.response.text();
+    // --- حلقة الانتقال التلقائي بين الموديلات ---
+    for (let i = 0; i < MODEL_FALLBACK_CHAIN.length; i++) {
+      const modelName = MODEL_FALLBACK_CHAIN[i];
+      try {
+        console.log(`Attempting to generate content with model: ${modelName}`);
 
-      if (!promptText) {
-        throw new Error("Received an empty response from the AI model.");
+        const model = genAiInstanceRef.current.getGenerativeModel({ model: modelName });
+        const { HarmCategory, HarmBlockThreshold } = aiModuleRef.current;
+        const safetySettings = [
+          { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+          { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+          { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+          { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+        ];
+
+        const result = await model.generateContent({
+          contents: [{ role: "user", parts: [imagePart, { text: masterPrompt }] }],
+          safetySettings,
+        });
+
+        const promptText = result.response.text();
+
+        if (!promptText) {
+          throw new Error("Received an empty response from the AI model.");
+        }
+        
+        setGeneratedPrompt(promptText);
+        successful = true;
+        console.log(`Success with model: ${modelName}`);
+        break; // اخرج من الحلقة عند النجاح
+
+      } catch (err: any) {
+        const errorString = String(err);
+        console.error(`Error with model ${modelName}:`, errorString);
+
+        // 3. نظام رسائل الأخطاء الاحترافي
+        // إذا كان الخطأ بسبب انتهاء الباقة
+        if (errorString.includes('quota') || errorString.includes('429')) {
+          // إذا كان هذا هو آخر موديل في السلسلة، أظهر رسالة للمستخدم
+          if (i === MODEL_FALLBACK_CHAIN.length - 1) {
+            setError("The tool is currently experiencing high demand. Please try again in a few minutes.");
+          }
+          // إذا لم يكن الأخير، لا تفعل شيئًا، ستستمر الحلقة للموديل التالي (fallback صامت)
+          continue; 
+        }
+        
+        // إذا كان الخطأ بسبب مفتاح API غير صالح
+        if (errorString.includes('API key not valid')) {
+          setError("Tool is currently under re-activation. Please try again in 1 minute.");
+          break; // لا فائدة من المحاولة مرة أخرى
+        }
+
+        // إذا كان الخطأ بسبب اسم موديل غير صحيح أو غير متاح
+        if (errorString.includes('400')) {
+            setError("Invalid request. The AI model configuration is incorrect. Please contact support.");
+            break; 
+        }
+
+        // لأي خطأ آخر غير متوقع
+        setError("An unexpected error occurred. Please try again.");
+        break; // اخرج من الحلقة
       }
-      setGeneratedPrompt(promptText);
-
-    } catch (err: any) {
-       console.error("Prompt Generation Error:", err);
-       let errorMessage = err.message || 'An unknown error occurred.';
-       if (String(errorMessage).includes('API key not valid')) {
-          errorMessage = "Authentication failed. The API key is not valid.";
-       } else if (String(errorMessage).includes('quota')) {
-          errorMessage = "Quota exceeded for the current model. Please try again later.";
-       } else if (String(errorMessage).includes('safety')) {
-          errorMessage = "The image could not be processed due to safety restrictions.";
-       } else if (String(errorMessage).includes('400')) {
-          errorMessage = "Invalid request. The AI model might not exist or is not available. Please check the model name."
-       }
-       setError(errorMessage);
-    } finally {
-       setIsLoading(false);
     }
+
+    setIsLoading(false);
   };
 
   const handleCopyPrompt = () => {
