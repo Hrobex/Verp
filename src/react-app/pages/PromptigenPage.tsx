@@ -19,7 +19,6 @@ function PromptigenPage() {
       setSelectedFile(file);
       setError(null);
       
-      // Create a preview URL for the selected image
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -39,45 +38,31 @@ function PromptigenPage() {
     setGeneratedPrompt('');
     let imageUrl = '';
 
-    // Step 1: Upload the image to Pollinations to get a public URL
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
-
       const uploadResponse = await fetch('https://image.pollinations.ai/upload', {
         method: 'POST',
         body: formData,
       });
-
       if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        throw new Error(`Image upload failed: ${errorText}`);
+        throw new Error(`Image upload failed with status: ${uploadResponse.status}`);
       }
-      
       const uploadResult = await uploadResponse.json();
-      // Assuming the response has a 'url' or similar key. Adjust if necessary.
-      imageUrl = uploadResult.url; 
-      
-      if(!imageUrl) {
-        // Fallback check if the key is different, e.g., 'ipfs_url'
-        imageUrl = uploadResult.ipfs_url;
-      }
-
-      if(!imageUrl) {
+      imageUrl = uploadResult.url || uploadResult.ipfs_url;
+      if (!imageUrl) {
           throw new Error('Could not retrieve a public URL for the uploaded image.');
       }
-
     } catch (err) {
+      console.error("Image Upload Error:", err);
       setError('Failed to prepare the image for analysis. Please try again.');
       setIsLoading(false);
-      console.error(err);
       return;
     }
     
-    // Step 2: Send the image URL to the vision model for analysis
     try {
       const payload = {
-        model: "claude-hybridspace", // Fast and high-quality model for vision
+        model: "claude-hybridspace",
         messages: [
           {
             role: "user",
@@ -88,33 +73,26 @@ function PromptigenPage() {
               },
               {
                 type: "image_url",
-                image_url: {
-                  url: imageUrl
-                }
+                image_url: { url: imageUrl }
               }
             ]
           }
         ]
       };
-
       const promptResponse = await fetch('https://text.pollinations.ai/openai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-
       if (!promptResponse.ok) {
-         const errorText = await promptResponse.text();
-         throw new Error(`The AI model failed to respond. Details: ${errorText}`);
+         throw new Error(`The AI model failed with status: ${promptResponse.status}`);
       }
-
       const promptResult = await promptResponse.json();
       const promptText = promptResult.choices[0].message.content;
       setGeneratedPrompt(promptText);
-
     } catch (err: any) {
+       console.error("Prompt Generation Error:", err);
        setError(err.message || 'An unknown error occurred during prompt generation.');
-       console.error(err);
     } finally {
        setIsLoading(false);
     }
@@ -124,9 +102,10 @@ function PromptigenPage() {
     if (!generatedPrompt) return;
     navigator.clipboard.writeText(generatedPrompt)
       .then(() => {
-        // Optional: show a temporary "Copied!" message
+        // You can add a "Copied!" confirmation message here if you like
       })
-      .catch(err => {
+      .catch(err => { // FIXED: The 'err' variable is now used
+        console.error('Failed to copy prompt:', err); 
         setError('Failed to copy prompt to clipboard.');
       });
   };
@@ -210,7 +189,7 @@ function PromptigenPage() {
             </div>
           </div>
           
-          {/* المحتوى الإضافي الذي ستملأه لاحقًا سيوضع هنا */}
+          {/* Your additional content will go here */}
           
         </main>
       </div>
