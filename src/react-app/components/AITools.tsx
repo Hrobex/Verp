@@ -11,7 +11,10 @@ import {
   Pencil,
   Palette,
   SprayCan,
-  Drama,   
+  Drama, 
+  Smile,
+  Paintbrush
+  
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -78,6 +81,24 @@ const tools = [
   color: 'from-purple-500 to-fuchsia-600',
   features: ['Realistic AI Swaps', 'Group Photo Support', 'Privacy Focused'],
   image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop' // صورة مقترحة، يمكن تغييرها
+  },
+  {
+    id: 'cartoonify',
+    title: 'Cartoonify Yourself',
+    description: 'Instantly turn your photo into a fun, 2D-style cartoon with a single click. Perfect for profile pictures and social media!',
+    icon: Smile, 
+    color: 'from-rose-400 to-purple-600',
+    features: ['Instant Conversion', 'Classic 2D Style', 'Free & Simple'],
+    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop'
+  },
+  {
+    id: 'cartoony-art',
+    title: 'DigiCartoony: Photo to Digital Art',
+    description: 'Elevate your photos into high-quality digital paintings with a unique, artistic style and detailed rendering.',
+    icon: Paintbrush, 
+    color: 'from-teal-500 to-cyan-600',
+    features: ['Digital Painting Style', 'Face Detection', 'High-Quality Art'],
+    image: 'https://images.unsplash.com/photo-1582573514932-349103231f16?w=400&h=300&fit=crop'
   },
   {
     id: 'ai-image-enhancer',
