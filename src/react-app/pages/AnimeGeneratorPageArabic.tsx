@@ -133,10 +133,10 @@ function AnimeGeneratorPageArabic() {
     <>
       <title>مولد أنمي مجاني بالذكاء الاصطناعي | أنشئ صور أنمي من النص</title>
       <meta name="description" content="حوّل أفكارك إلى حقيقة مع مولد الأنمي المجاني بالذكاء الاصطناعي. صمم شخصيات ورسومات أنمي فريدة بأنماط متنوعة وعالية الجودة." />
-      <link rel="canonical" href="https://aiconvert.online/ar/ai-anime-generator" />
-      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/ai-anime-generator" />
-      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-anime-generator" />
-      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/ai-anime-generator" />
+      <link rel="canonical" href="https://aiconvert.online/ar/anime-ai" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/anime-ai" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/anime-ai" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/anime-ai" />
       <script type="application/ld+json">
         {`
           {
