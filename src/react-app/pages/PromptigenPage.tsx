@@ -3,25 +3,7 @@ import { useState, useRef } from 'react';
 // --- مفتاح API الخاص بك مدمج هنا مباشرة ---
 const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
 
-// ===================================================================
-// !!! هذا هو السطر الذي تم تعديله لحل مشكلة Vercel build !!!
-// ===================================================================
-const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = (window as any).google.generativeai;
-// ===================================================================
-
-// --- تهيئة الموديل ---
-const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
-
-// --- إعدادات السلامة ---
-const safetySettings = [
-  { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-];
-
-// --- دالة مساعدة لتحويل الصورة ---
+// --- دالة مساعدة لتحويل الصورة (تبقى كما هي) ---
 async function fileToGenerativePart(file: File) {
   const base64EncodedDataPromise = new Promise((resolve) => {
     const reader = new FileReader();
@@ -41,6 +23,9 @@ function PromptigenPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // --- سنحتفظ بنسخة من الموديل هنا لتجنب إعادة تهيئته في كل مرة ---
+  const modelRef = useRef<any>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -64,23 +49,45 @@ function PromptigenPage() {
       setError('Please upload an image first.');
       return;
     }
-    // التأكد من أن المكتبة قد تم تحميلها قبل المتابعة
-    if (!(window as any).google?.generativeai) {
-        setError("AI library is not loaded. Please refresh the page.");
-        return;
-    }
-
+    
     setIsLoading(true);
     setError(null);
     setGeneratedPrompt('');
 
     try {
+      // !!! تم نقل كل هذا الجزء من الأعلى إلى هنا !!!
+      // هذا هو التغيير الجوهري الذي يحل المشكلة
+      // لن نقوم بتهيئة الموديل إلا عند الحاجة إليه
+      if (!modelRef.current) {
+        // 1. نتأكد أن المكتبة تم تحميلها
+        if (!(window as any).google?.generativeai) {
+          throw new Error("AI library not loaded. Please wait a moment and try again, or refresh the page.");
+        }
+        
+        // 2. نستدعي المكتبة ونجهز الإعدادات
+        const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = (window as any).google.generativeai;
+        const genAI = new GoogleGenerativeAI(API_KEY);
+        
+        // 3. نحفظ الموديل في الـ ref لاستخدامه لاحقًا
+        modelRef.current = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
+      }
+
+      // إعدادات السلامة
+      const { HarmCategory, HarmBlockThreshold } = (window as any).google.generativeai;
+      const safetySettings = [
+        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+      ];
+
       // الـ "Prompt الخفي" الاحترافي
       const masterPrompt = `Your mission is to act as an expert prompt engineer for AI image generators like Midjourney or Stable Diffusion. Analyze the uploaded image with extreme detail. Generate a single, coherent, and rich descriptive prompt that can replicate the image. **CRITICAL:** Focus on subject, environment, art style, composition, lighting, and color palette. End with a list of powerful keywords like "highly detailed, 4k, cinematic". Output ONLY the final, ready-to-use prompt.`;
 
       const imagePart = await fileToGenerativePart(selectedFile);
 
-      const result = await model.generateContent({
+      // نستخدم الموديل المحفوظ في الـ ref
+      const result = await modelRef.current.generateContent({
         contents: [{ role: "user", parts: [imagePart, {text: masterPrompt}] }],
         safetySettings,
       });
@@ -95,10 +102,10 @@ function PromptigenPage() {
 
     } catch (err: any) {
        console.error("Prompt Generation Error:", err);
-       let errorMessage = 'An unknown error occurred during analysis.';
-       if (err.message.includes('API key not valid')) {
+       let errorMessage = err.message || 'An unknown error occurred during analysis.';
+       if (String(errorMessage).includes('API key not valid')) {
           errorMessage = "Authentication failed. The API key is not valid.";
-       } else if (err.message.includes('safety')) {
+       } else if (String(errorMessage).includes('safety')) {
           errorMessage = "The image could not be processed due to safety restrictions.";
        }
        setError(errorMessage);
@@ -116,6 +123,7 @@ function PromptigenPage() {
   };
 
   return (
+    // ... محتوى الـ JSX لم يتغير ...
     <>
       <title>Promptigen: AI Image to Prompt Generator</title>
       <meta name="description" content="Turn any image into a detailed descriptive prompt. Use our free AI tool to analyze a picture and generate the perfect text prompt for AI image generators." />
