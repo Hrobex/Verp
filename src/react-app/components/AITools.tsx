@@ -35,7 +35,7 @@ const tools = [
     image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop'
   },
     {
-    id: 'ai-anime',
+    id: 'anime-ai',
     title: 'AI Anime Generator',
     description: 'Create original anime characters and illustrations in various styles like Modern, 90s Retro, Chibi, and more.',
     icon: SprayCan,
