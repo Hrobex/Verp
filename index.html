@@ -30,23 +30,5 @@
 
     <!-- The entry point for your application's JavaScript. -->
     <script type="module" src="/src/main.tsx"></script>
-    <!-- =================================================================== -->
-<!--  الكود الذكي لتحميل مكتبة Google AI عند الحاجة فقط  -->
-<!-- =================================================================== -->
-<script>
-  (function() {
-    const currentPath = window.location.pathname;
-    const targetPaths = ['/prompt-generator', '/ar/prompt-generator'];
-
-    // تحقق مما إذا كان المسار الحالي يطابق أحد المسارات المستهدفة
-    if (targetPaths.includes(currentPath)) {
-      // إذا تطابق، قم بإنشاء وإضافة وسم السكريبت لتحميل المكتبة
-      const script = document.createElement('script');
-      script.type = 'module';
-      script.src = 'https://esm.run/@google/generative-ai';
-      document.head.appendChild(script);
-    }
-  })();
-</script>
   </body>
 </html>
