@@ -18,8 +18,8 @@ import ImageEnhancerPage from "@/react-app/pages/ImageEnhancerPage";
 import FaceMergePage from "@/react-app/pages/FaceMergePage";
 import ArtigenV2Page from "@/react-app/pages/ArtigenV2Page";
 import AnimeGeneratorPage from "@/react-app/pages/AnimeGeneratorPage";
-import CartoonifyPage from "@/react-app/pages/CartoonifyPage"; // <-- 1. تم استيراد المكون الجديد
-import DigiCartoonyPage from "@/react-app/pages/DigiCartoonyPage"; // <-- 2. تم استيراد المكون الجديد
+import CartoonifyPage from "@/react-app/pages/CartoonifyPage";
+import DigiCartoonyPage from "@/react-app/pages/DigiCartoonyPage";
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -31,6 +31,8 @@ import ImageEnhancerPageArabic from "@/react-app/pages/ImageEnhancerPageArabic";
 import FaceMergePageArabic from "@/react-app/pages/FaceMergePageArabic";
 import ArtigenV2PageArabic from "@/react-app/pages/ArtigenV2PageArabic";
 import AnimeGeneratorPageArabic from "@/react-app/pages/AnimeGeneratorPageArabic";
+import CartoonifyPageArabic from "@/react-app/pages/CartoonifyPageArabic"; // <-- 1. تم استيراد المكون العربي الجديد
+import DigiCartoonyPageArabic from "@/react-app/pages/DigiCartoonyPageArabic"; // <-- 2. تم استيراد المكون العربي الجديد
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -51,8 +53,8 @@ createRoot(document.getElementById("root")!).render(
           <Route path="ai-face-merge" element={<FaceMergePage />} />
           <Route path="artigenv2" element={<ArtigenV2Page />} />
           <Route path="anime-ai" element={<AnimeGeneratorPage />} />
-          <Route path="cartoonify" element={<CartoonifyPage />} /> {/* <-- 3. تم إضافة المسار الجديد هنا */}
-          <Route path="cartoony-art" element={<DigiCartoonyPage />} /> {/* <-- 4. تم إضافة المسار الجديد هنا */}
+          <Route path="cartoonify" element={<CartoonifyPage />} />
+          <Route path="cartoony-art" element={<DigiCartoonyPage />} />
 
 
           {/* --- Arabic Route Group --- */}
@@ -66,6 +68,8 @@ createRoot(document.getElementById("root")!).render(
             <Route path="ai-face-merge" element={<FaceMergePageArabic />} />
             <Route path="artigenv2" element={<ArtigenV2PageArabic />} />
             <Route path="anime-ai" element={<AnimeGeneratorPageArabic />} />
+            <Route path="cartoonify" element={<CartoonifyPageArabic />} /> {/* <-- 3. تم إضافة المسار العربي الجديد هنا */}
+            <Route path="cartoony-art" element={<DigiCartoonyPageArabic />} /> {/* <-- 4. تم إضافة المسار العربي الجديد هنا */}
           </Route>
           
         </Route>
