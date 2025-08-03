@@ -34,7 +34,7 @@ const faqData = [
         question: 'متى أستخدم Artigen V2 ومتى أستخدم Artigen Pro؟',
         answer: (
             <>
-                الأمر يعتمد على هدفك. استخدم <strong className="text-yellow-400">Artigen V2</strong> عندما تبحث عن تفسير فني فريد وعالي الجودة لفكرتك. واستخدم <Link to="/ar/generate-image-pro" className="text-purple-400 hover:underline">Artigen Pro</Link> عندما تحتاج إلى أنماط أكثر تحديدًا مثل "فوتوغرافي"، "أنمي"، أو "فن البكسل".
+                الأمر يعتمد على هدفك. استخدم <strong className="text-yellow-400">Artigen V2</strong> عندما تبحث عن تفسير فني فريد وعالي الجودة لفكرتك. واستخدم <Link to="/ar/generate-image-pro" className="text-purple-400 underline">Artigen Pro</Link> عندما تحتاج إلى أنماط أكثر تحديدًا مثل "فوتوغرافي"، "أنمي"، أو "فن البكسل".
             </>
         )
     },
@@ -225,7 +225,7 @@ function ArtigenV2PageArabic() {
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
 
-            {/* --- عمود النتائج (بدون تغيير) --- */}
+            {/* --- عمود النتائج --- */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col justify-center items-center h-96 lg:h-auto min-h-[28rem]">
               <div className="w-full h-full flex justify-center items-center border-2 border-dashed border-gray-600 rounded-lg relative">
                 {isLoading && (
@@ -242,7 +242,7 @@ function ArtigenV2PageArabic() {
           </div>
 
           <div className="mt-24">
-              {/* --- قسم المزايا (بدون تغيير) --- */}
+              {/* --- قسم المزايا --- */}
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">فنان ذكاء اصطناعي لأفكارك الإبداعية</h2>
                   <p className="max-w-3xl mx-auto text-gray-400 mb-12">Artigen V2 هو أكثر من مجرد أداة؛ إنه شريكك في الإبداع. لقد ركزنا على الجودة الفنية لتتمكن أنت من التركيز على رؤيتك.</p>
@@ -254,7 +254,7 @@ function ArtigenV2PageArabic() {
                   </div>
               </section>
               
-              {/* --- تم التحديث: قسم كيفية الاستخدام --- */}
+              {/* --- قسم كيفية الاستخدام --- */}
               <section className="mt-20 text-center">
                    <h2 className="text-3xl font-bold mb-4">كيف تنشئ لوحة فنية مع Artigen V2</h2>
                    <p className="max-w-3xl mx-auto text-gray-400 mb-12">ثلاث خطوات بسيطة فقط تفصل بين خيالك وعمل فني مكتمل.</p>
@@ -265,7 +265,7 @@ function ArtigenV2PageArabic() {
                    </div>
               </section>
 
-              {/* --- تم التحديث: قسم الأسئلة الشائعة --- */}
+              {/* --- قسم الأسئلة الشائعة --- */}
               <section className="mt-20 max-w-4xl mx-auto">
                   <h2 className="text-3xl font-bold text-center mb-10">أسئلة شائعة</h2>
                   <div className="space-y-6">
