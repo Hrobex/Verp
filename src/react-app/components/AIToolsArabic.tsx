@@ -35,7 +35,7 @@ const toolsArabic = [
     image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop'
   },
     {
-    id: 'ai-anime',
+    id: 'anime-ai',
     title: 'مولد صور الأنمي',
     description: 'أنشئ شخصيات ورسومات أنمي أصلية بأنماط متنوعة مثل الحديث، التسعينات، تشيبي، وغيرها.',
     icon: SprayCan, 
