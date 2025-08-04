@@ -55,6 +55,15 @@ const toolsArabic = [
     image: 'https://images.unsplash.com/photo-1608447047976-50a1b6a71404?w=400&h=300&fit=crop'
   },
   {
+  "id": "prompt-generator",
+  "title": "Promptigen: تحويل الصورة إلى وصف نصي",
+  "description": "حوّل أي صورة إلى وصف نصي احترافي لاستخدامه في مولدات الصور بالذكاء الاصطناعي مثل ميدجورني.",
+  "icon": Pencil,
+  "color": "from-sky-500 to-violet-600",
+  "features": ["هندسة عكسية للصور", "أوصاف نصية احترافية", "مجاني وغير محدود"],
+  "image": "YOUR_UNSPLASH_IMAGE_URL_HERE?w=400&h=300&fit=crop"
+  },
+  {
     id: 'remove-background',
     title: 'إزالة الخلفية',
     description: 'أزل الخلفيات من أي صورة على الفور بدقة فائقة بفضل الذكاء الاصطناعي الذي يتعامل مع الحواف المعقدة بشكل مثالي.',
