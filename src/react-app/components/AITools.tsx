@@ -110,6 +110,15 @@ const tools = [
     image: 'https://images.unsplash.com/photo-1582573514932-349103231f16?w=400&h=300&fit=crop'
   },
   {
+  "id": "ai-story-generator",
+  "title": "Storygen: AI Story Generator",
+  "description": "Unleash your creativity. Turn any picture into a unique, narrative-driven story with our advanced AI.",
+  "icon": Pencil,
+  "color": "from-indigo-500 to-violet-600",
+  "features": ["Deep Narrative AI", "Multi-Lingual Writer", "Instant Inspiration"],
+  "image": "YOUR_UNSPLASH_IMAGE_URL_HERE?w=400&h=300&fit=crop"
+  },
+  {
     id: 'ai-image-enhancer',
     title: 'Image Enhancement',
     description: 'Upscale and enhance your images with AI. Increase resolution while maintaining quality.',
