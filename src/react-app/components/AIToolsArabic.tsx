@@ -109,6 +109,15 @@ const toolsArabic = [
     image: 'https://images.unsplash.com/photo-1582573514932-349103231f16?w=400&h=300&fit=crop'
   },
   {
+  "id": "ai-story-generator",
+  "title": "Storygen: مولد القصص بالذكاء الاصطناعي",
+  "description": "أطلق العنان لإبداعك. حوّل أي صورة إلى قصة فريدة قائمة على السرد باستخدام الذكاء الاصطناعي المتطور.",
+  "icon": Pencil,
+  "color": "from-indigo-500 to-violet-600",
+  "features": ["سرد قصصي عميق", "كاتب متعدد اللغات", "إلهام فوري"],
+  "image": "YOUR_UNSPLASH_IMAGE_URL_HERE?w=400&h=300&fit=crop"
+  },
+  {
     id: 'ai-image-enhancer',
     title: 'تحسين جودة الصور',
     description: 'قم بترقية وتحسين صورك باستخدام الذكاء الاصطناعي. زد الدقة مع الحفاظ على الجودة.',
