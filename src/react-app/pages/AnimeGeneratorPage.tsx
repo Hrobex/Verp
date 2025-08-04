@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-// --- Data Constants ---
+// --- Data Constants (Safe for frontend) ---
 
 const sizeOptions = [
   { label: 'Square (1024x1024)', value: '1024x1024' },
@@ -9,26 +9,10 @@ const sizeOptions = [
 ];
 
 const animeStyleOptions = [
-    { 
-        id: 'modern', 
-        name: 'Modern Style', 
-        prompt_suffix: ', modern anime style, digital illustration, studio quality, vibrant colors, clean line art, sharp details' 
-    },
-    { 
-        id: 'retro', 
-        name: '90s Retro', 
-        prompt_suffix: ', 90s anime screenshot, retro art style, cel-shaded, muted colors, subtle film grain, nostalgic aesthetic' 
-    },
-    { 
-        id: 'chibi', 
-        name: 'Chibi Style', 
-        prompt_suffix: ', cute chibi style, super deformed, kawaii, clean line art, vibrant, sticker design' 
-    },
-    { 
-        id: 'painterly', 
-        name: 'Painterly', 
-        prompt_suffix: ', ghibli-inspired art style, beautiful detailed background, painterly, whimsical, soft colors, hand-drawn aesthetic' 
-    }
+    { id: 'modern', name: 'Modern Style' },
+    { id: 'retro', name: '90s Retro' },
+    { id: 'chibi', name: 'Chibi Style' },
+    { id: 'painterly', name: 'Painterly' }
 ];
 
 const faqData = [
@@ -53,7 +37,7 @@ const faqData = [
 function AnimeGeneratorPage() {
   const [prompt, setPrompt] = useState('');
   const [selectedSize, setSelectedSize] = useState('1024x1024');
-  const [selectedAnimeStyle, setSelectedAnimeStyle] = useState('modern'); // Default to 'modern'
+  const [selectedAnimeStyle, setSelectedAnimeStyle] = useState('modern');
   const [imageUrl, setImageUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,41 +53,42 @@ function AnimeGeneratorPage() {
     setError(null);
     setImageUrl('');
 
-    let translatedPrompt = userPrompt;
     try {
-      const langPair = "ar|en"; 
-      const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(userPrompt)}&langpair=${langPair}&mt=1`;
-      const translateResponse = await fetch(apiUrl);
-      if (translateResponse.ok) {
-        const translateData = await translateResponse.json();
-        if (translateData.responseData?.translatedText) {
-          translatedPrompt = translateData.responseData.translatedText;
+        // استدعاء الواجهة الخلفية الجديدة
+        const response = await fetch('/api/generate-anime', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userPrompt: userPrompt,
+                styleId: selectedAnimeStyle,
+                size: selectedSize,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to generate image.');
         }
-      }
-    } catch (err) {
-      console.error("Translation API failed, using original prompt:", err);
+
+        const generatedUrl = data.imageUrl;
+        
+        // التحقق من أن الصورة تم تحميلها في المتصفح قبل عرضها
+        const img = new Image();
+        img.src = generatedUrl;
+        img.onload = () => {
+            setImageUrl(generatedUrl);
+            setIsLoading(false);
+        };
+        img.onerror = () => {
+            setError('Failed to load the generated image. The AI service might be busy.');
+            setIsLoading(false);
+        };
+
+    } catch (err: any) {
+        setError(err.message);
+        setIsLoading(false);
     }
-
-    const styleSuffix = animeStyleOptions.find(s => s.id === selectedAnimeStyle)?.prompt_suffix || '';
-    const finalPrompt = translatedPrompt + styleSuffix;
-    const [width, height] = selectedSize.split('x');
-    const encodedPrompt = encodeURIComponent(finalPrompt);
-    const seed = Date.now();
-
-    const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
-
-    const img = new Image();
-    img.src = constructedUrl;
-
-    img.onload = () => {
-      setImageUrl(constructedUrl);
-      setIsLoading(false);
-    };
-
-    img.onerror = () => {
-      setError('Failed to create the image. The AI service may be busy. Please try again.');
-      setIsLoading(false);
-    };
   };
   
   const handleDownloadClick = async () => {
