@@ -1,14 +1,8 @@
-// الملف: api/generate-prompt.ts
+// الملف: api/generate-prompt.ts (يجب أن يكون بهذا الشكل)
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
-const MODEL_FALLBACK_CHAIN = [
-  "gemini-2.5-flash-lite",
-  "gemini-2.0-flash-lite",
-  "gemini-2.5-flash",
-  "gemini-1.5-flash-latest",
-  "gemini-pro-vision"
-];
+const MODEL_FALLBACK_CHAIN = [ "gemini-2.5-flash-lite", "gemini-2.0-flash-lite", "gemini-2.5-flash", "gemini-1.5-flash-latest", "gemini-pro-vision" ];
 const MASTER_PROMPT = `Your mission is to act as an expert prompt engineer for AI image generators like Midjourney or Stable Diffusion. Analyze the uploaded image with extreme detail. Generate a single, coherent, and rich descriptive prompt that can replicate the image. **CRITICAL CONSTRAINT: The final output prompt must NOT exceed 70 words. This is a strict limit. Be concise, impactful, and stay strictly within the word limit.** Focus on subject, environment, art style, composition, lighting, and color palette. End with powerful keywords like "highly detailed, 4k, cinematic". Output ONLY the final, ready-to-use prompt.`;
 const SAFETY_SETTINGS = [{ category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" }, { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" }, { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" }, { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" }];
 
@@ -19,9 +13,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     try {
         const { imageData, mimeType } = req.body;
-        if (!imageData || !mimeType) {
-            return res.status(400).json({ error: 'Image data and mimeType are required.' });
-        }
+        if (!imageData || !mimeType) { return res.status(400).json({ error: 'Image data and mimeType are required.' }); }
         let finalResultText = null;
         for (const modelName of MODEL_FALLBACK_CHAIN) {
             try {
@@ -34,7 +26,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     finalResultText = generatedText.trim();
                     break;
                 } else { throw new Error(`Empty response from ${modelName}`); }
-            } catch (error) { /* Continue to next model */ }
+            } catch (error) { /* Continue */ }
         }
         if (finalResultText) {
             return res.status(200).json({ generatedPrompt: finalResultText });
