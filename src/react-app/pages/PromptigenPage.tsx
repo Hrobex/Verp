@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 
 // --- الثوابت الأساسية ---
-const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc"; 
+const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
 const SCRIPT_URL = "https://esm.run/@google/generative-ai";
 
+// --- سلسلة النماذج الأصلية الخاصة بك ---
 const MODEL_FALLBACK_CHAIN = [
-  "gemini-1.5-flash-latest",
-  "gemini-pro-vision"
+  "gemini-2.5-flash-lite",
+  "gemini-2.0-flash-lite",
+  "gemini-2.5-flash"
 ];
 
 const faqData = [
@@ -16,7 +18,7 @@ const faqData = [
   },
   {
     question: 'Which AI image generators can I use these prompts with?',
-    answer: 'Our prompts are designed to be universal. They work great with popular platforms like Midjourney, Stable Diffusion, DALL-E 3, and any other AI art generator that accepts descriptive text prompts.'
+    answer: 'Our prompts are designed to be universal. They work great with popular platforms like Midjourney, Stable Diffusion, Flux, and GPT-4o image generator, and any other AI art generator that accepts descriptive text prompts.'
   },
   {
     question: 'Is this "image to prompt" tool completely free?',
@@ -40,7 +42,6 @@ async function fileToGenerativePart(file: File) {
   };
 }
 
-
 function PromptigenPage() {
   // --- حالات الواجهة الرسومية والبيانات ---
   const [isAiReady, setIsAiReady] = useState(false);
@@ -49,6 +50,7 @@ function PromptigenPage() {
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadingText, setLoadingText] = useState('The AI is analyzing the image...');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const genAiInstanceRef = useRef<any>(null);
@@ -61,17 +63,30 @@ function PromptigenPage() {
         const module = await import(SCRIPT_URL);
         aiModuleRef.current = module;
         genAiInstanceRef.current = new module.GoogleGenerativeAI(API_KEY);
-        
-        console.log("AI Services Initialized Successfully.");
         setIsAiReady(true);
       } catch (e) {
         console.error("AI Initialization Failed:", e);
         setError("Could not initialize the AI model. Please refresh the page.");
       }
     };
-    
     initializeAI();
   }, []);
+
+  // --- التأثير الجانبي لنص التحميل الديناميكي ---
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isLoading) {
+      const baseText = "The AI is analyzing the image";
+      let dotCount = 1;
+      setLoadingText(`${baseText}${'.'.repeat(dotCount)}`); // Set initial text immediately
+      interval = setInterval(() => {
+        dotCount = (dotCount % 3) + 1;
+        setLoadingText(`${baseText}${'.'.repeat(dotCount)}`);
+      }, 500);
+    }
+    return () => clearInterval(interval);
+  }, [isLoading]);
+
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -90,6 +105,7 @@ function PromptigenPage() {
     }
   };
 
+  // --- منطق توليد الوصف الأصلي الخاص بك ---
   const handleGeneratePrompt = async () => {
     if (!selectedFile || !isAiReady) {
       setError('Please upload an image first and wait for the AI to initialize.');
@@ -120,9 +136,12 @@ function PromptigenPage() {
           { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
         ];
 
-        const result = await model.generateContent([masterPrompt, imagePart], { safetySettings });
-        const response = result.response;
-        const promptText = response.text();
+        const result = await model.generateContent({
+          contents: [{ role: "user", parts: [imagePart, { text: masterPrompt }] }],
+          safetySettings,
+        });
+
+        const promptText = result.response.text();
 
         if (!promptText) {
           throw new Error("Received an empty response from the AI model.");
@@ -139,7 +158,6 @@ function PromptigenPage() {
         if (errorString.includes('quota') || errorString.includes('429')) {
           if (i === MODEL_FALLBACK_CHAIN.length - 1) {
             setError("The tool is currently experiencing high demand. Please try again in a few minutes.");
-            break;
           }
           continue; 
         }
@@ -150,12 +168,8 @@ function PromptigenPage() {
         }
 
         if (errorString.includes('400')) {
-            setError("The AI model couldn't process this image. Please try a different one.");
+            setError("Invalid request. The AI model configuration is incorrect. Please contact support.");
             break; 
-        }
-
-        if (i < MODEL_FALLBACK_CHAIN.length - 1) {
-            continue; // Try next model
         }
 
         setError("An unexpected error occurred. Please try again.");
@@ -223,14 +237,13 @@ function PromptigenPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* Controls Column */}
+            {/* واجهة الأداة الأصلية الخاصة بك */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
-              <h2 className="sr-only">Image to Prompt Conversion Tool</h2>
               <div>
-                <label className="block text-lg font-semibold text-gray-200 mb-2">1. Upload an Image</label>
+                <label className="block text-lg font-semibold text-gray-200 mb-2">1. Upload Your Image</label>
                 <div 
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full h-64 border-2 border-dashed border-gray-600 rounded-lg flex justify-center items-center cursor-pointer hover:border-sky-400 hover:bg-gray-700/50 transition"
+                    className="w-full h-64 border-2 border-dashed border-gray-600 rounded-lg flex justify-center items-center cursor-pointer hover:border-purple-400 hover:bg-gray-700/50 transition"
                 >
                   <input
                     ref={fileInputRef}
@@ -240,11 +253,11 @@ function PromptigenPage() {
                     className="hidden"
                   />
                   {imagePreview ? (
-                    <img src={imagePreview} alt="Image preview for prompt generation" className="max-w-full max-h-full object-contain rounded-md" />
+                    <img src={imagePreview} alt="Selected preview" className="max-w-full max-h-full object-contain rounded-md" />
                   ) : (
                     <div className="text-center text-gray-400">
                       <p>Click to browse or drag & drop</p>
-                      <p className="text-sm text-gray-500">Supports PNG, JPG, WEBP</p>
+                      <p className="text-sm">PNG, JPG, or WEBP</p>
                     </div>
                   )}
                 </div>
@@ -252,41 +265,34 @@ function PromptigenPage() {
               <button
                 onClick={handleGeneratePrompt}
                 disabled={!isAiReady || isLoading || !selectedFile}
-                className="w-full mt-2 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-sky-500 to-violet-600 rounded-lg hover:from-sky-600 hover:to-violet-700 focus:outline-none focus:ring-4 focus:ring-sky-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                className="w-full mt-2 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg hover:from-purple-600 hover:to-cyan-600 focus:outline-none focus:ring-4 focus:ring-purple-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
                 {getButtonText()}
               </button>
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
-            
-            {/* Output Column */}
-            <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col min-h-[24rem]">
-              <label htmlFor="prompt-output" className="block text-lg font-semibold text-gray-200 mb-2">2. Get Your AI-Generated Prompt</label>
-              <div className="relative w-full h-full flex flex-col">
+            <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col justify-center items-center min-h-[24rem]">
+              <div className="w-full h-full flex flex-col">
+                <label className="block text-lg font-semibold text-gray-200 mb-2">Generated Prompt</label>
                 <textarea
-                  id="prompt-output"
                   readOnly
-                  value={isLoading ? "The AI is analyzing the image..." : generatedPrompt}
-                  placeholder="Your creative prompt will appear here..."
-                  className="w-full flex-grow p-4 bg-gray-700 border border-gray-600 rounded-lg resize-none text-gray-200 placeholder-gray-400 leading-relaxed"
+                  value={isLoading ? loadingText : generatedPrompt}
+                  placeholder="Your generated prompt will appear here..."
+                  className="w-full flex-grow p-4 bg-gray-700 border border-gray-600 rounded-lg resize-none text-gray-200 placeholder-gray-400"
                 />
                 {generatedPrompt && !isLoading && (
                   <button 
                     onClick={handleCopyPrompt}
-                    className="absolute top-2 right-2 p-2 text-gray-300 bg-gray-600 rounded-lg hover:bg-gray-500 hover:text-white transition-all"
-                    title="Copy to Clipboard"
+                    className="w-full mt-4 py-3 px-4 text-center text-lg font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z" />
-                      <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H4zm0 2h10v10H4V5z" />
-                    </svg>
+                    Copy to Clipboard
                   </button>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Content Sections */}
+          {/* أقسام المحتوى الإنجليزي */}
           <div className="mt-24">
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">From Vision to Text in One Click</h2>
@@ -301,7 +307,7 @@ function PromptigenPage() {
                       </div>
                       <div className="bg-gray-800 p-6 rounded-lg shadow-md">
                           <h3 className="text-xl font-bold text-sky-400 mb-2">Universal Compatibility</h3>
-                          <p className="text-gray-300">The generated prompts are optimized to work seamlessly with Midjourney, Stable Diffusion, DALL-E, and more.</p>
+                          <p className="text-gray-300">The generated prompts are optimized to work seamlessly with Midjourney, Stable Diffusion, and more.</p>
                       </div>
                       <div className="bg-gray-800 p-6 rounded-lg shadow-md">
                           <h3 className="text-xl font-bold text-sky-400 mb-2">Free & Unlimited</h3>
