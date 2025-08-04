@@ -1,27 +1,25 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-// Data for styles, extracted for clarity
+// قائمة الأنماط أصبحت أبسط، بدون الـ prompt_suffix السري
 const styleOptions = [
-  { name: 'Default', value: 'default', prompt_suffix: '' },
-  { name: 'Cinematic', value: 'cinematic', prompt_suffix: ', cinematic style' },
-  { name: 'Photographic', value: 'photographic', prompt_suffix: ', photographic, realistic' },
-  { name: 'Anime', value: 'anime', prompt_suffix: ', anime style' },
-  { name: 'Digital Art', value: 'digital-art', prompt_suffix: ', digital art' },
-  { name: 'Pixel Art', value: 'pixel-art', prompt_suffix: ', pixel art' },
-  { name: 'Fantasy Art', value: 'fantasy-art', prompt_suffix: ', fantasy art' },
-  { name: 'Neonpunk', value: 'neonpunk', prompt_suffix: ', neonpunk style' },
-  { name: '3D Model', value: '3d-model', prompt_suffix: ', 3d model' },
+  { name: 'Default', value: 'default' },
+  { name: 'Cinematic', value: 'cinematic' },
+  { name: 'Photographic', value: 'photographic' },
+  { name: 'Anime', value: 'anime' },
+  { name: 'Digital Art', value: 'digital-art' },
+  { name: 'Pixel Art', value: 'pixel-art' },
+  { name: 'Fantasy Art', value: 'fantasy-art' },
+  { name: 'Neonpunk', value: 'neonpunk' },
+  { name: '3D Model', value: '3d-model' },
 ];
 
-// Data for sizes
 const sizeOptions = [
   { label: 'Square (1024x1024)', value: '1024x1024' },
   { label: 'Widescreen (1024x576)', value: '1024x576' },
   { label: 'Portrait (576x1024)', value: '576x1024' },
 ];
 
-// FAQ Data
 const faqData = [
     {
       question: 'Is Artigen Pro truly free to use?',
@@ -70,44 +68,41 @@ function ImageGeneratorPage() {
     setError(null);
     setImageUrl('');
     
-    let translatedPrompt = userPrompt;
-
     try {
-      const langPair = "ar|en";
-      const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(userPrompt)}&langpair=${langPair}&mt=1`;
-      
-      const translateResponse = await fetch(apiUrl);
-      if (translateResponse.ok) {
-        const translateData = await translateResponse.json();
-        if (translateData.responseData && translateData.responseData.translatedText &&
-            translateData.responseData.translatedText.trim().toLowerCase() !== userPrompt.toLowerCase()) {
-          translatedPrompt = translateData.responseData.translatedText;
+        const response = await fetch('/api/generate-image-pro', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userPrompt: userPrompt,
+                style: selectedStyle,
+                size: selectedSize,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to generate image.');
         }
-      }
-    } catch (err) {
-      console.error("Translation API failed, using original prompt:", err);
+
+        const generatedUrl = data.imageUrl;
+        
+        const img = new Image();
+        img.src = generatedUrl;
+
+        img.onload = () => {
+            setImageUrl(generatedUrl);
+            setIsLoading(false);
+        };
+
+        img.onerror = () => {
+            setError('Failed to load the image. The AI service may be busy. Please try again later.');
+            setIsLoading(false);
+        };
+    } catch (err: any) {
+        setError(err.message);
+        setIsLoading(false);
     }
-
-    const styleSuffix = styleOptions.find(s => s.value === selectedStyle)?.prompt_suffix || '';
-    const finalPrompt = translatedPrompt + styleSuffix;
-    const [width, height] = selectedSize.split('x');
-    const encodedPrompt = encodeURIComponent(finalPrompt);
-    const seed = Date.now();
-    
-    const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
-
-    const img = new Image();
-    img.src = constructedUrl;
-
-    img.onload = () => {
-      setImageUrl(constructedUrl);
-      setIsLoading(false);
-    };
-
-    img.onerror = () => {
-      setError('Failed to load the image. The AI service may be busy. Please try again later.');
-      setIsLoading(false);
-    };
   };
   
   const handleDownloadClick = async () => {
