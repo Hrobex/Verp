@@ -1,39 +1,21 @@
 import { useState } from 'react';
 
-// --- ثوابت البيانات ---
+// --- ثوابت البيانات (آمنة للواجهة الأمامية) ---
 
-// خيارات الحجم مترجمة
 const sizeOptions = [
   { label: 'مربع (1024x1024)', value: '1024x1024' },
   { label: 'صورة طولية (576x1024)', value: '576x1024' },
   { label: 'شاشة عريضة (1024x576)', value: '1024x576' },
 ];
 
-// خيارات الأنماط مترجمة، مع الاحتفاظ بالنص الخفي بالإنجليزية للـ API
+// قائمة الأنماط أصبحت أبسط، بدون الـ prompt_suffix السري
 const animeStyleOptions = [
-    { 
-        id: 'modern', 
-        name: 'نمط حديث', 
-        prompt_suffix: ', modern anime style, digital illustration, studio quality, vibrant colors, clean line art, sharp details' 
-    },
-    { 
-        id: 'retro', 
-        name: 'نمط التسعينات', 
-        prompt_suffix: ', 90s anime screenshot, retro art style, cel-shaded, muted colors, subtle film grain, nostalgic aesthetic' 
-    },
-    { 
-        id: 'chibi', 
-        name: 'نمط تشيبي', 
-        prompt_suffix: ', cute chibi style, super deformed, kawaii, clean line art, vibrant, sticker design' 
-    },
-    { 
-        id: 'painterly', 
-        name: 'نمط فني', 
-        prompt_suffix: ', ghibli-inspired art style, beautiful detailed background, painterly, whimsical, soft colors, hand-drawn aesthetic' 
-    }
+    { id: 'modern', name: 'نمط حديث' },
+    { id: 'retro', name: 'نمط التسعينات' },
+    { id: 'chibi', name: 'نمط تشيبي' },
+    { id: 'painterly', name: 'نمط فني' }
 ];
 
-// بيانات الأسئلة الشائعة مترجمة ومحدثة بالكامل
 const faqData = [
     {
         question: 'كيف يمكنني تصميم شخصية أنمي أصلية خاصة بي؟',
@@ -72,41 +54,42 @@ function AnimeGeneratorPageArabic() {
     setError(null);
     setImageUrl('');
 
-    let translatedPrompt = userPrompt;
     try {
-      const langPair = "ar|en"; 
-      const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(userPrompt)}&langpair=${langPair}&mt=1`;
-      const translateResponse = await fetch(apiUrl);
-      if (translateResponse.ok) {
-        const translateData = await translateResponse.json();
-        if (translateData.responseData?.translatedText) {
-          translatedPrompt = translateData.responseData.translatedText;
+        // استدعاء الواجهة الخلفية الموجودة
+        const response = await fetch('/api/generate-anime', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userPrompt: userPrompt,
+                styleId: selectedAnimeStyle,
+                size: selectedSize,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'فشل إنشاء الصورة.');
         }
-      }
-    } catch (err) {
-      console.error("Translation API failed, using original prompt:", err);
+
+        const generatedUrl = data.imageUrl;
+        
+        // التحقق من أن الصورة تم تحميلها في المتصفح قبل عرضها
+        const img = new Image();
+        img.src = generatedUrl;
+        img.onload = () => {
+            setImageUrl(generatedUrl);
+            setIsLoading(false);
+        };
+        img.onerror = () => {
+            setError('فشل تحميل الصورة المنشأة. قد تكون خدمة الذكاء الاصطناعي مشغولة.');
+            setIsLoading(false);
+        };
+
+    } catch (err: any) {
+        setError(err.message);
+        setIsLoading(false);
     }
-
-    const styleSuffix = animeStyleOptions.find(s => s.id === selectedAnimeStyle)?.prompt_suffix || '';
-    const finalPrompt = translatedPrompt + styleSuffix;
-    const [width, height] = selectedSize.split('x');
-    const encodedPrompt = encodeURIComponent(finalPrompt);
-    const seed = Date.now();
-
-    const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
-
-    const img = new Image();
-    img.src = constructedUrl;
-
-    img.onload = () => {
-      setImageUrl(constructedUrl);
-      setIsLoading(false);
-    };
-
-    img.onerror = () => {
-      setError('فشل إنشاء الصورة. قد تكون خدمة الذكاء الاصطناعي مشغولة. يرجى المحاولة مرة أخرى.');
-      setIsLoading(false);
-    };
   };
   
   const handleDownloadClick = async () => {
