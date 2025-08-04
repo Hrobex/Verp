@@ -1,18 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 
-// --- الثوابت الأساسية ---
-const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
-const SCRIPT_URL = "https://esm.run/@google/generative-ai";
-
-// --- تمت استعادة سلسلة النماذج الأصلية الخاصة بك ---
-const MODEL_FALLBACK_CHAIN = [
-  "gemini-2.5-flash-lite",
-  "gemini-2.0-flash-lite",
-  "gemini-2.5-flash",
-  "gemini-1.5-flash-latest",
-  "gemini-pro-vision"
-];
-
 const faqDataArabic = [
   {
     question: 'ما هو مولد الأوصاف النصية العكسي؟',
@@ -32,21 +19,17 @@ const faqDataArabic = [
   },
 ];
 
-// --- دالة مساعدة لتحويل الصورة ---
-async function fileToGenerativePart(file: File) {
-  const base64EncodedDataPromise = new Promise((resolve) => {
+// دالة مساعدة جديدة لتحويل الصورة إلى صيغة Base64
+async function convertFileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
     reader.readAsDataURL(file);
+    reader.onload = () => resolve((reader.result as string).split(',')[1]);
+    reader.onerror = (error) => reject(error);
   });
-  return {
-    inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
-  };
 }
 
 function PromptigenPageArabic() {
-  // --- حالات الواجهة الرسومية والبيانات ---
-  const [isAiReady, setIsAiReady] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
@@ -56,32 +39,13 @@ function PromptigenPageArabic() {
   const [loadingText, setLoadingText] = useState('يقوم الذكاء الاصطناعي بتحليل الصورة...');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const genAiInstanceRef = useRef<any>(null);
-  const aiModuleRef = useRef<any>(null);
 
-  // --- التأثير الجانبي لتهيئة الذكاء الاصطناعي ---
-  useEffect(() => {
-    const initializeAI = async () => {
-      try {
-        const module = await import(SCRIPT_URL);
-        aiModuleRef.current = module;
-        genAiInstanceRef.current = new module.GoogleGenerativeAI(API_KEY);
-        setIsAiReady(true);
-      } catch (e) {
-        console.error("AI Initialization Failed:", e);
-        setError("لا يمكن تهيئة نموذج الذكاء الاصطناعي. يرجى تحديث الصفحة.");
-      }
-    };
-    initializeAI();
-  }, []);
-
-  // --- التأثير الجانبي لنص التحميل الديناميكي ---
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isLoading) {
       const baseText = "يقوم الذكاء الاصطناعي بتحليل الصورة";
       let dotCount = 1;
-      setLoadingText(`${baseText}${'.'.repeat(dotCount)}`); // Set initial text immediately
+      setLoadingText(`${baseText}${'.'.repeat(dotCount)}`);
       interval = setInterval(() => {
         dotCount = (dotCount % 3) + 1;
         setLoadingText(`${baseText}${'.'.repeat(dotCount)}`);
@@ -98,6 +62,7 @@ function PromptigenPageArabic() {
         return;
       }
       setSelectedFile(file);
+      setGeneratedPrompt('');
       setError(null);
       const reader = new FileReader();
       reader.onloadend = () => setImagePreview(reader.result as string);
@@ -106,8 +71,8 @@ function PromptigenPageArabic() {
   };
 
   const handleGeneratePrompt = async () => {
-    if (!selectedFile || !isAiReady) {
-      setError('يرجى رفع صورة أولاً وانتظار تهيئة الذكاء الاصطناعي.');
+    if (!selectedFile) {
+      setError('يرجى رفع صورة أولاً.');
       return;
     }
     
@@ -115,74 +80,32 @@ function PromptigenPageArabic() {
     setError(null);
     setGeneratedPrompt('');
 
-    let masterPrompt = `Your mission is to act as an expert prompt engineer for AI image generators like Midjourney or Stable Diffusion. Analyze the uploaded image with extreme detail. Generate a single, coherent, and rich descriptive prompt that can replicate the image. 
-    **CRITICAL CONSTRAINT: The final output prompt must NOT exceed 70 words. This is a strict limit. Be concise, impactful, and stay strictly within the word limit.**
-    Focus on subject, environment, art style, composition, lighting, and color palette. End with powerful keywords like "highly detailed, 4k, cinematic". Output ONLY the final, ready-to-use prompt.`;
-    
-    // الإبقاء على ميزة تحديد اللغة
-    if (language === 'ar') {
-      masterPrompt += ` **CRITICAL FINAL INSTRUCTION: Your entire response MUST be in fluent, modern Arabic.**`;
-    }
+    try {
+      const imageData = await convertFileToBase64(selectedFile);
 
-    const imagePart = await fileToGenerativePart(selectedFile);
+      const response = await fetch('/api/generate-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          imageData: imageData, 
+          mimeType: selectedFile.type,
+          language: language // إرسال اللغة المحددة
+        }),
+      });
+      
+      const result = await response.json();
 
-    for (let i = 0; i < MODEL_FALLBACK_CHAIN.length; i++) {
-      const modelName = MODEL_FALLBACK_CHAIN[i];
-      try {
-        console.log(`Attempting to generate content with model: ${modelName}`);
-
-        const model = genAiInstanceRef.current.getGenerativeModel({ model: modelName });
-        const { HarmCategory, HarmBlockThreshold } = aiModuleRef.current;
-        const safetySettings = [
-          { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-          { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-          { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-          { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-        ];
-
-        const result = await model.generateContent({
-          contents: [{ role: "user", parts: [imagePart, { text: masterPrompt }] }],
-          safetySettings,
-        });
-
-        const promptText = result.response.text();
-
-        if (!promptText) {
-          throw new Error("Received an empty response from the AI model.");
-        }
-        
-        setGeneratedPrompt(promptText);
-        console.log(`Success with model: ${modelName}`);
-        break; 
-
-      } catch (err: any) {
-        // تمت استعادة منطق معالجة الأخطاء الأصلي مع ترجمة الرسائل
-        const errorString = String(err);
-        console.error(`Error with model ${modelName}:`, errorString);
-
-        if (errorString.includes('quota') || errorString.includes('429')) {
-          if (i === MODEL_FALLBACK_CHAIN.length - 1) {
-            setError("الأداة تواجه حاليًا طلبًا مرتفعًا. يرجى المحاولة مرة أخرى في غضون دقائق قليلة.");
-          }
-          continue; 
-        }
-        
-        if (errorString.includes('API key not valid')) {
-          setError("الأداة قيد إعادة التنشيط حاليًا. يرجى المحاولة مرة أخرى في دقيقة واحدة.");
-          break;
-        }
-
-        if (errorString.includes('400')) {
-            setError("طلب غير صالح. تكوين نموذج الذكاء الاصطناعي غير صحيح. يرجى الاتصال بالدعم.");
-            break; 
-        }
-
-        setError("حدث خطأ غير متوقع. رجاء حاول مرة أخرى.");
-        break;
+      if (!response.ok) {
+        throw new Error(result.error || 'حدث خطأ غير معروف.');
       }
-    }
 
-    setIsLoading(false);
+      setGeneratedPrompt(result.generatedPrompt);
+
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   const handleCopyPrompt = () => {
@@ -192,7 +115,7 @@ function PromptigenPageArabic() {
 
   const getButtonText = () => {
     if (isLoading) return 'جاري تحليل الصورة...';
-    if (!isAiReady) return 'جاري تهيئة الأداة...';
+    // لم نعد نحتاج للتحقق من isAiReady
     return 'توليد الوصف النصي';
   };
 
@@ -229,7 +152,7 @@ function PromptigenPageArabic() {
       </script>
 
       <div className="pt-24 bg-gray-900 text-white min-h-screen">
-        <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8" dir="rtl">
           
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-violet-500">
@@ -241,7 +164,6 @@ function PromptigenPageArabic() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* عمود التحكم (مع الإبقاء على التصميم والتحسينات) */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
               <h2 className="sr-only">أداة تحويل الصورة إلى أمر نصي</h2>
               <div>
@@ -276,7 +198,7 @@ function PromptigenPageArabic() {
 
               <button
                 onClick={handleGeneratePrompt}
-                disabled={!isAiReady || isLoading || !selectedFile}
+                disabled={isLoading || !selectedFile}
                 className="w-full mt-2 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-sky-500 to-violet-600 rounded-lg hover:from-sky-600 hover:to-violet-700 focus:outline-none focus:ring-4 focus:ring-sky-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
                 {getButtonText()}
@@ -284,7 +206,6 @@ function PromptigenPageArabic() {
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
             
-            {/* عمود النتائج (مع الإبقاء على التصميم والتحسينات) */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col min-h-[24rem]">
               <label htmlFor="prompt-output" className="block text-lg font-semibold text-gray-200 mb-2">٣. احصل على وصفك النصي</label>
               <div className="relative w-full h-full flex flex-col">
