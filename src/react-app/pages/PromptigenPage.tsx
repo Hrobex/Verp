@@ -1,17 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 
-// --- الثوابت الأساسية ---
-const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
-const SCRIPT_URL = "https://esm.run/@google/generative-ai";
-
-// --- سلسلة النماذج الأصلية الخاصة بك ---
-const MODEL_FALLBACK_CHAIN = [
-  "gemini-2.5-flash-lite",
-  "gemini-2.0-flash-lite",
-  "gemini-2.5-flash",
-  "gemini-1.5-flash-latest",
-  "gemini-pro-vision"
-];
+// --- كل الثوابت الحساسة تم حذفها من هنا ---
 
 const faqData = [
   {
@@ -32,21 +21,9 @@ const faqData = [
   },
 ];
 
-// --- دالة مساعدة لتحويل الصورة ---
-async function fileToGenerativePart(file: File) {
-  const base64EncodedDataPromise = new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
-    reader.readAsDataURL(file);
-  });
-  return {
-    inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
-  };
-}
 
 function PromptigenPage() {
-  // --- حالات الواجهة الرسومية والبيانات ---
-  const [isAiReady, setIsAiReady] = useState(false);
+  // --- حالات الواجهة الرسومية (تم تبسيطها) ---
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
@@ -55,32 +32,14 @@ function PromptigenPage() {
   const [loadingText, setLoadingText] = useState('The AI is analyzing the image...');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const genAiInstanceRef = useRef<any>(null);
-  const aiModuleRef = useRef<any>(null);
 
-  // --- التأثير الجانبي لتهيئة الذكاء الاصطناعي ---
-  useEffect(() => {
-    const initializeAI = async () => {
-      try {
-        const module = await import(SCRIPT_URL);
-        aiModuleRef.current = module;
-        genAiInstanceRef.current = new module.GoogleGenerativeAI(API_KEY);
-        setIsAiReady(true);
-      } catch (e) {
-        console.error("AI Initialization Failed:", e);
-        setError("Could not initialize the AI model. Please refresh the page.");
-      }
-    };
-    initializeAI();
-  }, []);
-
-  // --- التأثير الجانبي لنص التحميل الديناميكي ---
+  // --- التأثير الجانبي لنص التحميل الديناميكي (بقي كما هو) ---
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isLoading) {
       const baseText = "The AI is analyzing the image";
       let dotCount = 1;
-      setLoadingText(`${baseText}${'.'.repeat(dotCount)}`); // Set initial text immediately
+      setLoadingText(`${baseText}${'.'.repeat(dotCount)}`);
       interval = setInterval(() => {
         dotCount = (dotCount % 3) + 1;
         setLoadingText(`${baseText}${'.'.repeat(dotCount)}`);
@@ -107,10 +66,10 @@ function PromptigenPage() {
     }
   };
 
-  // --- منطق توليد الوصف الأصلي الخاص بك ---
+  // --- دالة توليد الوصف (تمت إعادة كتابتها بالكامل) ---
   const handleGeneratePrompt = async () => {
-    if (!selectedFile || !isAiReady) {
-      setError('Please upload an image first and wait for the AI to initialize.');
+    if (!selectedFile) {
+      setError('Please upload an image first.');
       return;
     }
     
@@ -118,68 +77,46 @@ function PromptigenPage() {
     setError(null);
     setGeneratedPrompt('');
 
-    const masterPrompt = `Your mission is to act as an expert prompt engineer for AI image generators like Midjourney or Stable Diffusion. Analyze the uploaded image with extreme detail. Generate a single, coherent, and rich descriptive prompt that can replicate the image. 
-    **CRITICAL CONSTRAINT: The final output prompt must NOT exceed 70 words. This is a strict limit. Be concise, impactful, and stay strictly within the word limit.**
-    Focus on subject, environment, art style, composition, lighting, and color palette. End with powerful keywords like "highly detailed, 4k, cinematic". Output ONLY the final, ready-to-use prompt.`;
+    // دالة مساعدة لتحويل الصورة إلى base64 داخلية
+    const toBase64 = (file: File): Promise<string> => 
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve((reader.result as string).split(',')[1]); // إزالة الـ prefix
+        reader.onerror = error => reject(error);
+    });
 
-    const imagePart = await fileToGenerativePart(selectedFile);
+    try {
+      const imageBase64 = await toBase64(selectedFile);
+      
+      // --- هنا يحدث الاتصال الآمن بالواجهة الخلفية ---
+      const response = await fetch('/api/generate-prompt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          imageBase64: imageBase64,
+          mimeType: selectedFile.type,
+        }),
+      });
 
-    for (let i = 0; i < MODEL_FALLBACK_CHAIN.length; i++) {
-      const modelName = MODEL_FALLBACK_CHAIN[i];
-      try {
-        console.log(`Attempting to generate content with model: ${modelName}`);
+      const data = await response.json();
 
-        const model = genAiInstanceRef.current.getGenerativeModel({ model: modelName });
-        const { HarmCategory, HarmBlockThreshold } = aiModuleRef.current;
-        const safetySettings = [
-          { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-          { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-          { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-          { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-        ];
-
-        const result = await model.generateContent({
-          contents: [{ role: "user", parts: [imagePart, { text: masterPrompt }] }],
-          safetySettings,
-        });
-
-        const promptText = result.response.text();
-
-        if (!promptText) {
-          throw new Error("Received an empty response from the AI model.");
-        }
-        
-        setGeneratedPrompt(promptText);
-        console.log(`Success with model: ${modelName}`);
-        break; 
-
-      } catch (err: any) {
-        const errorString = String(err);
-        console.error(`Error with model ${modelName}:`, errorString);
-
-        if (errorString.includes('quota') || errorString.includes('429')) {
-          if (i === MODEL_FALLBACK_CHAIN.length - 1) {
-            setError("The tool is currently experiencing high demand. Please try again in a few minutes.");
-          }
-          continue; 
-        }
-        
-        if (errorString.includes('API key not valid')) {
-          setError("Tool is currently under re-activation. Please try again in 1 minute.");
-          break;
-        }
-
-        if (errorString.includes('400')) {
-            setError("Invalid request. The AI model configuration is incorrect. Please contact support.");
-            break; 
-        }
-
-        setError("An unexpected error occurred. Please try again.");
-        break;
+      // إذا كانت الاستجابة تحتوي على خطأ (كما صممناها في الواجهة الخلفية)
+      if (!response.ok) {
+        throw new Error(data.error || 'An unknown error occurred.');
       }
-    }
+      
+      // إذا كانت الاستجابة ناجحة
+      setGeneratedPrompt(data.prompt);
 
-    setIsLoading(false);
+    } catch (err: any) {
+      // عرض أي خطأ للمستخدم (سواء من الواجهة الخلفية أو من الشبكة)
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCopyPrompt = () => {
@@ -190,14 +127,15 @@ function PromptigenPage() {
     });
   };
 
+  // تم تبسيط هذه الدالة لأن حالة "Initializing AI" لم تعد موجودة
   const getButtonText = () => {
     if (isLoading) return 'Analyzing Image...';
-    if (!isAiReady) return 'Initializing AI...';
     return 'Generate Prompt';
   };
 
   return (
     <>
+      {/* ... كل كود الـ JSX والمحتوى الخاص بك يبقى كما هو تمامًا ... */}
       <title>Free AI Image to Prompt Generator | Reverse Prompt Finder - Promptigen</title>
       <meta name="description" content="Turn any image into a masterpiece prompt! Promptigen is a free AI tool that analyzes your picture and generates detailed, creative text prompts for Midjourney, Stable Diffusion, and more." />
       <link rel="canonical" href="https://aiconvert.online/prompt-generator" />
@@ -239,7 +177,6 @@ function PromptigenPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* واجهة الأداة الأصلية الخاصة بك */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
               <div>
                 <label className="block text-lg font-semibold text-gray-200 mb-2">1. Upload Your Image</label>
@@ -266,7 +203,7 @@ function PromptigenPage() {
               </div>
               <button
                 onClick={handleGeneratePrompt}
-                disabled={!isAiReady || isLoading || !selectedFile}
+                disabled={isLoading || !selectedFile}
                 className="w-full mt-2 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg hover:from-purple-600 hover:to-cyan-600 focus:outline-none focus:ring-4 focus:ring-purple-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
                 {getButtonText()}
@@ -293,8 +230,7 @@ function PromptigenPage() {
               </div>
             </div>
           </div>
-
-          {/* أقسام المحتوى الإنجليزي */}
+          
           <div className="mt-24">
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">From Vision to Text in One Click</h2>
