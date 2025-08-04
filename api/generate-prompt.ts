@@ -1,15 +1,11 @@
-// api/generate-prompt.ts
+// api/generate-prompt.ts (النسخة النهائية والمضمونة)
 
-// استيراد الأنواع من Vercel ومن مكتبة جوجل
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold, Part } from "@google/generative-ai";
 
-// --- الأسرار والإعدادات المحمية على الخادم ---
-
-// 1. قراءة مفتاح API بأمان من متغيرات البيئة في Vercel
+// --- الثوابت المحمية على الخادم ---
 const apiKey = process.env.GEMINI_API_KEY;
+const SCRIPT_URL = "https://esm.run/@google/generative-ai";
 
-// 2. سلسلة النماذج الاحتياطية
 const MODEL_FALLBACK_CHAIN = [
   "gemini-2.5-flash-lite",
   "gemini-2.0-flash-lite",
@@ -18,20 +14,9 @@ const MODEL_FALLBACK_CHAIN = [
   "gemini-pro-vision"
 ];
 
-// 3. الـ "Prompt الخفي"
 const MASTER_PROMPT = `Your mission is to act as an expert prompt engineer for AI image generators like Midjourney or Stable Diffusion. Analyze the uploaded image with extreme detail. Generate a single, coherent, and rich descriptive prompt that can replicate the image. 
 **CRITICAL CONSTRAINT: The final output prompt must NOT exceed 70 words. This is a strict limit. Be concise, impactful, and stay strictly within the word limit.**
 Focus on subject, environment, art style, composition, lighting, and color palette. End with powerful keywords like "highly detailed, 4k, cinematic". Output ONLY the final, ready-to-use prompt.`;
-
-// إعدادات السلامة
-const safetySettings = [
-  { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-];
-
-// --- "العقل الذكي": الدالة التي ستتعامل مع الطلبات ---
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
@@ -39,11 +24,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (!apiKey) {
-    console.error("GEMINI_API_KEY is not set in environment variables.");
+    console.error("GEMINI_API_KEY is not set.");
     return res.status(500).json({ error: "Server configuration error." });
   }
 
   try {
+    // --- هنا يتم تحميل المكتبة ديناميكيًا عند الحاجة ---
+    const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold, Part } = await import(SCRIPT_URL);
+    
+    // إعدادات السلامة
+    const safetySettings = [
+      { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+      { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+      { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+      { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+    ];
+
     const { imageBase64, mimeType } = req.body;
 
     if (!imageBase64 || !mimeType) {
@@ -77,14 +73,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.error(`[API] Error with ${modelName}:`, errorString);
 
         if (errorString.includes('quota') || errorString.includes('429')) {
-          continue; // جرب الموديل التالي بصمت
+          continue; 
         }
         
-        throw err; // ارمي الخطأ للخارج ليتم التقاطه في الـ catch الرئيسية
+        throw err;
       }
     }
     
-    // إذا انتهت الحلقة ولم ينجح أي موديل
     console.error("[API] All models failed due to quota exhaustion.");
     return res.status(503).json({ error: "The tool is currently experiencing high demand. Please try again in a few minutes." });
 
@@ -100,4 +95,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     
     return res.status(500).json({ error: "An unexpected error occurred. Please try again." });
   }
-    }
+}
