@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, ChangeEvent } from 'react';
 const faqData = [
   {
     question: 'What is a reverse image prompt generator?',
-    answer: 'It\'s an AI tool that does the opposite of a normal image generator. Instead of turning text into an image, it analyzes an existing image and generates a detailed text prompt that describes it. This prompt can then be used to create similar images.'
+    answer: 'It\'s an AI tool that does the opposite of a normal image generator. Instead of turning text intoo an image, it analyzes an existing image and generates a detailed text prompt that describes it. This prompt can then be used to create similar images.'
   },
   {
     question: 'Which AI image generators can I use these prompts with?',
