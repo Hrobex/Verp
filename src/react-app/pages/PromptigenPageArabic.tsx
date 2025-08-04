@@ -4,9 +4,11 @@ import { useState, useRef, useEffect } from 'react';
 const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
 const SCRIPT_URL = "https://esm.run/@google/generative-ai";
 
+// --- تمت استعادة سلسلة النماذج الأصلية الخاصة بك ---
 const MODEL_FALLBACK_CHAIN = [
-  "gemini-1.5-flash-latest",
-  "gemini-pro-vision"
+  "gemini-2.5-flash-lite",
+  "gemini-2.0-flash-lite",
+  "gemini-2.5-flash"
 ];
 
 const faqDataArabic = [
@@ -16,7 +18,7 @@ const faqDataArabic = [
   },
   {
     question: 'هل يمكنني استخدام هذه الأوصاف مع أي مولد صور؟',
-    answer: 'نعم، تم تصميم الأوصاف التي ننشئها لتكون متوافقة عالميًا. إنها تعمل بشكل ممتاز مع أشهر المنصات مثل Midjourney، وStable Diffusion، وGPT-4o image generator، وأي مولد صور آخر يقبل الأوامر النصية الوصفية.'
+    answer: 'نعم، تم تصميم الأوصاف التي ننشئها لتكون متوافقة عالميًا. إنها تعمل بشكل ممتاز مع أشهر المنصات مثل Midjourney، وStable Diffusion، وFlux، وGPT-4o image generator، وأي مولد صور آخر يقبل الأوامر النصية الوصفية.'
   },
   {
     question: 'هل أداة تحويل الصورة إلى وصف نصي (Image to Prompt) مجانية تمامًا؟',
@@ -77,9 +79,10 @@ function PromptigenPageArabic() {
     if (isLoading) {
       const baseText = "يقوم الذكاء الاصطناعي بتحليل الصورة";
       let dotCount = 1;
+      setLoadingText(`${baseText}${'.'.repeat(dotCount)}`); // Set initial text immediately
       interval = setInterval(() => {
-        setLoadingText(`${baseText}${'.'.repeat(dotCount)}`);
         dotCount = (dotCount % 3) + 1;
+        setLoadingText(`${baseText}${'.'.repeat(dotCount)}`);
       }, 500);
     }
     return () => clearInterval(interval);
@@ -113,7 +116,8 @@ function PromptigenPageArabic() {
     let masterPrompt = `Your mission is to act as an expert prompt engineer for AI image generators like Midjourney or Stable Diffusion. Analyze the uploaded image with extreme detail. Generate a single, coherent, and rich descriptive prompt that can replicate the image. 
     **CRITICAL CONSTRAINT: The final output prompt must NOT exceed 70 words. This is a strict limit. Be concise, impactful, and stay strictly within the word limit.**
     Focus on subject, environment, art style, composition, lighting, and color palette. End with powerful keywords like "highly detailed, 4k, cinematic". Output ONLY the final, ready-to-use prompt.`;
-
+    
+    // الإبقاء على ميزة تحديد اللغة
     if (language === 'ar') {
       masterPrompt += ` **CRITICAL FINAL INSTRUCTION: Your entire response MUST be in fluent, modern Arabic.**`;
     }
@@ -121,32 +125,61 @@ function PromptigenPageArabic() {
     const imagePart = await fileToGenerativePart(selectedFile);
 
     for (let i = 0; i < MODEL_FALLBACK_CHAIN.length; i++) {
-        const modelName = MODEL_FALLBACK_CHAIN[i];
-        try {
-            const model = genAiInstanceRef.current.getGenerativeModel({ model: modelName });
-            const { HarmCategory, HarmBlockThreshold } = aiModuleRef.current;
-            const safetySettings = [
-                { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-                { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-                { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-                { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-            ];
+      const modelName = MODEL_FALLBACK_CHAIN[i];
+      try {
+        console.log(`Attempting to generate content with model: ${modelName}`);
 
-            const result = await model.generateContent([masterPrompt, imagePart], { safetySettings });
-            const promptText = result.response.text();
+        const model = genAiInstanceRef.current.getGenerativeModel({ model: modelName });
+        const { HarmCategory, HarmBlockThreshold } = aiModuleRef.current;
+        const safetySettings = [
+          { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+          { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+          { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+          { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+        ];
 
-            if (!promptText) throw new Error("استجابة فارغة من النموذج.");
-            
-            setGeneratedPrompt(promptText);
-            break; 
+        const result = await model.generateContent({
+          contents: [{ role: "user", parts: [imagePart, { text: masterPrompt }] }],
+          safetySettings,
+        });
 
-        } catch (err) {
-            console.error(`Error with model ${modelName}:`, String(err));
-            if (i === MODEL_FALLBACK_CHAIN.length - 1) {
-                setError("حدث خطأ غير متوقع أو أن الأداة تواجه ضغطًا عاليًا. يرجى المحاولة مرة أخرى.");
-            }
+        const promptText = result.response.text();
+
+        if (!promptText) {
+          throw new Error("Received an empty response from the AI model.");
         }
+        
+        setGeneratedPrompt(promptText);
+        console.log(`Success with model: ${modelName}`);
+        break; 
+
+      } catch (err: any) {
+        // تمت استعادة منطق معالجة الأخطاء الأصلي مع ترجمة الرسائل
+        const errorString = String(err);
+        console.error(`Error with model ${modelName}:`, errorString);
+
+        if (errorString.includes('quota') || errorString.includes('429')) {
+          if (i === MODEL_FALLBACK_CHAIN.length - 1) {
+            setError("الأداة تواجه حاليًا طلبًا مرتفعًا. يرجى المحاولة مرة أخرى في غضون دقائق قليلة.");
+          }
+          continue; 
+        }
+        
+        if (errorString.includes('API key not valid')) {
+          setError("الأداة قيد إعادة التنشيط حاليًا. يرجى المحاولة مرة أخرى في دقيقة واحدة.");
+          break;
+        }
+
+        if (errorString.includes('400')) {
+            setError("طلب غير صالح. تكوين نموذج الذكاء الاصطناعي غير صحيح. يرجى الاتصال بالدعم.");
+            break; 
+        }
+
+        setError("حدث خطأ غير متوقع. رجاء حاول مرة أخرى.");
+        break;
+      }
     }
+
     setIsLoading(false);
   };
   
@@ -165,7 +198,7 @@ function PromptigenPageArabic() {
     <>
       <title>مولد الأوصاف النصية (Prompt) من الصور - أداة مجانية بالذكاء الاصطناعي</title>
       <meta name="description" content="حوّل أي صورة إلى وصف نصي (Prompt) احترافي ومفصل. أداة Promptigen المجانية تحلل صورتك وتنشئ أمر نصي مثالي لمولدات الصور مثل ميدجورني وStable Diffusion." />
-      <link rel="canonical" href="https://aiconvert.online/prompt-generator" />
+      <link rel="canonical" href="https://aiconvert.online/ar/prompt-generator" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/prompt-generator" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/prompt-generator" />
       <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/prompt-generator" />
@@ -206,7 +239,7 @@ function PromptigenPageArabic() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* عمود التحكم */}
+            {/* عمود التحكم (مع الإبقاء على التصميم والتحسينات) */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
               <h2 className="sr-only">أداة تحويل الصورة إلى أمر نصي</h2>
               <div>
@@ -249,7 +282,7 @@ function PromptigenPageArabic() {
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
             
-            {/* عمود النتائج */}
+            {/* عمود النتائج (مع الإبقاء على التصميم والتحسينات) */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col min-h-[24rem]">
               <label htmlFor="prompt-output" className="block text-lg font-semibold text-gray-200 mb-2">٣. احصل على وصفك النصي</label>
               <div className="relative w-full h-full flex flex-col">
@@ -269,7 +302,6 @@ function PromptigenPageArabic() {
             </div>
           </div>
 
-          {/* أقسام المحتوى */}
           <div className="mt-24">
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">من صورة إلى نص بنقرة واحدة</h2>
