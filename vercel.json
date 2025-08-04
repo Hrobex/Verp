@@ -1,5 +1,4 @@
 {
-  {
   "builds": [
     {
       "src": "api/**/*.ts",
@@ -12,8 +11,7 @@
         "distDir": "dist"
       }
     }
-  ]
-}
+  ],
   "headers": [
     {
       "source": "/(.*)",
