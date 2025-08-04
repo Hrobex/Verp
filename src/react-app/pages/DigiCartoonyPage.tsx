@@ -114,9 +114,9 @@ function DigiCartoonyPage() {
       const formData = new FormData();
       formData.append('file', compressedFile);
       formData.append('if_face', detectFace ? 'Yes' : 'No');
-      // The 'Style' parameter is removed as there are no options to choose from.
 
-      const response = await fetch('https://makhinur-angusad.hf.space/inference/', {
+      // تم تغيير الرابط فقط. كل المنطق الآخر يبقى كما هو
+      const response = await fetch('/api/digicartoony', {
         method: 'POST',
         body: formData,
       });
@@ -143,7 +143,7 @@ function DigiCartoonyPage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
+};
 
   return (
     <>
