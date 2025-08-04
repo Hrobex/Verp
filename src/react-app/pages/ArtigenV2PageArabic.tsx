@@ -1,30 +1,20 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-// --- ثوابت البيانات ---
+// --- ثوابت البيانات (آمنة للواجهة الأمامية) ---
 
-// خيارات الحجم مترجمة
 const sizeOptions = [
   { label: 'مربع (1024x1024)', value: '1024x1024' },
   { label: 'شاشة عريضة (1024x576)', value: '1024x576' },
   { label: 'صورة طولية (576x1024)', value: '576x1024' },
 ];
 
-// تمت الإضافة: خيارات النمط الفني مع المطالبات الخفية بالإنجليزية
+// قائمة الأنماط أصبحت أبسط، بدون الـ prompt_suffix السري
 const artStyleOptions = [
-    { 
-        id: 'artistic', 
-        name: 'النمط الفني', 
-        prompt_suffix: ', masterpiece, digital painting, stylized, intricate details, vibrant colors, high quality' 
-    },
-    { 
-        id: 'cinematic', 
-        name: 'الفن السينمائي', 
-        prompt_suffix: ', masterpiece, concept art, high detail, sharp focus, cinematic lighting' 
-    }
+    { id: 'artistic', name: 'النمط الفني' },
+    { id: 'cinematic', name: 'الفن السينمائي' }
 ];
 
-// تم التحديث: بيانات الأسئلة الشائعة
 const faqData = [
     {
         question: 'ما الذي يميز Artigen V2 عن أدوات توليد الصور الأخرى؟',
@@ -51,7 +41,7 @@ const faqData = [
 function ArtigenV2PageArabic() {
   const [prompt, setPrompt] = useState('');
   const [selectedSize, setSelectedSize] = useState('1024x1024');
-  const [selectedArtStyle, setSelectedArtStyle] = useState('artistic'); // القيمة الافتراضية هي النمط الفني
+  const [selectedArtStyle, setSelectedArtStyle] = useState('artistic');
   const [imageUrl, setImageUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,44 +57,42 @@ function ArtigenV2PageArabic() {
     setError(null);
     setImageUrl('');
 
-    let translatedPrompt = userPrompt;
     try {
-      const langPair = "ar|en";
-      const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(userPrompt)}&langpair=${langPair}&mt=1`;
-      
-      const translateResponse = await fetch(apiUrl);
-      if (translateResponse.ok) {
-        const translateData = await translateResponse.json();
-        if (translateData.responseData && translateData.responseData.translatedText &&
-            translateData.responseData.translatedText.trim().toLowerCase() !== userPrompt.toLowerCase()) {
-          translatedPrompt = translateData.responseData.translatedText;
+        // استدعاء الواجهة الخلفية الموجودة
+        const response = await fetch('/api/generate-artigen-v2', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userPrompt: userPrompt,
+                styleId: selectedArtStyle,
+                size: selectedSize,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'فشل توليد الصورة الفنية.');
         }
-      }
-    } catch (err)      {
-      console.error("Translation API failed, using original prompt:", err);
+
+        const generatedUrl = data.imageUrl;
+        
+        // التحقق من أن الصورة تم تحميلها في المتصفح قبل عرضها
+        const img = new Image();
+        img.src = generatedUrl;
+        img.onload = () => {
+            setImageUrl(generatedUrl);
+            setIsLoading(false);
+        };
+        img.onerror = () => {
+            setError('فشل تحميل الصورة المنشأة. قد تكون الخدمة مشغولة.');
+            setIsLoading(false);
+        };
+
+    } catch (err: any) {
+        setError(err.message);
+        setIsLoading(false);
     }
-    
-    // تم التحديث: استخدام النص الخفي بناءً على النمط المختار
-    const styleSuffix = artStyleOptions.find(s => s.id === selectedArtStyle)?.prompt_suffix || '';
-    const finalPrompt = translatedPrompt + styleSuffix;
-    const [width, height] = selectedSize.split('x');
-    const encodedPrompt = encodeURIComponent(finalPrompt);
-    const seed = Date.now();
-
-    const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
-
-    const img = new Image();
-    img.src = constructedUrl;
-
-    img.onload = () => {
-      setImageUrl(constructedUrl);
-      setIsLoading(false);
-    };
-
-    img.onerror = () => {
-      setError('فشل توليد الصورة الفنية. قد تكون الخدمة مشغولة. يرجى المحاولة مرة أخرى بعد لحظات.');
-      setIsLoading(false);
-    };
   };
   
   const handleDownloadClick = async () => {
