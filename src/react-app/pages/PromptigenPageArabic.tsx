@@ -272,7 +272,7 @@ function PromptigenPageArabic() {
           {/* أقسام المحتوى */}
           <div className="mt-24">
               <section className="text-center">
-                  <h2 className="text-3xl font-bold mb-4">من رؤية إلى نص بنقرة واحدة</h2>
+                  <h2 className="text-3xl font-bold mb-4">من صورة إلى نص بنقرة واحدة</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
                       <div className="bg-gray-800 p-6 rounded-lg shadow-md">
                           <h3 className="text-xl font-bold text-sky-400 mb-2">هندسة عكسية للفن</h3>
@@ -300,7 +300,7 @@ function PromptigenPageArabic() {
                         أصبح تحويل أي صورة إلى أمر نصي قوي أسهل من أي وقت مضى.
                     </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-right">
                     <div className="bg-gray-800/50 p-6 rounded-lg">
                         <p className="text-sky-400 font-bold text-lg mb-2">١. ارفع صورتك</p>
                         <p className="text-gray-300">
