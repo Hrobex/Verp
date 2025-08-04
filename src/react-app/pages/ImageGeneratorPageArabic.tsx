@@ -1,27 +1,25 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-// بيانات الأنماط - مترجمة للعرض فقط
+// قائمة الأنماط أصبحت أبسط، بدون الـ prompt_suffix السري
 const styleOptions = [
-  { name: 'افتراضي', value: 'default', prompt_suffix: '' },
-  { name: 'سينمائي', value: 'cinematic', prompt_suffix: ', cinematic style' },
-  { name: 'فوتوغرافي', value: 'photographic', prompt_suffix: ', photographic, realistic' },
-  { name: 'أنمي', value: 'anime', prompt_suffix: ', anime style' },
-  { name: 'فن رقمي', value: 'digital-art', prompt_suffix: ', digital art' },
-  { name: 'فن البكسل', value: 'pixel-art', prompt_suffix: ', pixel art' },
-  { name: 'فن خيالي', value: 'fantasy-art', prompt_suffix: ', fantasy art' },
-  { name: 'نيون بانك', value: 'neonpunk', prompt_suffix: ', neonpunk style' },
-  { name: 'مجسم 3D', value: '3d-model', prompt_suffix: ', 3d model' },
+  { name: 'افتراضي', value: 'default' },
+  { name: 'سينمائي', value: 'cinematic' },
+  { name: 'فوتوغرافي', value: 'photographic' },
+  { name: 'أنمي', value: 'anime' },
+  { name: 'فن رقمي', value: 'digital-art' },
+  { name: 'فن البكسل', value: 'pixel-art' },
+  { name: 'فن خيالي', value: 'fantasy-art' },
+  { name: 'نيون بانك', value: 'neonpunk' },
+  { name: 'مجسم 3D', value: '3d-model' },
 ];
 
-// بيانات الأحجام - مترجمة
 const sizeOptions = [
   { label: 'مربع (1024x1024)', value: '1024x1024' },
   { label: 'شاشة عريضة (1024x576)', value: '1024x576' },
   { label: 'صورة طولية (576x1024)', value: '576x1024' },
 ];
 
-// بيانات الأسئلة الشائعة - مترجمة ومحدثة
 const faqData = [
     {
       question: 'هل أداة Artigen Pro مجانية حقًا؟',
@@ -70,44 +68,41 @@ function ImageGeneratorPageArabic() {
     setError(null);
     setImageUrl('');
     
-    let translatedPrompt = userPrompt;
-
     try {
-      const langPair = "ar|en";
-      const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(userPrompt)}&langpair=${langPair}&mt=1`;
-      
-      const translateResponse = await fetch(apiUrl);
-      if (translateResponse.ok) {
-        const translateData = await translateResponse.json();
-        if (translateData.responseData && translateData.responseData.translatedText &&
-            translateData.responseData.translatedText.trim().toLowerCase() !== userPrompt.toLowerCase()) {
-          translatedPrompt = translateData.responseData.translatedText;
+        const response = await fetch('/api/generate-image-pro', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userPrompt: userPrompt,
+                style: selectedStyle,
+                size: selectedSize,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'فشل توليد الصورة.');
         }
-      }
-    } catch (err) {
-      console.error("Translation API failed, using original prompt:", err);
+
+        const generatedUrl = data.imageUrl;
+        
+        const img = new Image();
+        img.src = generatedUrl;
+
+        img.onload = () => {
+            setImageUrl(generatedUrl);
+            setIsLoading(false);
+        };
+
+        img.onerror = () => {
+            setError('فشل تحميل الصورة. قد تكون خدمة الذكاء الاصطناعي مشغولة. يرجى المحاولة مرة أخرى لاحقًا.');
+            setIsLoading(false);
+        };
+    } catch (err: any) {
+        setError(err.message);
+        setIsLoading(false);
     }
-
-    const styleSuffix = styleOptions.find(s => s.value === selectedStyle)?.prompt_suffix || '';
-    const finalPrompt = translatedPrompt + styleSuffix;
-    const [width, height] = selectedSize.split('x');
-    const encodedPrompt = encodeURIComponent(finalPrompt);
-    const seed = Date.now();
-    
-    const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
-
-    const img = new Image();
-    img.src = constructedUrl;
-
-    img.onload = () => {
-      setImageUrl(constructedUrl);
-      setIsLoading(false);
-    };
-
-    img.onerror = () => {
-      setError('فشل تحميل الصورة. قد تكون خدمة الذكاء الاصطناعي مشغولة. يرجى المحاولة مرة أخرى لاحقًا.');
-      setIsLoading(false);
-    };
   };
   
   const handleDownloadClick = async () => {
@@ -129,7 +124,7 @@ function ImageGeneratorPageArabic() {
         setError('فشل التحميل. يمكنك محاولة النقر بزر الماوس الأيمن على الصورة واختيار "حفظ الصورة باسم".');
       }
   };
-
+  
   return (
     <>
       <title>Artigen Pro: مولد الصور المجاني بالذكاء الاصطناعي من النص</title>
