@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-// --- Data Constants ---
+// --- Data Constants (Safe for frontend) ---
 
 const sizeOptions = [
   { label: 'Square (1024x1024)', value: '1024x1024' },
@@ -9,17 +9,10 @@ const sizeOptions = [
   { label: 'Portrait (576x1024)', value: '576x1024' },
 ];
 
+// قائمة الأنماط أصبحت أبسط، بدون الـ prompt_suffix السري
 const artStyleOptions = [
-    { 
-        id: 'artistic', 
-        name: 'Artistic Style', 
-        prompt_suffix: ', masterpiece, digital painting, stylized, intricate details, vibrant colors, high quality' 
-    },
-    { 
-        id: 'cinematic', 
-        name: 'Cinematic Art', 
-        prompt_suffix: ', masterpiece, concept art, high detail, sharp focus, cinematic lighting' 
-    }
+    { id: 'artistic', name: 'Artistic Style' },
+    { id: 'cinematic', name: 'Cinematic Art' }
 ];
 
 const faqData = [
@@ -64,44 +57,42 @@ function ArtigenV2Page() {
     setError(null);
     setImageUrl('');
 
-    // --- ADDED: Translation logic to handle non-English prompts ---
-    let translatedPrompt = userPrompt;
     try {
-      const langPair = "ar|en"; // Can be adapted if more source languages are common
-      const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(userPrompt)}&langpair=${langPair}&mt=1`;
-      
-      const translateResponse = await fetch(apiUrl);
-      if (translateResponse.ok) {
-        const translateData = await translateResponse.json();
-        if (translateData.responseData && translateData.responseData.translatedText &&
-            translateData.responseData.translatedText.trim().toLowerCase() !== userPrompt.toLowerCase()) {
-          translatedPrompt = translateData.responseData.translatedText;
+        // استدعاء الواجهة الخلفية الجديدة
+        const response = await fetch('/api/generate-artigen-v2', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userPrompt: userPrompt,
+                styleId: selectedArtStyle,
+                size: selectedSize,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to generate art.');
         }
-      }
-    } catch (err) {
-      console.error("Translation API failed, using original prompt:", err);
+
+        const generatedUrl = data.imageUrl;
+        
+        // التحقق من أن الصورة تم تحميلها في المتصفح قبل عرضها
+        const img = new Image();
+        img.src = generatedUrl;
+        img.onload = () => {
+            setImageUrl(generatedUrl);
+            setIsLoading(false);
+        };
+        img.onerror = () => {
+            setError('Failed to load the generated art. The service might be busy.');
+            setIsLoading(false);
+        };
+
+    } catch (err: any) {
+        setError(err.message);
+        setIsLoading(false);
     }
-
-    const styleSuffix = artStyleOptions.find(s => s.id === selectedArtStyle)?.prompt_suffix || '';
-    const finalPrompt = translatedPrompt + styleSuffix; // Use the translated prompt
-    const [width, height] = selectedSize.split('x');
-    const encodedPrompt = encodeURIComponent(finalPrompt);
-    const seed = Date.now();
-
-    const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
-
-    const img = new Image();
-    img.src = constructedUrl;
-
-    img.onload = () => {
-      setImageUrl(constructedUrl);
-      setIsLoading(false);
-    };
-
-    img.onerror = () => {
-      setError('Failed to generate the art. The service might be busy. Please try again in a moment.');
-      setIsLoading(false);
-    };
   };
   
   const handleDownloadClick = async () => {
