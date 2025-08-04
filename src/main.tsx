@@ -20,7 +20,7 @@ import ArtigenV2Page from "@/react-app/pages/ArtigenV2Page";
 import AnimeGeneratorPage from "@/react-app/pages/AnimeGeneratorPage";
 import CartoonifyPage from "@/react-app/pages/CartoonifyPage";
 import DigiCartoonyPage from "@/react-app/pages/DigiCartoonyPage";
-import PromptigenPage from "@/react-app/pages/PromptigenPage"; // <-- 1. تم استيراد المكون الجديد
+import PromptigenPage from "@/react-app/pages/PromptigenPage";
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -34,6 +34,7 @@ import ArtigenV2PageArabic from "@/react-app/pages/ArtigenV2PageArabic";
 import AnimeGeneratorPageArabic from "@/react-app/pages/AnimeGeneratorPageArabic";
 import CartoonifyPageArabic from "@/react-app/pages/CartoonifyPageArabic";
 import DigiCartoonyPageArabic from "@/react-app/pages/DigiCartoonyPageArabic";
+import PromptigenPageArabic from "@/react-app/pages/PromptigenPageArabic"; // <-- 1. تم استيراد المكون العربي الجديد
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -56,7 +57,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="anime-ai" element={<AnimeGeneratorPage />} />
           <Route path="cartoonify" element={<CartoonifyPage />} />
           <Route path="cartoony-art" element={<DigiCartoonyPage />} />
-          <Route path="prompt-generator" element={<PromptigenPage />} /> {/* <-- 2. تم إضافة المسار الجديد هنا */}
+          <Route path="prompt-generator" element={<PromptigenPage />} />
 
 
           {/* --- Arabic Route Group --- */}
@@ -72,6 +73,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="anime-ai" element={<AnimeGeneratorPageArabic />} />
             <Route path="cartoonify" element={<CartoonifyPageArabic />} />
             <Route path="cartoony-art" element={<DigiCartoonyPageArabic />} />
+            <Route path="prompt-generator" element={<PromptigenPageArabic />} /> {/* <-- 2. تم إضافة المسار العربي الجديد هنا */}
           </Route>
           
         </Route>
