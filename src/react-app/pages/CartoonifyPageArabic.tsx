@@ -27,6 +27,17 @@ const faqData = [
     },
 ];
 
+// أضف هذه الدالة المساعدة قبل دالة المكون الرئيسية
+async function fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve((reader.result as string).split(',')[1]);
+        reader.onerror = error => reject(error);
+    });
+}
+
+
 function CartoonifyPageArabic() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourcePreview, setSourcePreview] = useState<string | null>(null);
@@ -56,23 +67,31 @@ function CartoonifyPageArabic() {
     setError(null);
     setResultImageUrl(null);
 
-    const formData = new FormData();
-    formData.append('file', sourceFile);
-
     try {
-      const response = await fetch('https://makhinur-cdonn.hf.space/cartoonize/', {
-        method: 'POST',
-        body: formData,
-      });
+        // تحويل الصورة إلى Base64 لإرسالها
+        const base64Image = await fileToBase64(sourceFile);
 
-      if (response.ok) {
-        const imageBlob = await response.blob();
-        const imageUrl = URL.createObjectURL(imageBlob);
-        setResultImageUrl(imageUrl);
-      } else {
-        const errorText = await response.text();
-        setError(errorText || 'عفوًا! حدث خطأ ما. يرجى المحاولة مرة أخرى لاحقًا.');
-      }
+        // استدعاء الواجهة الخلفية الآمنة
+        const response = await fetch('/api/cartoonify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                imageData: base64Image,
+                mimeType: sourceFile.type,
+                filename: sourceFile.name,
+            }),
+        });
+
+        if (response.ok) {
+            // الواجهة الخلفية الآن تعيد الصورة مباشرة
+            const imageBlob = await response.blob();
+            const imageUrl = URL.createObjectURL(imageBlob);
+            setResultImageUrl(imageUrl);
+        } else {
+            // محاولة قراءة الخطأ كـ JSON، وإلا عرض رسالة عامة
+            const errorData = await response.json().catch(() => ({ error: 'عفوًا! حدث خطأ ما.' }));
+            setError(errorData.error || 'يرجى المحاولة مرة أخرى لاحقًا.');
+        }
     } catch (err) {
       setError('حدث خطأ غير متوقع. يرجى التحقق من اتصالك والمحاولة مرة أخرى.');
     } finally {
@@ -84,12 +103,12 @@ function CartoonifyPageArabic() {
     if (!resultImageUrl) return;
     const link = document.createElement('a');
     link.href = resultImageUrl;
-    link.download = 'cartoon-image.png';
+    link.download = 'cartoon-image.png'; 
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
-
+    
   return (
     <>
       <title>تحويل الصور إلى كرتون مجانًا | فلتر كرتون بالذكاء الاصطناعي</title>
