@@ -1,23 +1,4 @@
 {
-  "builds": [
-    {
-      "src": "api/**/*.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -27,6 +8,12 @@
           "value": "noindex"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/((?!api|assets|sw.js|_next|favicon.ico|static).*)",
+      "destination": "/index.html"
     }
   ]
 }
