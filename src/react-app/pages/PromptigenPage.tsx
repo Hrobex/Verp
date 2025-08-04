@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 
 // --- الثوابت الأساسية ---
-const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc"; // ملاحظة: هذا مفتاح عام، لا بأس به
+const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc"; 
 const SCRIPT_URL = "https://esm.run/@google/generative-ai";
 
 const MODEL_FALLBACK_CHAIN = [
@@ -184,10 +184,10 @@ function PromptigenPage() {
     <>
       <title>Free AI Image to Prompt Generator | Reverse Prompt Finder - Promptigen</title>
       <meta name="description" content="Turn any image into a masterpiece prompt! Promptigen is a free AI tool that analyzes your picture and generates detailed, creative text prompts for Midjourney, Stable Diffusion, and more." />
-      <link rel="canonical" href="https://aiconvert.online/promptigen" />
-      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/promptigen" />
-      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/promptigen" />
-      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/promptigen" />
+      <link rel="canonical" href="https://aiconvert.online/prompt-generator" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/prompt-generator" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/prompt-generator" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/prompt-generator" />
        <script type="application/ld+json">
         {`
           {
