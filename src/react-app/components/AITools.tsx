@@ -56,6 +56,15 @@ const tools = [
     image: 'https://images.unsplash.com/photo-1569336415962-a4294509e385?w=400&h=300&fit=crop'
   },
   {
+  "id": "prompt-generator",
+  "title": "Promptigen: Image to Prompt",
+  "description": "Reverse-engineer any image into a detailed, creative text prompt for AI art generators like Midjourney.",
+  "icon": Pencil,
+  "color": "from-sky-500 to-violet-600",
+  "features": ["Reverse Engineer Images", "Expert-Level Prompts", "Free & Unlimited"],
+  "image": "YOUR_UNSPLASH_IMAGE_URL_HERE?w=400&h=300&fit=crop"
+  },
+  {
     id: 'remove-background',
     title: 'Background Removal',
     description: 'Remove backgrounds from any image instantly with precision AI that handles complex edges perfectly.',
