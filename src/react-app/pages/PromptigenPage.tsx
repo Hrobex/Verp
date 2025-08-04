@@ -1,6 +1,8 @@
+// src/react-app/pages/PromptigenPage.tsx (النسخة النهائية والآمنة)
+
 import { useState, useRef, useEffect } from 'react';
 
-// --- كل الثوابت الحساسة تم حذفها من هنا ---
+// --- كل الثوابت الحساسة (مفتاح API، قائمة النماذج، Prompt خفي) تم حذفها بالكامل من هنا ---
 
 const faqData = [
   {
@@ -23,7 +25,7 @@ const faqData = [
 
 
 function PromptigenPage() {
-  // --- حالات الواجهة الرسومية (تم تبسيطها) ---
+  // --- حالات الواجهة الرسومية (بقيت كما هي) ---
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
@@ -66,7 +68,7 @@ function PromptigenPage() {
     }
   };
 
-  // --- دالة توليد الوصف (تمت إعادة كتابتها بالكامل) ---
+  // --- دالة توليد الوصف (تمت إعادة كتابتها بالكامل لتكون "غبية" وآمنة) ---
   const handleGeneratePrompt = async () => {
     if (!selectedFile) {
       setError('Please upload an image first.');
@@ -77,7 +79,7 @@ function PromptigenPage() {
     setError(null);
     setGeneratedPrompt('');
 
-    // دالة مساعدة لتحويل الصورة إلى base64 داخلية
+    // دالة مساعدة لتحويل الصورة إلى base64
     const toBase64 = (file: File): Promise<string> => 
       new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -89,7 +91,7 @@ function PromptigenPage() {
     try {
       const imageBase64 = await toBase64(selectedFile);
       
-      // --- هنا يحدث الاتصال الآمن بالواجهة الخلفية ---
+      // --- هنا يحدث الاتصال الآمن بـ "العقل الذكي" على الخادم ---
       const response = await fetch('/api/generate-prompt', {
         method: 'POST',
         headers: {
@@ -103,16 +105,18 @@ function PromptigenPage() {
 
       const data = await response.json();
 
-      // إذا كانت الاستجابة تحتوي على خطأ (كما صممناها في الواجهة الخلفية)
+      // إذا كانت الاستجابة من الخادم تحتوي على خطأ (كما صممناها في الواجهة الخلفية)
       if (!response.ok) {
-        throw new Error(data.error || 'An unknown error occurred.');
+        // نثق بالرسالة الاحترافية القادمة من الخادم ونعرضها مباشرة
+        throw new Error(data.error || 'An unknown server error occurred.');
       }
       
       // إذا كانت الاستجابة ناجحة
       setGeneratedPrompt(data.prompt);
 
     } catch (err: any) {
-      // عرض أي خطأ للمستخدم (سواء من الواجهة الخلفية أو من الشبكة)
+      // عرض أي خطأ للمستخدم (سواء من الخادم أو من مشاكل الشبكة)
+      console.error("Frontend Error:", err);
       setError(err.message);
     } finally {
       setIsLoading(false);
@@ -126,8 +130,8 @@ function PromptigenPage() {
       setError('Failed to copy prompt to clipboard.');
     });
   };
-
-  // تم تبسيط هذه الدالة لأن حالة "Initializing AI" لم تعد موجودة
+  
+  // هذه الدالة الآن أبسط، لأننا لم نعد ننتظر تهيئة أي شيء في الواجهة الأمامية
   const getButtonText = () => {
     if (isLoading) return 'Analyzing Image...';
     return 'Generate Prompt';
