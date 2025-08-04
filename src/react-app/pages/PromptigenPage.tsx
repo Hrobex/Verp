@@ -1,6 +1,9 @@
-import { useState, useRef, useEffect, ChangeEvent } from 'react';
+// الملف: PromptigenPage.tsx (النسخة الجديدة والآمنة)
 
-// بيانات الأسئلة الشائعة تبقى في الواجهة الأمامية
+import { useState, useRef, useEffect } from 'react';
+
+// تم حذف كل الثوابت الحساسة (API_KEY, MODEL_FALLBACK_CHAIN, SCRIPT_URL)
+
 const faqData = [
   {
     question: 'What is a reverse image prompt generator?',
@@ -20,7 +23,24 @@ const faqData = [
   },
 ];
 
+// دالة مساعدة جديدة لتحويل الصورة إلى صيغة Base64 لإرسالها للواجهة الخلفية
+async function convertFileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      // نزيل الجزء الأول من النص "data:image/png;base64," لنرسل البيانات الخام فقط
+      const base64String = (reader.result as string).split(',')[1];
+      resolve(base64String);
+    };
+    reader.onerror = (error) => reject(error);
+  });
+}
+
+
 function PromptigenPage() {
+  // --- حالات الواجهة الرسومية والبيانات (معظمها يبقى كما هو) ---
+  // تم حذف `isAiReady` لأن تهيئة الذكاء الاصطناعي لم تعد تتم هنا
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
@@ -29,69 +49,111 @@ function PromptigenPage() {
   const [loadingText, setLoadingText] = useState('The AI is analyzing the image...');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // تم حذف المراجع الخاصة بالذكاء الاصطناعي (genAiInstanceRef, aiModuleRef)
+
+  // --- التأثير الجانبي لتهيئة الذكاء الاصطناعي ---
+  // تم حذف هذا التأثير الجانبي بالكامل، لم يعد ضرورياً
   
+  // --- التأثير الجانبي لنص التحميل الديناميكي (يبقى كما هو) ---
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isLoading) {
       const baseText = "The AI is analyzing the image";
       let dotCount = 1;
       setLoadingText(`${baseText}${'.'.repeat(dotCount)}`);
-      interval = setInterval(() => { dotCount = (dotCount % 3) + 1; setLoadingText(`${baseText}${'.'.repeat(dotCount)}`); }, 500);
+      interval = setInterval(() => {
+        dotCount = (dotCount % 3) + 1;
+        setLoadingText(`${baseText}${'.'.repeat(dotCount)}`);
+      }, 500);
     }
     return () => clearInterval(interval);
   }, [isLoading]);
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  // دالة التعامل مع تغيير الملف (تبقى كما هي)
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) { setError('Please select a valid image file (PNG, JPG, WEBP).'); return; }
+      if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+        setError('Please select a valid image file (PNG, JPG, WEBP).');
+        return;
+      }
       setSelectedFile(file);
+      setGeneratedPrompt(''); // إفراغ النتيجة القديمة عند اختيار صورة جديدة
       setError(null);
       const reader = new FileReader();
-      reader.onloadend = () => setImagePreview(reader.result as string);
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
       reader.readAsDataURL(file);
     }
   };
 
+  // --- منطق توليد الوصف الجديد والمبسط ---
   const handleGeneratePrompt = async () => {
-    if (!selectedFile) { setError('Please upload an image first.'); return; }
+    if (!selectedFile) {
+      setError('Please upload an image first.');
+      return;
+    }
     
     setIsLoading(true);
     setError(null);
     setGeneratedPrompt('');
 
-    const reader = new FileReader();
-    reader.readAsDataURL(selectedFile);
-    reader.onload = async () => {
-        const base64String = (reader.result as string).split(',')[1];
-        try {
-            const response = await fetch('/api/generatePrompt', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ imageBase64: base64String, mimeType: selectedFile.type }),
-            });
-            const data = await response.json();
-            if (!response.ok) {
-              throw new Error(data.error || 'An unknown server error occurred.');
-            }
-            setGeneratedPrompt(data.prompt);
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-    reader.onerror = () => { setIsLoading(false); setError('Failed to read the file.'); };
+    try {
+      // 1. تحويل الصورة إلى نص Base64
+      const imageData = await convertFileToBase64(selectedFile);
+
+      // 2. إرسال الطلب إلى الواجهة الخلفية الآمنة
+      const response = await fetch('/api/generate-prompt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // نرسل بيانات الصورة ونوعها فقط
+        body: JSON.stringify({ 
+          imageData: imageData, 
+          mimeType: selectedFile.type 
+        }),
+      });
+      
+      const result = await response.json();
+
+      if (!response.ok) {
+        // عرض رسالة الخطأ القادمة من الواجهة الخلفية
+        throw new Error(result.error || 'An unknown error occurred.');
+      }
+
+      // 3. عرض النتيجة للمستخدم
+      setGeneratedPrompt(result.generatedPrompt);
+
+    } catch (err: any) {
+      setError(err.message);
+      console.error("Frontend Error:", err);
+    } finally {
+      // 4. إيقاف التحميل دائماً
+      setIsLoading(false);
+    }
   };
 
+  // دالة نسخ الوصف (تبقى كما هي)
   const handleCopyPrompt = () => {
     if (!generatedPrompt) return;
-    navigator.clipboard.writeText(generatedPrompt).catch(() => setError('Failed to copy prompt to clipboard.'));
+    navigator.clipboard.writeText(generatedPrompt).then(() => {
+        // يمكنك إضافة رسالة نجاح هنا إذا أردت
+    }).catch(err => {
+      console.error('Failed to copy prompt:', err);
+      setError('Failed to copy prompt to clipboard.');
+    });
   };
 
-  const getButtonText = () => isLoading ? 'Analyzing Image...' : 'Generate Prompt';
+  // دالة نص الزر (تم تبسيطها)
+  const getButtonText = () => {
+    if (isLoading) return 'Analyzing Image...';
+    return 'Generate Prompt';
+  };
 
   return (
+    // واجهة المستخدم بالكامل تبقى كما هي بدون أي تغيير في الشكل أو التصميم
     <>
       <title>Free AI Image to Prompt Generator | Reverse Prompt Finder - Promptigen</title>
       <meta name="description" content="Turn any image into a masterpiece prompt! Promptigen is a free AI tool that analyzes your picture and generates detailed, creative text prompts for Midjourney, Stable Diffusion, and more." />
@@ -99,10 +161,31 @@ function PromptigenPage() {
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/prompt-generator" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/prompt-generator" />
       <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/prompt-generator" />
-       <script type="application/ld+json">{`{ "@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Promptigen AI Image to Prompt Generator", "operatingSystem": "WEB", "applicationCategory": "MultimediaApplication", "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "ratingCount": "954" }, "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" } }`}</script>
+       <script type="application/ld+json">
+        {`
+          {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "Promptigen AI Image to Prompt Generator",
+            "operatingSystem": "WEB",
+            "applicationCategory": "MultimediaApplication",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.8",
+              "ratingCount": "954"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            }
+          }
+        `}
+      </script>
 
       <div className="pt-24 bg-gray-900 text-white min-h-screen">
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+          
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-violet-500">
               Promptigen: AI Image to Prompt Generator
@@ -171,25 +254,64 @@ function PromptigenPage() {
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">From Vision to Text in One Click</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-sky-400 mb-2">Reverse Engineer Art</h3><p className="text-gray-300">See an image you love? Upload it and instantly get the descriptive prompt needed to recreate its style, subject, and mood.</p></div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-sky-400 mb-2">Expert-Level Prompts</h3><p className="text-gray-300">Our AI is trained to think like a prompt engineer, capturing details about lighting, composition, and artistic style.</p></div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-sky-400 mb-2">Universal Compatibility</h3><p className="text-gray-300">The generated prompts are optimized to work seamlessly with Midjourney, Stable Diffusion, and more.</p></div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-sky-400 mb-2">Free & Unlimited</h3><p className="text-gray-300">Unleash your creativity without limits. Our image-to-prompt tool is completely free, with no sign-up required.</p></div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+                          <h3 className="text-xl font-bold text-sky-400 mb-2">Reverse Engineer Art</h3>
+                          <p className="text-gray-300">See an image you love? Upload it and instantly get the descriptive prompt needed to recreate its style, subject, and mood.</p>
+                      </div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+                          <h3 className="text-xl font-bold text-sky-400 mb-2">Expert-Level Prompts</h3>
+                          <p className="text-gray-300">Our AI is trained to think like a prompt engineer, capturing details about lighting, composition, and artistic style.</p>
+                      </div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+                          <h3 className="text-xl font-bold text-sky-400 mb-2">Universal Compatibility</h3>
+                          <p className="text-gray-300">The generated prompts are optimized to work seamlessly with Midjourney, Stable Diffusion, and more.</p>
+                      </div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+                          <h3 className="text-xl font-bold text-sky-400 mb-2">Free & Unlimited</h3>
+                          <p className="text-gray-300">Unleash your creativity without limits. Our image-to-prompt tool is completely free, with no sign-up required.</p>
+                      </div>
                   </div>
               </section>
 
             <section className="mt-20">
-                <div className="text-center"><h2 className="text-3xl font-bold mb-4">How It Works: A Simple 3-Step Process</h2><p className="max-w-3xl mx-auto text-gray-400 mb-12">Transforming an image into a powerful prompt has never been more straightforward.</p></div>
+                <div className="text-center">
+                    <h2 className="text-3xl font-bold mb-4">How It Works: A Simple 3-Step Process</h2>
+                    <p className="max-w-3xl mx-auto text-gray-400 mb-12">
+                        Transforming an image into a powerful prompt has never been more straightforward.
+                    </p>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-                    <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-sky-400 font-bold text-lg mb-2">1. Upload Your Image</p><p className="text-gray-300">Click the upload area and select any picture from your device. It can be a photo, a painting, or any digital art that inspires you.</p></div>
-                    <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-sky-400 font-bold text-lg mb-2">2. Generate the Prompt</p><p className="text-gray-300">Hit the "Generate Prompt" button. Our AI will analyze every aspect of the image, from the subject to the finest details.</p></div>
-                    <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-sky-400 font-bold text-lg mb-2">3. Copy and Create</p><p className="text-gray-300">Your expert-crafted prompt appears in seconds. Copy it with one click and paste it into your favorite AI image generator to start creating.</p></div>
+                    <div className="bg-gray-800/50 p-6 rounded-lg">
+                        <p className="text-sky-400 font-bold text-lg mb-2">1. Upload Your Image</p>
+                        <p className="text-gray-300">
+                            Click the upload area and select any picture from your device. It can be a photo, a painting, or any digital art that inspires you.
+                        </p>
+                    </div>
+                    <div className="bg-gray-800/50 p-6 rounded-lg">
+                        <p className="text-sky-400 font-bold text-lg mb-2">2. Generate the Prompt</p>
+                        <p className="text-gray-300">
+                           Hit the "Generate Prompt" button. Our AI will analyze every aspect of the image, from the subject to the finest details.
+                        </p>
+                    </div>
+                    <div className="bg-gray-800/50 p-6 rounded-lg">
+                        <p className="text-sky-400 font-bold text-lg mb-2">3. Copy and Create</p>
+                        <p className="text-gray-300">
+                           Your expert-crafted prompt appears in seconds. Copy it with one click and paste it into your favorite AI image generator to start creating.
+                        </p>
+                    </div>
                 </div>
             </section>
             
               <section className="mt-20 max-w-4xl mx-auto">
                   <h2 className="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
-                  <div className="space-y-4">{faqData.map((faq, index) => <div key={index} className="bg-gray-800 p-6 rounded-lg"><h3 className="font-bold text-lg text-sky-400 mb-2">{faq.question}</h3><p className="text-gray-300 leading-relaxed">{faq.answer}</p></div>)}</div>
+                  <div className="space-y-4">
+                      {faqData.map((faq, index) => (
+                          <div key={index} className="bg-gray-800 p-6 rounded-lg">
+                              <h3 className="font-bold text-lg text-sky-400 mb-2">{faq.question}</h3>
+                              <p className="text-gray-300 leading-relaxed">{faq.answer}</p>
+                          </div>
+                      ))}
+                  </div>
               </section>
           </div>
         </main>
