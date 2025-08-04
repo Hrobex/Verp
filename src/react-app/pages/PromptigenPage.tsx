@@ -1,9 +1,6 @@
-// src/react-app/pages/PromptigenPage.tsx (النسخة النهائية والآمنة)
+import { useState, useRef, useEffect, ChangeEvent } from 'react';
 
-import { useState, useRef, useEffect } from 'react';
-
-// --- كل الثوابت الحساسة (مفتاح API، قائمة النماذج، Prompt خفي) تم حذفها بالكامل من هنا ---
-
+// The FAQ data is not sensitive and stays in the frontend.
 const faqData = [
   {
     question: 'What is a reverse image prompt generator?',
@@ -23,9 +20,7 @@ const faqData = [
   },
 ];
 
-
 function PromptigenPage() {
-  // --- حالات الواجهة الرسومية (بقيت كما هي) ---
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
@@ -34,8 +29,7 @@ function PromptigenPage() {
   const [loadingText, setLoadingText] = useState('The AI is analyzing the image...');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // --- التأثير الجانبي لنص التحميل الديناميكي (بقي كما هو) ---
+  
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isLoading) {
@@ -50,8 +44,7 @@ function PromptigenPage() {
     return () => clearInterval(interval);
   }, [isLoading]);
 
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
@@ -61,14 +54,11 @@ function PromptigenPage() {
       setSelectedFile(file);
       setError(null);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
+      reader.onloadend = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
-  // --- دالة توليد الوصف (تمت إعادة كتابتها بالكامل لتكون "غبية" وآمنة) ---
   const handleGeneratePrompt = async () => {
     if (!selectedFile) {
       setError('Please upload an image first.');
@@ -79,48 +69,39 @@ function PromptigenPage() {
     setError(null);
     setGeneratedPrompt('');
 
-    // دالة مساعدة لتحويل الصورة إلى base64
-    const toBase64 = (file: File): Promise<string> => 
-      new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve((reader.result as string).split(',')[1]); // إزالة الـ prefix
-        reader.onerror = error => reject(error);
-    });
+    const reader = new FileReader();
+    reader.readAsDataURL(selectedFile);
+    reader.onload = async () => {
+        const base64String = (reader.result as string).split(',')[1];
 
-    try {
-      const imageBase64 = await toBase64(selectedFile);
-      
-      // --- هنا يحدث الاتصال الآمن بـ "العقل الذكي" على الخادم ---
-      const response = await fetch('/api/generate-prompt', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          imageBase64: imageBase64,
-          mimeType: selectedFile.type,
-        }),
-      });
+        try {
+            const response = await fetch('/api/generatePrompt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    imageBase64: base64String,
+                    mimeType: selectedFile.type
+                }),
+            });
 
-      const data = await response.json();
+            const data = await response.json();
 
-      // إذا كانت الاستجابة من الخادم تحتوي على خطأ (كما صممناها في الواجهة الخلفية)
-      if (!response.ok) {
-        // نثق بالرسالة الاحترافية القادمة من الخادم ونعرضها مباشرة
-        throw new Error(data.error || 'An unknown server error occurred.');
-      }
-      
-      // إذا كانت الاستجابة ناجحة
-      setGeneratedPrompt(data.prompt);
+            if (!response.ok) {
+                throw new Error(data.error || 'An unknown error occurred.');
+            }
 
-    } catch (err: any) {
-      // عرض أي خطأ للمستخدم (سواء من الخادم أو من مشاكل الشبكة)
-      console.error("Frontend Error:", err);
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
+            setGeneratedPrompt(data.prompt);
+
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    reader.onerror = () => {
+        setError('Failed to read the file.');
+        setIsLoading(false);
+    };
   };
 
   const handleCopyPrompt = () => {
@@ -130,16 +111,14 @@ function PromptigenPage() {
       setError('Failed to copy prompt to clipboard.');
     });
   };
-  
-  // هذه الدالة الآن أبسط، لأننا لم نعد ننتظر تهيئة أي شيء في الواجهة الأمامية
-  const getButtonText = () => {
+
+   const getButtonText = () => {
     if (isLoading) return 'Analyzing Image...';
     return 'Generate Prompt';
   };
 
   return (
     <>
-      {/* ... كل كود الـ JSX والمحتوى الخاص بك يبقى كما هو تمامًا ... */}
       <title>Free AI Image to Prompt Generator | Reverse Prompt Finder - Promptigen</title>
       <meta name="description" content="Turn any image into a masterpiece prompt! Promptigen is a free AI tool that analyzes your picture and generates detailed, creative text prompts for Midjourney, Stable Diffusion, and more." />
       <link rel="canonical" href="https://aiconvert.online/prompt-generator" />
@@ -181,6 +160,7 @@ function PromptigenPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            {/* واجهة الأداة الأصلية الخاصة بك */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
               <div>
                 <label className="block text-lg font-semibold text-gray-200 mb-2">1. Upload Your Image</label>
@@ -234,7 +214,8 @@ function PromptigenPage() {
               </div>
             </div>
           </div>
-          
+
+          {/* أقسام المحتوى الإنجليزي */}
           <div className="mt-24">
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">From Vision to Text in One Click</h2>
