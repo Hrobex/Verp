@@ -85,7 +85,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="prompt-generator" element={<PromptigenPageArabic />} />
             <Route path="ai-story-generator" element={<StorygenPageArabic />} />
             <Route path="ai-video-prompt-generator" element={<VideoPromptPageArabic />} />
-            <Route path="easy-drawings" element={<EasyDrawingsPageAr />} /> {/* <-- تمت إضافة هذا السطر */}
+            <Route path="easy-drawings" element={<EasyDrawingsPageArabic />} /> {/* <-- تمت إضافة هذا السطر */}
           </Route>
           
         </Route>
