@@ -69,7 +69,7 @@ function ImageEnhancerPage() {
 
     try {
       // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
-      const response = await fetch('/api/image-enhancer', {
+      const response = await fetch('/api/tools?tool=image-enhancer', {
         method: 'POST',
         body: formData,
       });
