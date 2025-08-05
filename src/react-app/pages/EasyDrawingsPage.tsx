@@ -1,5 +1,6 @@
 // الملف: EasyDrawingsPage.tsx
 import { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
 // --- الثوابت العامة ---
 const faqData = [
@@ -14,6 +15,15 @@ const faqData = [
   {
     question: 'What is the best type of photo for creating a sketch?',
     answer: 'Photos with good lighting, clear subjects, and high contrast generally produce the best results. However, our AI can work its magic on almost any image, from portraits and pets to landscapes and architecture.'
+  },
+  {
+    question: "What's the difference between this 'Sketch' tool and the 'Line Drawing' tool?",
+    answer: (
+      <>
+        Both tools create amazing artistic effects, but for different purposes. This tool is designed to generate a rich, detailed <strong>artistic sketch</strong> with shading and texture, mimicking a hand-drawn piece. 
+        In contrast, our <Link to="/line-drawing" className="text-yellow-400 hover:underline">Photo to Line Drawing tool</Link> specializes in extracting clean, precise <strong>outlines</strong> from your image, perfect for coloring pages, stencils, or technical designs.
+      </>
+    )
   },
   {
     question: 'Can I use the generated sketch for commercial purposes?',
