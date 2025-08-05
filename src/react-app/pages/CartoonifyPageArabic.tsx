@@ -1,8 +1,8 @@
+// الملف: CartoonifyPageArabic.tsx (النسخة المحدثة بمنطق face-merge)
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 
 // --- ثوابت البيانات ---
-
 const faqData = [
     {
         question: 'كيف تقوم الأداة بتحويل صورتي إلى كرتون؟',
@@ -27,16 +27,7 @@ const faqData = [
     },
 ];
 
-// أضف هذه الدالة المساعدة قبل دالة المكون الرئيسية
-async function fileToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve((reader.result as string).split(',')[1]);
-        reader.onerror = error => reject(error);
-    });
-}
-
+// تم حذف دالة fileToBase64 من هنا لأننا لم نعد بحاجة إليها
 
 function CartoonifyPageArabic() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
@@ -58,6 +49,7 @@ function CartoonifyPageArabic() {
     }
   };
 
+  // --- تم تعديل هذه الدالة بالكامل لتتبع منطق face-merge ---
   const handleCartoonifyClick = async () => {
     if (!sourceFile) {
       setError('يرجى رفع صورة لكرتنتها.');
@@ -68,32 +60,28 @@ function CartoonifyPageArabic() {
     setResultImageUrl(null);
 
     try {
-        // تحويل الصورة إلى Base64 لإرسالها
-        const base64Image = await fileToBase64(sourceFile);
+      // 1. إنشاء FormData مباشرة (أبسط وأسرع)
+      const formData = new FormData();
+      formData.append('file', sourceFile);
 
-        // استدعاء الواجهة الخلفية الآمنة
-        const response = await fetch('/api/cartoonify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                imageData: base64Image,
-                mimeType: sourceFile.type,
-                filename: sourceFile.name,
-            }),
-        });
+      // 2. استدعاء الواجهة الخلفية الذكية مع الملصق الصحيح
+      const response = await fetch('/api/tools?tool=cartoonify', {
+        method: 'POST',
+        body: formData,
+      });
 
-        if (response.ok) {
-            // الواجهة الخلفية الآن تعيد الصورة مباشرة
-            const imageBlob = await response.blob();
-            const imageUrl = URL.createObjectURL(imageBlob);
-            setResultImageUrl(imageUrl);
-        } else {
-            // محاولة قراءة الخطأ كـ JSON، وإلا عرض رسالة عامة
-            const errorData = await response.json().catch(() => ({ error: 'عفوًا! حدث خطأ ما.' }));
-            setError(errorData.error || 'يرجى المحاولة مرة أخرى لاحقًا.');
-        }
-    } catch (err) {
-      setError('حدث خطأ غير متوقع. يرجى التحقق من اتصالك والمحاولة مرة أخرى.');
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'فشلت عملية تحويل الصورة. الرجاء المحاولة مرة أخرى.');
+      }
+      
+      // 3. التعامل مع الرد كصورة مباشرة
+      const imageBlob = await response.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
+      setResultImageUrl(imageUrl);
+
+    } catch (err: any) {
+      setError(err.message || 'حدث خطأ غير متوقع. يرجى التحقق من اتصالك والمحاولة مرة أخرى.');
     } finally {
       setIsLoading(false);
     }
