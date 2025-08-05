@@ -69,7 +69,7 @@ function ImageGeneratorPageArabic() {
     setImageUrl('');
     
     try {
-        const response = await fetch('/api/generate-image-pro', {
+        const response = await fetch('/api/image-generators?tool=image-pro', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
