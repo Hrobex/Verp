@@ -1,5 +1,5 @@
-// الملف: StorygenPage.tsx (النسخة الجديدة والآمنة)
-import { useState, useRef, useEffect, ChangeEvent } from 'react';
+// الملف: StorygenPage.tsx (النسخة المصححة)
+import { useState, useRef, useEffect } from 'react'; // تم حذف ChangeEvent من هنا
 
 // --- الثوابت العامة (آمنة) ---
 const languageOptions = [
@@ -54,8 +54,6 @@ function StorygenPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // تم حذف كل ما يتعلق بتهيئة الـ AI من هنا
-
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isLoading) {
@@ -70,6 +68,7 @@ function StorygenPage() {
     return () => clearInterval(interval);
   }, [isLoading]);
 
+  // تم تغيير نوع المعامل هنا
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -93,17 +92,15 @@ function StorygenPage() {
     setGeneratedStory('');
 
     try {
-        // 1. تحويل الصورة إلى نص Base64
         const imageData = await fileToBase64(selectedFile);
 
-        // 2. إرسال الطلب إلى الواجهة الخلفية الآمنة
         const response = await fetch('/api/story-generator', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 imageData: imageData,
                 mimeType: selectedFile.type,
-                language: selectedLanguage, // نرسل كائن اللغة كاملاً
+                language: selectedLanguage,
             }),
         });
         
@@ -113,7 +110,6 @@ function StorygenPage() {
             throw new Error(result.error || 'An unknown error occurred.');
         }
 
-        // 3. عرض النتيجة للمستخدم
         setGeneratedStory(result.story);
 
     } catch (err: any) {
@@ -129,9 +125,10 @@ function StorygenPage() {
     navigator.clipboard.writeText(generatedStory).catch(() => setError('Failed to copy the story.'));
   };
 
+  // --- تم تصحيح هذه الدالة ---
   const getButtonText = () => {
     if (isLoading) return 'Writing Your Story...';
-    // لم نعد نحتاج للتحقق من isAiReady
+    // تم حذف التحقق من isAiReady لأنه لم يعد موجوداً
     return 'Generate Story from Image';
   };
   
