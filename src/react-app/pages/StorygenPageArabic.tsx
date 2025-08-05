@@ -1,19 +1,7 @@
+// الملف: StorygenPageArabic.tsx (النسخة الجديدة والآمنة)
 import { useState, useRef, useEffect } from 'react';
 
-// --- الثوابت الأساسية ---
-const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
-const SCRIPT_URL = "https://esm.run/@google/generative-ai";
-
-// سلسلة النماذج الجديدة والموسعة بالترتيب المطلوب
-const MODEL_FALLBACK_CHAIN = [
-  "gemini-2.5-flash",
-  "gemini-2.0-flash-lite",
-  "gemini-2.5-flash-lite",
-  "gemini-1.5-flash-latest",
-  "gemini-pro-vision"
-];
-
-// بيانات اللغات مع العربية كخيار أول
+// --- الثوابت العامة (آمنة) ---
 const languageOptions = [
     { code: 'ar', name: 'العربية' },
     { code: 'en', name: 'English' },
@@ -46,20 +34,16 @@ const faqDataArabic = [
   },
 ];
 
-// --- دالة مساعدة لتحويل الصورة ---
-async function fileToGenerativePart(file: File) {
-  const base64EncodedDataPromise = new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
-    reader.readAsDataURL(file);
-  });
-  return {
-    inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
-  };
+// --- دالة مساعدة لتحويل الصورة إلى Base64 ---
+async function fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
+      reader.readAsDataURL(file);
+    });
 }
 
 function StorygenPageArabic() {
-  const [isAiReady, setIsAiReady] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [generatedStory, setGeneratedStory] = useState('');
@@ -69,22 +53,6 @@ function StorygenPageArabic() {
   const [loadingText, setLoadingText] = useState('جاري نسج قصتك...');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const genAiInstanceRef = useRef<any>(null);
-  const aiModuleRef = useRef<any>(null);
-
-  useEffect(() => {
-    const initializeAI = async () => {
-      try {
-        const module = await import(SCRIPT_URL);
-        aiModuleRef.current = module;
-        genAiInstanceRef.current = new module.GoogleGenerativeAI(API_KEY);
-        setIsAiReady(true);
-      } catch (e) {
-        setError("لم يتمكن من تهيئة نموذج الذكاء الاصطناعي. يرجى تحديث الصفحة.");
-      }
-    };
-    initializeAI();
-  }, []);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -104,6 +72,7 @@ function StorygenPageArabic() {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+      setGeneratedStory('');
       setError(null);
       const reader = new FileReader();
       reader.onloadend = () => setImagePreview(reader.result as string);
@@ -112,8 +81,8 @@ function StorygenPageArabic() {
   };
 
   const handleGenerateStory = async () => {
-    if (!selectedFile || !isAiReady) {
-      setError('يرجى رفع صورة أولاً وانتظار تهيئة الذكاء الاصطناعي.');
+    if (!selectedFile) {
+      setError('يرجى رفع صورة أولاً.');
       return;
     }
     
@@ -121,39 +90,32 @@ function StorygenPageArabic() {
     setError(null);
     setGeneratedStory('');
 
-    let masterPrompt = `Act as an expert storyteller and creative writer. Analyze the provided image in immense detail. Identify the characters, their expressions, the setting, the time of day, the overall mood, and any potential actions or conflicts. Use these visual cues to write a compelling, imaginative, and complete story. The story must have a clear beginning, a developing middle, and a satisfying conclusion. Be descriptive and bring the scene to life. There is NO limit on the story length.`;
+    try {
+        const imageData = await fileToBase64(selectedFile);
 
-    if (selectedLanguage.code !== 'en') {
-      masterPrompt += ` **CRITICAL FINAL INSTRUCTION: Your entire response, the story, MUST be written fluently in the following language: ${selectedLanguage.name}.**`;
-    }
-
-    const imagePart = await fileToGenerativePart(selectedFile);
-
-    for (let i = 0; i < MODEL_FALLBACK_CHAIN.length; i++) {
-      const modelName = MODEL_FALLBACK_CHAIN[i];
-      try {
-        const model = genAiInstanceRef.current.getGenerativeModel({ model: modelName });
-        const { HarmCategory, HarmBlockThreshold } = aiModuleRef.current;
-        const safetySettings = [
-            { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-            { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-            { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-            { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-        ];
-        const result = await model.generateContent({ contents: [{ role: "user", parts: [imagePart, { text: masterPrompt }] }], safetySettings });
-        const storyText = result.response.text();
-        if (!storyText) throw new Error("استقبل استجابة فارغة من النموذج.");
+        const response = await fetch('/api/story-generator', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                imageData: imageData,
+                mimeType: selectedFile.type,
+                language: selectedLanguage,
+            }),
+        });
         
-        setGeneratedStory(storyText);
-        break; 
-      } catch (err) {
-        console.error(`خطأ في نموذج ${modelName}:`, String(err));
-        if (i === MODEL_FALLBACK_CHAIN.length - 1) {
-          setError("حدث خطأ غير متوقع أو أن الأداة تواجه ضغطًا عاليًا. يرجى المحاولة مرة أخرى.");
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || 'حدث خطأ غير معروف.');
         }
-      }
+
+        setGeneratedStory(result.story);
+
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
   
   const handleCopyStory = () => {
@@ -163,10 +125,9 @@ function StorygenPageArabic() {
 
   const getButtonText = () => {
     if (isLoading) return 'جاري كتابة القصة...';
-    if (!isAiReady) return 'جاري تهيئة الأداة...';
     return 'ولّد قصة من الصورة';
   };
-
+    
   return (
     <>
       <title>مولد قصص بالذكاء الاصطناعي من الصور | تحويل الصورة إلى قصة</title>
@@ -247,7 +208,7 @@ function StorygenPageArabic() {
 
               <button
                 onClick={handleGenerateStory}
-                disabled={!isAiReady || isLoading || !selectedFile}
+                disabled={isLoading || !selectedFile}
                 className="w-full mt-2 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-indigo-500 to-violet-600 rounded-lg hover:from-indigo-600 hover:to-violet-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
                 {getButtonText()}
