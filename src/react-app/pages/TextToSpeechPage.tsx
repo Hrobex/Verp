@@ -1,40 +1,25 @@
-// الملف: TextToSpeechPage.tsx (النسخة المصححة)
+// الملف: TextToSpeechPage.tsx (النسخة المصححة والنهائية)
 import { useState, useEffect, ChangeEvent } from 'react';
 
-// --- Type Definitions (تبقى كما هي) ---
-type Genders = {
-  Male?: string[];
-  Female?: string[];
-};
-type LanguageData = {
-  code: string;
-  name: string;
-  genders: Genders;
-};
+type Genders = { Male?: string[]; Female?: string[]; };
+type LanguageData = { code: string; name: string; genders: Genders; };
 type GenderKey = 'Male' | 'Female';
 
-// --- React Component ---
 function TextToSpeechPage() {
-  // --- States ---
   const [text, setText] = useState('');
   const [selectedLanguageCode, setSelectedLanguageCode] = useState('en-US');
   const [selectedGender, setSelectedGender] = useState<GenderKey>('Female');
   const [selectedVoice, setSelectedVoice] = useState('');
   const [rate, setRate] = useState(1);
   const [pitch, setPitch] = useState(1);
-  
   const [voicesData, setVoicesData] = useState<LanguageData[]>([]);
   const [genders, setGenders] = useState<GenderKey[]>([]);
   const [voices, setVoices] = useState<string[]>([]);
-  
   const [isLoading, setIsLoading] = useState(false);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // --- Effects ---
-  // جلب بيانات الأصوات من الواجهة الخلفية عند تحميل المكون
-        
-        useEffect(() => {
+  useEffect(() => {
     const fetchVoicesData = async () => {
       try {
         const response = await fetch('/api/tts-voices');
@@ -43,8 +28,10 @@ function TextToSpeechPage() {
         const data = await response.json();
         const fetchedVoices: LanguageData[] = data.voices;
         
-        // تعيين القيمة الأولية للصوت بعد تحميل البيانات بنجاح
-        const initialLang = data.find(lang => lang.code === 'en-US');
+        // --- هذا هو السطر الذي كان مفقوداً وتمت إضافته ---
+        setVoicesData(fetchedVoices); 
+        
+        const initialLang = fetchedVoices.find(lang => lang.code === 'en-US');
         if (initialLang?.genders.Female?.[0]) {
             setSelectedVoice(initialLang.genders.Female[0]);
         }
@@ -55,6 +42,8 @@ function TextToSpeechPage() {
     fetchVoicesData();
   }, []);
 
+  // --- بقية الكود تبقى كما هي تماماً ---
+
   useEffect(() => {
     if (voicesData.length === 0) return;
     const currentLanguage = voicesData.find(lang => lang.code === selectedLanguageCode);
@@ -64,7 +53,7 @@ function TextToSpeechPage() {
       const currentSelectedGenderExists = availableGenders.includes(selectedGender);
       setSelectedGender(currentSelectedGenderExists ? selectedGender : availableGenders[0]);
     }
-  }, [selectedLanguageCode, voicesData]);
+  }, [selectedLanguageCode, voicesData, selectedGender]); // أضفت selectedGender هنا لتحسين المنطق
 
   useEffect(() => {
     if (voicesData.length === 0) return;
@@ -79,7 +68,6 @@ function TextToSpeechPage() {
     }
   }, [selectedLanguageCode, selectedGender, voicesData]);
 
-  // --- Handlers ---
   const handleTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
     if (newText.length <= 1500) {
@@ -109,7 +97,6 @@ function TextToSpeechPage() {
     formData.append('pitch', pitch.toString());
 
     try {
-      // استدعاء الواجهة الخلفية الآمنة لتوليد الصوت
       const response = await fetch('/api/tts-generate', { method: 'POST', body: formData });
       if (!response.ok) throw new Error('Failed to generate audio. The service may be busy. Please try again.');
       const audioBlob = await response.blob();
