@@ -1,3 +1,4 @@
+// الملف: LineArtifyPageArabic.tsx (النسخة الجديدة والآمنة)
 import { useState, useCallback, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -64,7 +65,6 @@ const faqData = [
       answer: 'للحصول على أفضل نتيجة عند تحويل الصور إلى رسم رصاص، استخدم صورًا ذات مواضيع واضحة، إضاءة جيدة، وتباين عالٍ. الصور ذات الحواف المحددة جيدًا تميل إلى إنتاج رسومات أكثر نظافة ودقة.'
     },
 ];
-
 
 function LineArtifyPageArabic() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
@@ -169,7 +169,8 @@ function LineArtifyPageArabic() {
       formData.append('file', compressedFile, sourceFile.name);
       formData.append('version', version);
 
-      const response = await fetch('https://asartb-lld.hf.space/predict/', {
+      // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
+      const response = await fetch('/api/lineartify', {
         method: 'POST',
         body: formData,
       });
@@ -194,7 +195,7 @@ function LineArtifyPageArabic() {
     if (!resultImage) return;
     const a = document.createElement('a');
     a.href = resultImage;
-    a.download = `rasm-rassas_${sourceFile?.name.split('.')[0] || 'image'}.png`;
+    a.download = `rasm-khaty_${sourceFile?.name.split('.')[0] || 'image'}.png`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
