@@ -93,7 +93,7 @@ function VideoPromptPage() {
     try {
         const imageData = await fileToBase64(selectedFile);
 
-        const response = await fetch('/api/video-prompt-generator', {
+        const response = await fetch('/api/stvid?tool=video-prompt', { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
