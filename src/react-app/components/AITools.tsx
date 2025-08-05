@@ -13,6 +13,7 @@ import {
   SprayCan,
   Drama, 
   Smile,
+  Film,
   Paintbrush
   
 } from 'lucide-react';
@@ -54,6 +55,15 @@ const tools = [
     color: 'from-cyan-500 to-blue-600',
     features: ['Instant conversion', 'High-quality sketch', 'For artists & creators'],
     image: 'https://images.unsplash.com/photo-1569336415962-a4294509e385?w=400&h=300&fit=crop'
+  },
+  {
+    id: 'ai-video-prompt-generator',
+    title: 'AI Video Prompt Generator',
+    description: 'Turn any static image into a cinematic video prompt. Our AI writes professional scene descriptions for tools like Sora, Veo, and Runway.',
+    icon: Film, 
+    color: 'from-rose-500 to-teal-600',
+    features: ['Cinematic Descriptions', 'For Sora, Veo & More', 'Free & No Sign-up'],
+    image: 'https://images.unsplash.com/photo-1574717521952-9430d440513d?w=400&h=300&fit=crop'
   },
   {
   "id": "prompt-generator",
