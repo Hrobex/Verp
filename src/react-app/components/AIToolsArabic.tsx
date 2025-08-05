@@ -13,6 +13,7 @@ import {
   SprayCan,
   Drama,
   Smile,
+  Film,
   Paintbrush
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -53,6 +54,15 @@ const toolsArabic = [
     color: 'from-cyan-500 to-blue-600',
     features: ['تحويل فوري', 'رسم عالي الجودة', 'للفنانين والمبدعين'],
     image: 'https://images.unsplash.com/photo-1608447047976-50a1b6a71404?w=400&h=300&fit=crop'
+  },
+  {
+    id: 'ai-video-prompt-generator',
+    title: 'مولد وصف الفيديو بالذكاء الاصطناعي',
+    description: 'حوّل أي صورة ثابتة إلى وصف فيديو سينمائي. يكتب الذكاء الاصطناعي أوامر احترافية لمنصات مثل Sora و Veo و Runway.',
+    icon: Film, // Or any other icon component you use
+    color: 'from-rose-500 to-teal-600',
+    features: ['أوصاف سينمائية', 'لمنصات Sora و Veo وغيرها', 'مجاني وبدون تسجيل'],
+    image: 'https://images.unsplash.com/photo-1574717521952-9430d440513d?w=400&h=300&fit=crop'
   },
   {
   "id": "prompt-generator",
