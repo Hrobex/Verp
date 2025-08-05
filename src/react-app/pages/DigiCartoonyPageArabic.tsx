@@ -90,7 +90,7 @@ function DigiCartoonyPageArabic() {
       formData.append('if_face', detectFace ? 'Yes' : 'No');
 
       // تم تغيير الرابط فقط إلى الواجهة الخلفية الآمنة
-      const response = await fetch('/api/digicartoony', {
+      const response = await fetch('/api/tools?tool=digicartoony', {
         method: 'POST',
         body: formData,
       });
