@@ -22,6 +22,7 @@ import CartoonifyPage from "@/react-app/pages/CartoonifyPage";
 import DigiCartoonyPage from "@/react-app/pages/DigiCartoonyPage";
 import PromptigenPage from "@/react-app/pages/PromptigenPage";
 import StorygenPage from "@/react-app/pages/StorygenPage";
+import VideoPromptPage from "@/react-app/pages/VideoPromptPage"; // <-- تمت إضافة هذا السطر
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -61,6 +62,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="cartoony-art" element={<DigiCartoonyPage />} />
           <Route path="prompt-generator" element={<PromptigenPage />} />
           <Route path="ai-story-generator" element={<StorygenPage />} />
+          <Route path="ai-video-prompt-generator" element={<VideoPromptPage />} /> {/* <-- تمت إضافة هذا السطر */}
 
 
           {/* --- Arabic Route Group --- */}
