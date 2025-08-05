@@ -1,3 +1,4 @@
+// الملف: LineArtifyPage.tsx (النسخة الجديدة والآمنة)
 import { useState, useCallback, ChangeEvent } from 'react';
 
 // This is a helper component for the drag-and-drop area.
@@ -100,6 +101,7 @@ function LineArtifyPage() {
     e.currentTarget.classList.add('border-blue-500');
   };
   
+  // دالة ضغط الصورة تبقى هنا لتحسين الأداء قبل الرفع
   const compressImage = (file: File): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -146,6 +148,7 @@ function LineArtifyPage() {
     });
   };
 
+  // تم تعديل هذه الدالة لتصبح آمنة
   const handleConvertClick = async () => {
     if (!sourceFile) {
       setError('Please upload an image first.');
@@ -163,7 +166,8 @@ function LineArtifyPage() {
       formData.append('file', compressedFile, sourceFile.name);
       formData.append('version', version);
 
-      const response = await fetch('https://asartb-lld.hf.space/predict/', {
+      // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
+      const response = await fetch('/api/lineartify', {
         method: 'POST',
         body: formData,
       });
@@ -187,10 +191,10 @@ function LineArtifyPage() {
   const handleDownloadClick = () => {
     if (!resultImage) return;
     const a = document.createElement('a');
-a.href = resultImage;
+    a.href = resultImage;
     a.download = `lineart_${sourceFile?.name.split('.')[0] || 'image'}.png`;
     document.body.appendChild(a);
-    a.click();
+a.click();
     document.body.removeChild(a);
   };
 
