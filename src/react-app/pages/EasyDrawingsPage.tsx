@@ -119,7 +119,7 @@ function EasyDrawingsPage() {
               Photo to Sketch Converter
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
-              Transform your pictures into artistic pencil sketches and line art with a single click. Upload a photo and let our AI do the rest.
+              Transform your pictures into pencil artistic sketches with a single click. Upload a photo and let our AI do the rest.
             </p>
           </div>
 
@@ -182,14 +182,14 @@ function EasyDrawingsPage() {
 
           <div className="mt-24">
               <section className="text-center">
-                  <h2 className="text-3xl font-bold mb-4">Create Stunning Line Art Instantly</h2>
+                  <h2 className="text-3xl font-bold mb-4">Create Stunning drawings Instantly</h2>
                    <p className="max-w-3xl mx-auto text-gray-400 mb-12">
                     Whether you're an artist seeking a foundation for your next piece, a designer looking for a stylized graphic, or just having fun, our AI sketch generator provides a clean, high-quality outline from any image in seconds.
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
                       <div className="bg-gray-800 p-6 rounded-lg shadow-md">
                           <h3 className="text-xl font-bold text-yellow-400 mb-2">For Artists</h3>
-                          <p className="text-gray-300">Generate perfect line art from a photo to use as a template for tracing, painting, or digital art.</p>
+                          <p className="text-gray-300">Generate perfect art from a photo to use as a template for tracing, painting, or digital art.</p>
                       </div>
                       <div className="bg-gray-800 p-6 rounded-lg shadow-md">
                           <h3 className="text-xl font-bold text-yellow-400 mb-2">High Quality</h3>
