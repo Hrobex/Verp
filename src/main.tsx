@@ -22,7 +22,7 @@ import CartoonifyPage from "@/react-app/pages/CartoonifyPage";
 import DigiCartoonyPage from "@/react-app/pages/DigiCartoonyPage";
 import PromptigenPage from "@/react-app/pages/PromptigenPage";
 import StorygenPage from "@/react-app/pages/StorygenPage";
-import VideoPromptPage from "@/react-app/pages/VideoPromptPage"; // <-- تمت إضافة هذا السطر
+import VideoPromptPage from "@/react-app/pages/VideoPromptPage";
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -37,7 +37,8 @@ import AnimeGeneratorPageArabic from "@/react-app/pages/AnimeGeneratorPageArabic
 import CartoonifyPageArabic from "@/react-app/pages/CartoonifyPageArabic";
 import DigiCartoonyPageArabic from "@/react-app/pages/DigiCartoonyPageArabic";
 import PromptigenPageArabic from "@/react-app/pages/PromptigenPageArabic";
-import StorygenPageArabic from "@/react-app/pages/StorygenPageArabic"; // <-- 1. تم استيراد المكون العربي الجديد
+import StorygenPageArabic from "@/react-app/pages/StorygenPageArabic";
+import VideoPromptPageArabic from "@/react-app/pages/VideoPromptPageAr"; // <-- تمت إضافة هذا السطر
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -62,7 +63,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="cartoony-art" element={<DigiCartoonyPage />} />
           <Route path="prompt-generator" element={<PromptigenPage />} />
           <Route path="ai-story-generator" element={<StorygenPage />} />
-          <Route path="ai-video-prompt-generator" element={<VideoPromptPage />} /> {/* <-- تمت إضافة هذا السطر */}
+          <Route path="ai-video-prompt-generator" element={<VideoPromptPage />} />
 
 
           {/* --- Arabic Route Group --- */}
@@ -79,7 +80,8 @@ createRoot(document.getElementById("root")!).render(
             <Route path="cartoonify" element={<CartoonifyPageArabic />} />
             <Route path="cartoony-art" element={<DigiCartoonyPageArabic />} />
             <Route path="prompt-generator" element={<PromptigenPageArabic />} />
-            <Route path="ai-story-generator" element={<StorygenPageArabic />} /> {/* <-- 2. تم إضافة المسار العربي الجديد هنا */}
+            <Route path="ai-story-generator" element={<StorygenPageArabic />} />
+            <Route path="ai-video-prompt-generator" element={<VideoPromptPageArabic />} /> {/* <-- تمت إضافة هذا السطر */}
           </Route>
           
         </Route>
