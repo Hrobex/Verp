@@ -1,150 +1,106 @@
+// الملف: FaceMergePage.tsx (النسخة الجديدة والآمنة)
 import { useState, useRef, ChangeEvent } from 'react';
-import { Link } from 'react-router-dom';
-
-// --- Helper Function ---
-// Converts a File to a compressed JPEG File
-async function compressImage(file: File): Promise<File> {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target?.result as string;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                if (!ctx) return reject(new Error('Canvas context is not available.'));
-
-                const maxWidth = 1000;
-                const maxHeight = 1000;
-                let { width, height } = img;
-
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height = Math.round(height * (maxWidth / width));
-                        width = maxWidth;
-                    }
-                } else {
-                    if (height > maxHeight) {
-                        width = Math.round(width * (maxHeight / height));
-                        height = maxHeight;
-                    }
-                }
-                canvas.width = width;
-                canvas.height = height;
-                ctx.drawImage(img, 0, 0, width, height);
-
-                canvas.toBlob(
-                    (blob) => {
-                        if (blob) {
-                            resolve(new File([blob], file.name, { type: 'image/jpeg' }));
-                        } else {
-                            reject(new Error('Canvas to Blob conversion failed.'));
-                        }
-                    },
-                    'image/jpeg',
-                    0.7 // 70% quality
-                );
-            };
-            img.onerror = reject;
-        };
-        reader.onerror = reject;
-    });
-}
-
 
 // --- Data Constants ---
-const faqData = [
-    {
-        question: 'How is this different from a simple cartoon filter?',
-        answer: 'DigiCartoony doesn\'t just apply a filter. It uses advanced AI to reinterpret your photo as a new piece of digital art, adding painterly depth, complex lighting, and a unique artistic quality.'
-    },
-    {
-        question: 'What does the "Detect Face Only" option do?',
-        answer: 'This powerful feature gives you artistic control. When enabled, the AI focuses all its power on transforming only the face in your photo into a detailed digital portrait. When disabled, it transforms the entire image, which is great for landscapes or full-body shots.'
-    },
-    {
-        question: 'What is the difference between DigiCartoony and Cartoonify?',
-        answer: (
-            <>
-                They are two different artists for two different goals. <strong>DigiCartoony</strong> is a digital painter, creating a high-quality, detailed piece of art with a unique painterly depth. It's for creating a masterpiece.
-                <Link to="https://aiconvert.online/cartoonify/" className="text-rose-400 underline"> Cartoonify</Link> is a quick sketch artist, giving you a fun, 2D "toon" look instantly, perfect for social media posts.
-            </>
-        )
-    },
-     {
-        question: 'Are my uploaded photos safe?',
-        answer: 'Yes, your privacy is our priority. Photos are uploaded securely for AI processing and are automatically deleted from our servers after a short time. We never store or use your images.'
-    },
+// تم حذف `apiEndpoint` السري من هنا.
+const creativeIdeas = [
+  { title: 'Historical Mashups', description: 'Place your face onto a famous historical portrait or photograph.' },
+  { title: 'Movie Star Fun', description: 'Swap faces with your favorite actor in an iconic movie scene.' },
+  { title: 'Friend & Family Mix', description: 'Create hilarious combinations by merging faces of friends and family.' },
+  { title: 'Artistic Creations', description: 'Use face merge to create unique and surreal digital art projects.' },
 ];
 
-function DigiCartoonyPage() {
+const ethicalGuidelines = [
+  { title: 'Use Responsibly', description: 'Employ the tool with respect for the privacy and personal rights of others.' },
+  { title: 'Avoid Misuse', description: 'Refrain from using the tool in abusive ways, such as for deception, bullying, or insulting others.' },
+  { title: 'Respect Privacy', description: 'Do not use or share images of individuals without their proper consent.' },
+];
+
+const faqData = [
+    { question: 'What is AI face swapping and how does it work?', answer: 'AI face swapping is a technology that uses artificial intelligence to replace a face in one image with a face from another. It works by analyzing the key facial features in the source image and seamlessly blending them onto the target image.' },
+    { question: 'Can I swap faces online for free?', answer: 'Yes, Mergify is a completely free online AI face swap tool. It allows you to merge and swap faces in images without any sign-up or credit card required.' },
+    { question: 'Is Mergify suitable for swapping faces in group photos?', answer: 'Yes, our tool is designed to work with group photos. Simply upload your source and destination images and specify the number of the person (from left to right) in each photo to ensure the correct faces are swapped.' },
+    { question: 'What are the benefits of using AI for face swapping?', answer: 'AI technology provides highly realistic and seamless results. It intelligently analyzes lighting, angles, and expressions to make the final merged image look natural and convincing.' },
+    { question: 'Are there any limitations to using Mergify?', answer: 'Mergify does not impose any limits on the number of images you can process. For the best results, use clear, front-facing photos where faces are not obscured.' },
+    { question: 'What are the privacy implications of using Mergify?', answer: 'We prioritize your privacy. All uploaded images are processed on our servers and are automatically deleted after a short period. We do not store or share your images.' },
+    { question: 'What is the license for the AI model used in this tool?', answer: 'The model is governed by the Responsible AI License (creativeml-openrail-m), which allows for a wide range of uses as long as they adhere to the specific use-case restrictions outlined in the license to prevent harmful applications. You can read the full license for details.'},
+];
+
+// --- React Component ---
+function FaceMergePage() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
+  const [destinationFile, setDestinationFile] = useState<File | null>(null);
   const [sourcePreview, setSourcePreview] = useState<string | null>(null);
-  const [detectFace, setDetectFace] = useState(true);
+  const [destinationPreview, setDestinationPreview] = useState<string | null>(null);
+  
+  const [sourcePersonNumber, setSourcePersonNumber] = useState('1');
+  const [destinationPersonNumber, setDestinationPersonNumber] = useState('1');
+
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const sourceFileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
+  const sourceFileInputRef = useRef<HTMLInputElement>(null);
+  const destinationFileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>, type: 'source' | 'destination') => {
     const file = e.target.files?.[0];
     if (file) {
-      setSourceFile(file);
       const reader = new FileReader();
-      reader.onloadend = () => setSourcePreview(reader.result as string);
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        if (type === 'source') {
+          setSourceFile(file);
+          setSourcePreview(result);
+        } else {
+          setDestinationFile(file);
+          setDestinationPreview(result);
+        }
+      };
       reader.readAsDataURL(file);
       setResultImageUrl(null);
       setError(null);
     }
   };
 
-  const handleGenerateClick = async () => {
-    if (!sourceFile) {
-      setError('Please upload a photo to get started.');
+  const handleMergeClick = async () => {
+    if (!sourceFile || !destinationFile) {
+      setError('Please upload both a source and a destination image.');
       return;
     }
     setIsLoading(true);
     setError(null);
     setResultImageUrl(null);
 
+    const formData = new FormData();
+    formData.append('source_file', sourceFile);
+    formData.append('destination_file', destinationFile);
+    formData.append('source_face_index', sourcePersonNumber);
+    formData.append('destination_face_index', destinationPersonNumber);
+    
     try {
-      const compressedFile = await compressImage(sourceFile);
-      
-      const formData = new FormData();
-      formData.append('file', compressedFile);
-      formData.append('if_face', detectFace ? 'Yes' : 'No');
-
-      // تم تغيير الرابط فقط. كل المنطق الآخر يبقى كما هو
-      const response = await fetch('/api/digicartoony', {
+      // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
+      const response = await fetch('/api/face-merge', {
         method: 'POST',
         body: formData,
       });
 
-      if (response.ok) {
-        const imageBlob = await response.blob();
-        setResultImageUrl(URL.createObjectURL(imageBlob));
-      } else {
+      if (!response.ok) {
         const errorText = await response.text();
-        setError(errorText || 'An error occurred during processing. Please try again.');
+        throw new Error(errorText || 'Face swapping failed. Please check your images and try again.');
       }
-    } catch (err) {
-      setError('An unknown error occurred. Please check your connection.');
+      
+      const imageBlob = await response.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
+      setResultImageUrl(imageUrl);
+
+    } catch (err: any) {
+      setError(err.message || 'An unknown error occurred.');
     } finally {
       setIsLoading(false);
     }
   };
-
-  const handleDownloadClick = () => {
-    if (!resultImageUrl) return;
-    const link = document.createElement('a');
-    link.href = resultImageUrl;
-    link.download = 'digicartoony-art.png';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-};
-
+  
   return (
     <>
       <title>AI Digital Painting from Photo | Free Photo to Art Converter</title>
