@@ -84,7 +84,7 @@ function ImageBackgroundToolPage() {
 
     try {
       // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
-      const response = await fetch('/api/background-remover', {
+      const response = await fetch('/api/tools?tool=background-remover', {
         method: 'POST',
         body: formData,
       });
