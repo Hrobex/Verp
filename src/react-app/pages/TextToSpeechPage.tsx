@@ -33,13 +33,16 @@ function TextToSpeechPage() {
 
   // --- Effects ---
   // جلب بيانات الأصوات من الواجهة الخلفية عند تحميل المكون
-  useEffect(() => {
+        
+        useEffect(() => {
     const fetchVoicesData = async () => {
       try {
         const response = await fetch('/api/tts-voices');
         if (!response.ok) throw new Error('Could not load voice data.');
-        const data: LanguageData[] = await response.json();
-        setVoicesData(data);
+        
+        const data = await response.json();
+        const fetchedVoices: LanguageData[] = data.voices;
+        
         // تعيين القيمة الأولية للصوت بعد تحميل البيانات بنجاح
         const initialLang = data.find(lang => lang.code === 'en-US');
         if (initialLang?.genders.Female?.[0]) {
