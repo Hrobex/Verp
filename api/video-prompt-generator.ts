@@ -1,14 +1,21 @@
 // الملف: api/video-prompt-generator.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+// --- الأسرار التشغيلية والمنطق المخفي ---
 const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
 
-// النموذج المستهدف للتجربة الأولية
-const TARGET_MODEL = "gemini-2.5-pro"; 
+// سلسلة النماذج بالترتيب المطلوب للتجربة (نظام التعاقب)
+const MODEL_FALLBACK_CHAIN = [
+  "gemini-2.5-pro",
+  "gemini-2.0-flash-lite",
+  "gemini-2.5-flash-lite",
+  "gemini-2.0-flash",
+  "gemini-pro-vision" // هذا النموذج موثوق جدًا كخيار أخير للصور
+];
 
 // إعدادات الأمان
 const SAFETY_SETTINGS = [
-    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" }, // قد نحتاج لتخفيفها لوصف مشاهد أكشن
+    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
     { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
     { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
     { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
@@ -35,7 +42,6 @@ It must seamlessly blend the following elements:
 Now, analyze the user's image and generate the perfect video prompt based on these rules.
 `;
 
-    // تعديل للغات الأخرى
     if (languageCode !== 'en') {
       masterPrompt += ` **CRITICAL FINAL INSTRUCTION: Your entire response, the final video prompt, MUST be written fluently in the following language: ${languageName}. Do not translate the example, just follow the structure.**`;
     }
@@ -50,60 +56,73 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
-        // لاحظ أننا لم نعد نحتاج إلى language هنا، ولكن قد نضيفها لاحقًا
         const { imageData, mimeType, language } = req.body;
 
         if (!imageData || !mimeType) {
             return res.status(400).json({ error: 'Missing imageData or mimeType.' });
         }
         
-        // استخدام اللغة إذا كانت متاحة، وإلا الافتراضي هو الإنجليزية
         const currentLanguage = language || { name: 'English', code: 'en' };
         const masterPrompt = getMasterPrompt(currentLanguage.name, currentLanguage.code);
+        
+        let finalResultText: string | null = null;
+        let lastErrorForDev: string | null = null;
 
-        const requestBody = {
-            contents: [{
-                role: "user",
-                parts: [
-                    { inline_data: { mime_type: mimeType, data: imageData } },
-                    { text: masterPrompt }
-                ]
-            }],
-            safetySettings: SAFETY_SETTINGS,
-            // يمكن إضافة إعدادات الجيل هنا إذا أردنا تحكمًا أدق
-            generationConfig: {
-                "temperature": 0.8,
-                "topP": 0.95,
+        for (const modelName of MODEL_FALLBACK_CHAIN) {
+            try {
+                const requestBody = {
+                    contents: [{
+                        role: "user",
+                        parts: [
+                            { inline_data: { mime_type: mimeType, data: imageData } },
+                            { text: masterPrompt }
+                        ]
+                    }],
+                    safetySettings: SAFETY_SETTINGS,
+                    generationConfig: {
+                        "temperature": 0.8,
+                        "topP": 0.95,
+                    }
+                };
+
+                const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const responseData = await apiResponse.json();
+                
+                if (!apiResponse.ok) {
+                    lastErrorForDev = responseData.error?.message || `API Error with ${modelName}`;
+                    throw new Error(lastErrorForDev);
+                }
+                
+                const generatedText = responseData.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                if (generatedText && generatedText.trim()) {
+                    finalResultText = generatedText.trim();
+                    break; // نجحنا، نخرج من الحلقة
+                } else {
+                    lastErrorForDev = `Empty response from ${modelName}. Finish Reason: ${responseData.candidates?.[0]?.finishReason}`;
+                }
+            } catch (error: any) {
+                // هذه الرسالة ستظهر في سجلات Vercel فقط (للمطور)
+                console.error(`Error with model ${modelName}:`, error.message);
+                // نستمر لتجربة النموذج التالي
             }
-        };
-
-        const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${TARGET_MODEL}:generateContent?key=${API_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody)
-        });
-
-        const responseData = await apiResponse.json();
-        
-        if (!apiResponse.ok) {
-            const errorMsg = responseData.error?.message || `API Error with ${TARGET_MODEL}`;
-            console.error("API Error:", errorMsg);
-            return res.status(502).json({ error: errorMsg });
         }
-        
-        const generatedText = responseData.candidates?.[0]?.content?.parts?.[0]?.text;
-        
-        if (generatedText && generatedText.trim()) {
-            // الاستجابة هنا هي prompt الفيديو
-            return res.status(200).json({ videoPrompt: generatedText.trim() });
+
+        if (finalResultText) {
+            return res.status(200).json({ videoPrompt: finalResultText });
         } else {
-            const errorMessage = responseData.candidates?.[0]?.finishReason || "The AI model returned an empty response.";
-            console.error("Empty response from model, reason:", errorMessage);
-            return res.status(502).json({ error: `The AI failed to generate a prompt. Reason: ${errorMessage}` });
+            // هذه هي الرسالة التي ستظهر للمستخدم في حالة فشل كل النماذج
+            console.error("All models in the fallback chain failed. Last known error for dev:", lastErrorForDev);
+            return res.status(502).json({ error: "The AI is currently experiencing high demand. Please try again in a moment." });
         }
 
     } catch (error: any) {
-        console.error("Video Prompt Generator backend error:", error.message);
-        return res.status(500).json({ error: 'A critical server error occurred.' });
+        console.error("Video Prompt Generator critical backend error:", error.message);
+        return res.status(500).json({ error: 'A critical server error occurred. Please contact support.' });
     }
 }
