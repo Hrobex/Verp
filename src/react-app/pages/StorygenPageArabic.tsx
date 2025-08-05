@@ -93,7 +93,7 @@ function StorygenPageArabic() {
     try {
         const imageData = await fileToBase64(selectedFile);
 
-        const response = await fetch('/api/story-generator', {
+        const response = await fetch('/api/stvid?tool=story', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
