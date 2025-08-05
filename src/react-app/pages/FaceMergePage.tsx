@@ -1,32 +1,30 @@
-// الملف: FaceMergePage.tsx (النسخة الجديدة والآمنة باستخدام Base64)
+// الملف: FaceMergePage.tsx (النسخة الجديدة والآمنة)
 import { useState, useRef, ChangeEvent } from 'react';
 
-// --- الثوابت العامة تبقى كما هي ---
+// --- Data Constants ---
+// تم حذف `apiEndpoint` السري من هنا.
 const creativeIdeas = [
   { title: 'Historical Mashups', description: 'Place your face onto a famous historical portrait or photograph.' },
   { title: 'Movie Star Fun', description: 'Swap faces with your favorite actor in an iconic movie scene.' },
-  // ... a.i. ...
+  { title: 'Friend & Family Mix', description: 'Create hilarious combinations by merging faces of friends and family.' },
+  { title: 'Artistic Creations', description: 'Use face merge to create unique and surreal digital art projects.' },
 ];
+
 const ethicalGuidelines = [
-    { title: 'Use Responsibly', description: 'Employ the tool with respect for the privacy and personal rights of others.' },
-    // ... a.i. ...
+  { title: 'Use Responsibly', description: 'Employ the tool with respect for the privacy and personal rights of others.' },
+  { title: 'Avoid Misuse', description: 'Refrain from using the tool in abusive ways, such as for deception, bullying, or insulting others.' },
+  { title: 'Respect Privacy', description: 'Do not use or share images of individuals without their proper consent.' },
 ];
+
 const faqData = [
-    { question: 'What is AI face swapping and how does it work?', answer: 'AI face swapping is a technology that uses artificial intelligence...' },
-    // ... a.i. ...
+    { question: 'What is AI face swapping and how does it work?', answer: 'AI face swapping is a technology that uses artificial intelligence to replace a face in one image with a face from another. It works by analyzing the key facial features in the source image and seamlessly blending them onto the target image.' },
+    { question: 'Can I swap faces online for free?', answer: 'Yes, Mergify is a completely free online AI face swap tool. It allows you to merge and swap faces in images without any sign-up or credit card required.' },
+    { question: 'Is Mergify suitable for swapping faces in group photos?', answer: 'Yes, our tool is designed to work with group photos. Simply upload your source and destination images and specify the number of the person (from left to right) in each photo to ensure the correct faces are swapped.' },
+    { question: 'What are the benefits of using AI for face swapping?', answer: 'AI technology provides highly realistic and seamless results. It intelligently analyzes lighting, angles, and expressions to make the final merged image look natural and convincing.' },
+    { question: 'Are there any limitations to using Mergify?', answer: 'Mergify does not impose any limits on the number of images you can process. For the best results, use clear, front-facing photos where faces are not obscured.' },
+    { question: 'What are the privacy implications of using Mergify?', answer: 'We prioritize your privacy. All uploaded images are processed on our servers and are automatically deleted after a short period. We do not store or share your images.' },
+    { question: 'What is the license for the AI model used in this tool?', answer: 'The model is governed by the Responsible AI License (creativeml-openrail-m), which allows for a wide range of uses as long as they adhere to the specific use-case restrictions outlined in the license to prevent harmful applications. You can read the full license for details.'},
 ];
-
-
-// --- دالة مساعدة جديدة لتحويل الملف إلى نص Base64 ---
-async function convertFileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file); // يقرأ الملف ويعطينا Data URL كاملة (e.g., "data:image/jpeg;base64,...")
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-}
-
 
 // --- React Component ---
 function FaceMergePage() {
@@ -45,7 +43,6 @@ function FaceMergePage() {
   const sourceFileInputRef = useRef<HTMLInputElement>(null);
   const destinationFileInputRef = useRef<HTMLInputElement>(null);
 
-  // دالة اختيار الملفات والمعاينة تبقى كما هي
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>, type: 'source' | 'destination') => {
     const file = e.target.files?.[0];
     if (file) {
@@ -66,7 +63,6 @@ function FaceMergePage() {
     }
   };
 
-  // --- تم تعديل هذه الدالة لتستخدم Base64 ---
   const handleMergeClick = async () => {
     if (!sourceFile || !destinationFile) {
       setError('Please upload both a source and a destination image.');
@@ -75,27 +71,20 @@ function FaceMergePage() {
     setIsLoading(true);
     setError(null);
     setResultImageUrl(null);
+
+    const formData = new FormData();
+    formData.append('source_file', sourceFile);
+    formData.append('destination_file', destinationFile);
+    formData.append('source_face_index', sourcePersonNumber);
+    formData.append('destination_face_index', destinationPersonNumber);
     
     try {
-      // 1. تحويل كلا الملفين إلى نصوص Base64 أولاً
-      const sourceBase64 = await convertFileToBase64(sourceFile);
-      const destinationBase64 = await convertFileToBase64(destinationFile);
-
-      // 2. إرسال طلب JSON بسيط إلى الواجهة الخلفية الآمنة الخاصة بنا
+      // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
       const response = await fetch('/api/face-merge', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sourceImage: sourceBase64,
-          destinationImage: destinationBase64,
-          sourcePersonNumber: sourcePersonNumber,
-          destinationPersonNumber: destinationPersonNumber,
-        }),
+        body: formData,
       });
 
-      // 3. معالجة الرد القادم من الواجهة الخلفية (لا تغيير هنا)
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || 'Face swapping failed. Please check your images and try again.');
