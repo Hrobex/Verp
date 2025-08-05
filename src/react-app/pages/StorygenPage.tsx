@@ -211,7 +211,7 @@ const getButtonText = () => {
 
               <button
                 onClick={handleGenerateStory}
-                disabled={!isAiReady || isLoading || !selectedFile}
+                disabled={isLoading || !selectedFile}
                 className="w-full mt-2 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-indigo-500 to-violet-600 rounded-lg hover:from-indigo-600 hover:to-violet-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
                 {getButtonText()}
