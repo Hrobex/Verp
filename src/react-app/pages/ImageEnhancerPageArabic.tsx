@@ -1,9 +1,10 @@
+// الملف: ImageEnhancerPageArabic.tsx (النسخة النهائية والآمنة)
 import { useState, useRef, ChangeEvent } from 'react';
 
 // --- Data Constants ---
 const versions = ['v1.4', 'v2.1', 'v3.0'];
 const scales = [2, 4];
-const apiEndpoint = 'https://makhinur-furd.hf.space/upload/';
+// تم حذف `apiEndpoint` السري من هنا.
 
 const faqData = [
   {
@@ -68,6 +69,7 @@ function ImageEnhancerPageArabic() {
     formData.append('scale', selectedScale.toString());
 
     try {
+      // سطر الـ fetch هذا صحيح ويستدعي الواجهة الخلفية الموحدة
       const response = await fetch('/api/tools?tool=image-enhancer', {
         method: 'POST',
         body: formData,
