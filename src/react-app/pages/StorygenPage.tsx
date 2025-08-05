@@ -1,19 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+// الملف: StorygenPage.tsx (النسخة الجديدة والآمنة)
+import { useState, useRef, useEffect, ChangeEvent } from 'react';
 
-// --- الثوابت الأساسية ---
-const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
-const SCRIPT_URL = "https://esm.run/@google/generative-ai";
-
-// سلسلة النماذج الجديدة والموسعة بالترتيب المطلوب
-const MODEL_FALLBACK_CHAIN = [
-  "gemini-2.5-flash",
-  "gemini-2.0-flash-lite",
-  "gemini-2.5-flash-lite",
-  "gemini-1.5-flash-latest",
-  "gemini-pro-vision"
-];
-
-// بيانات اللغات للقائمة المنسدلة
+// --- الثوابت العامة (آمنة) ---
 const languageOptions = [
     { code: 'en', name: 'English' },
     { code: 'ar', name: 'العربية' },
@@ -46,21 +34,16 @@ const faqData = [
   },
 ];
 
-// --- دالة مساعدة لتحويل الصورة ---
-async function fileToGenerativePart(file: File) {
-  const base64EncodedDataPromise = new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
-    reader.readAsDataURL(file);
-  });
-  return {
-    inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
-  };
+// --- دالة مساعدة لتحويل الصورة إلى Base64 ---
+async function fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
+      reader.readAsDataURL(file);
+    });
 }
 
-
 function StorygenPage() {
-  const [isAiReady, setIsAiReady] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [generatedStory, setGeneratedStory] = useState('');
@@ -70,22 +53,8 @@ function StorygenPage() {
   const [loadingText, setLoadingText] = useState('The AI is weaving your story...');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const genAiInstanceRef = useRef<any>(null);
-  const aiModuleRef = useRef<any>(null);
 
-  useEffect(() => {
-    const initializeAI = async () => {
-      try {
-        const module = await import(SCRIPT_URL);
-        aiModuleRef.current = module;
-        genAiInstanceRef.current = new module.GoogleGenerativeAI(API_KEY);
-        setIsAiReady(true);
-      } catch (e) {
-        setError("Could not initialize the AI model. Please refresh the page.");
-      }
-    };
-    initializeAI();
-  }, []);
+  // تم حذف كل ما يتعلق بتهيئة الـ AI من هنا
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -106,6 +75,7 @@ function StorygenPage() {
     if (file) {
       setSelectedFile(file);
       setError(null);
+      setGeneratedStory('');
       const reader = new FileReader();
       reader.onloadend = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
@@ -113,8 +83,8 @@ function StorygenPage() {
   };
 
   const handleGenerateStory = async () => {
-    if (!selectedFile || !isAiReady) {
-      setError('Please upload an image and wait for the AI to be ready.');
+    if (!selectedFile) {
+      setError('Please upload an image.');
       return;
     }
     
@@ -122,40 +92,36 @@ function StorygenPage() {
     setError(null);
     setGeneratedStory('');
 
-    // --- الـ Prompt الخفي الاحترافي لـ Storygen ---
-    let masterPrompt = `Act as an expert storyteller and creative writer. Analyze the provided image in immense detail. Identify the characters, their expressions, the setting, the time of day, the overall mood, and any potential actions or conflicts. Use these visual cues to write a compelling, imaginative, and complete story. The story must have a clear beginning, a developing middle, and a satisfying conclusion. Be descriptive and bring the scene to life. There is NO limit on the story length.`;
+    try {
+        // 1. تحويل الصورة إلى نص Base64
+        const imageData = await fileToBase64(selectedFile);
 
-    if (selectedLanguage.code !== 'en') {
-      masterPrompt += ` **CRITICAL FINAL INSTRUCTION: Your entire response, the story, MUST be written fluently in the following language: ${selectedLanguage.name}.**`;
-    }
-
-    const imagePart = await fileToGenerativePart(selectedFile);
-
-    for (let i = 0; i < MODEL_FALLBACK_CHAIN.length; i++) {
-      const modelName = MODEL_FALLBACK_CHAIN[i];
-      try {
-        const model = genAiInstanceRef.current.getGenerativeModel({ model: modelName });
-        const { HarmCategory, HarmBlockThreshold } = aiModuleRef.current;
-        const safetySettings = [
-            { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-            { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-            { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-            { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-        ];
-        const result = await model.generateContent({ contents: [{ role: "user", parts: [imagePart, { text: masterPrompt }] }], safetySettings });
-        const storyText = result.response.text();
-        if (!storyText) throw new Error("Received an empty response from the AI model.");
+        // 2. إرسال الطلب إلى الواجهة الخلفية الآمنة
+        const response = await fetch('/api/story-generator', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                imageData: imageData,
+                mimeType: selectedFile.type,
+                language: selectedLanguage, // نرسل كائن اللغة كاملاً
+            }),
+        });
         
-        setGeneratedStory(storyText);
-        break; 
-      } catch (err) {
-        console.error(`Error with model ${modelName}:`, String(err));
-        if (i === MODEL_FALLBACK_CHAIN.length - 1) {
-          setError("An unexpected error occurred or the tool is under high demand. Please try again.");
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || 'An unknown error occurred.');
         }
-      }
+
+        // 3. عرض النتيجة للمستخدم
+        setGeneratedStory(result.story);
+
+    } catch (err: any) {
+      setError(err.message);
+      console.error("Frontend Error:", err);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
   
   const handleCopyStory = () => {
@@ -165,10 +131,10 @@ function StorygenPage() {
 
   const getButtonText = () => {
     if (isLoading) return 'Writing Your Story...';
-    if (!isAiReady) return 'Warming Up the AI...';
+    // لم نعد نحتاج للتحقق من isAiReady
     return 'Generate Story from Image';
   };
-
+  
   return (
     <>
       <title>Free AI Story Generator from Image | Turn Picture to Story - Storygen</title>
