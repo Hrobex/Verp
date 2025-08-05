@@ -1,4 +1,4 @@
-  // الملف: TextToSpeechPage.tsx (النسخة الجديدة والآمنة)
+// الملف: TextToSpeechPage.tsx (النسخة المصححة)
 import { useState, useEffect, ChangeEvent } from 'react';
 
 // --- Type Definitions (تبقى كما هي) ---
@@ -30,7 +30,6 @@ function TextToSpeechPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isDataLoading, setIsDataLoading] = useState(true); // حالة جديدة لتحميل البيانات
 
   // --- Effects ---
   // جلب بيانات الأصوات من الواجهة الخلفية عند تحميل المكون
@@ -43,13 +42,11 @@ function TextToSpeechPage() {
         setVoicesData(data);
         // تعيين القيمة الأولية للصوت بعد تحميل البيانات بنجاح
         const initialLang = data.find(lang => lang.code === 'en-US');
-        if (initialLang && initialLang.genders.Female) {
+        if (initialLang?.genders.Female?.[0]) {
             setSelectedVoice(initialLang.genders.Female[0]);
         }
       } catch (err) {
         setError('Failed to load available voices. Please refresh the page.');
-      } finally {
-        setIsDataLoading(false);
       }
     };
     fetchVoicesData();
@@ -121,6 +118,8 @@ function TextToSpeechPage() {
       setIsLoading(false);
     }
   };
+
+  // --- FAQ and Utility Calculations (Can be dynamic) ---
   const totalVoices = voicesData.reduce((acc, lang) => acc + (lang.genders.Male?.length || 0) + (lang.genders.Female?.length || 0), 0);
   const totalLanguages = voicesData.length;
 
