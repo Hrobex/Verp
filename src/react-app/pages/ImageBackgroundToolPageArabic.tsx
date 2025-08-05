@@ -83,7 +83,8 @@ function ImageBackgroundToolPageArabic() {
     formData.append('file', originalFile);
 
     try {
-      const response = await fetch('https://asartb-brcbd.hf.space/process-image/', {
+      // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
+      const response = await fetch('/api/background-remover', {
         method: 'POST',
         body: formData,
       });
@@ -145,7 +146,7 @@ function ImageBackgroundToolPageArabic() {
     if (!finalImageUrl) return;
     const link = document.createElement('a');
     link.href = finalImageUrl;
-    link.download = 'processed_image.png';
+    link.download = 'صورة-معالجة.png'; // تم تعديل اسم الملف
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
