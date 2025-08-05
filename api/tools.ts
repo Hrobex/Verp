@@ -10,6 +10,7 @@ const API_LINKS = {
   'background-remover': 'https://asartb-brcbd.hf.space/process-image/',
   'digicartoony': 'https://makhinur-angusad.hf.space/inference/',
   'image-enhancer': 'https://makhinur-furd.hf.space/upload/',
+  'cartoonify': 'https://makhinur-cdonn.hf.space/cartoonize/',
   // أضف أي أدوات مستقبلية هنا
 };
 
