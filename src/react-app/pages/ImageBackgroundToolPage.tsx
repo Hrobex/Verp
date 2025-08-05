@@ -1,5 +1,6 @@
+// الملف: ImageBackgroundToolPage.tsx (النسخة الجديدة والآمنة)
 import { useState, useRef, useEffect, ChangeEvent } from 'react';
-// FAQ Data - Tailored for this tool
+
 const faqData = [
   {
     question: 'Is this AI background remover completely free?',
@@ -82,7 +83,8 @@ function ImageBackgroundToolPage() {
     formData.append('file', originalFile);
 
     try {
-      const response = await fetch('https://asartb-brcbd.hf.space/process-image/', {
+      // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
+      const response = await fetch('/api/background-remover', {
         method: 'POST',
         body: formData,
       });
@@ -104,6 +106,7 @@ function ImageBackgroundToolPage() {
     }
   };
 
+  // هذا المنطق يعمل في المتصفح ويبقى كما هو
   const handleApplyBackground = () => {
     if (!processedImageUrl) {
       setError('Please process an image first to get the cutout.');
@@ -149,7 +152,7 @@ function ImageBackgroundToolPage() {
     link.click();
     document.body.removeChild(link);
   };
-
+  
   return (
     <>
       {/* SEO Section - Following React 19 Best Practices */}
