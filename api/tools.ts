@@ -11,7 +11,8 @@ const API_LINKS = {
   'digicartoony': 'https://makhinur-angusad.hf.space/inference/',
   'image-enhancer': 'https://makhinur-furd.hf.space/upload/',
   'cartoonify': 'https://makhinur-cdonn.hf.space/cartoonize/',
-  // أضف أي أدوات مستقبلية هنا
+  // --- الإضافة الجديدة ---
+  'image-to-sketch': 'https://makhinur-itsd.hf.space/upload/', 
 };
 
 // --- إعدادات Vercel (مرة واحدة هنا) ---
@@ -37,7 +38,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
-        // 1. تحديد الأداة المطلوبة من الرابط (e.g., /api/tools?tool=face-merge)
         const toolName = req.query.tool as keyof typeof API_LINKS;
 
         if (!toolName || !API_LINKS[toolName]) {
@@ -45,9 +45,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         const { fields, files } = await parseForm(req);
-
-        // 2. إعادة بناء FormData ديناميكياً
         const externalApiFormData = new FormData();
+
         for (const key in files) {
             const file = files[key]?.[0];
             if (file) {
@@ -61,7 +60,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             }
         }
         
-        // 3. الاتصال بالخدمة النهائية الصحيحة
         const apiResponse = await fetch(API_LINKS[toolName], {
             method: 'POST',
             body: externalApiFormData,
@@ -72,7 +70,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             return res.status(apiResponse.status).send(errorText);
         }
         
-        // 4. إعادة توجيه الرد (سواء كان صورة أو JSON)
         const contentType = apiResponse.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
             const responseData = await apiResponse.json();
@@ -87,4 +84,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.error(`Error in tools handler for ${req.query.tool}:`, error.message);
         return res.status(500).json({ error: 'A critical server error occurred.' });
     }
-}
+            }
