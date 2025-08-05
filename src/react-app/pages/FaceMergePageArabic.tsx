@@ -1,8 +1,5 @@
 import { useState, useRef, ChangeEvent } from 'react';
 
-// --- Data Constants ---
-const apiEndpoint = 'https://asartb-fs.hf.space/swap_faces/';
-
 const creativeIdeas = [
   { title: 'لمسات تاريخية', description: 'ضع وجهك على لوحة أو صورة شخصية تاريخية مشهورة.' },
   { title: 'متعة نجوم السينما', description: 'بدّل وجهك مع وجه ممثلك المفضل في مشهد سينمائي أيقوني.' },
@@ -79,7 +76,8 @@ function FaceMergePageArabic() {
     formData.append('destination_face_index', destinationPersonNumber);
     
     try {
-      const response = await fetch(apiEndpoint, {
+      // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
+      const response = await fetch('/api/face-merge', {
         method: 'POST',
         body: formData,
       });
