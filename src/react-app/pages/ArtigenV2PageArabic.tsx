@@ -59,7 +59,7 @@ function ArtigenV2PageArabic() {
 
     try {
         // استدعاء الواجهة الخلفية الموجودة
-        const response = await fetch('/api/generate-artigen-v2', {
+        const response = await fetch('/api/image-generators?tool=artigen-v2', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
