@@ -56,7 +56,7 @@ function AnimeGeneratorPageArabic() {
 
     try {
         // استدعاء الواجهة الخلفية الموجودة
-        const response = await fetch('/api/generate-anime', {
+        const response = await fetch('/api/image-generators?tool=anime', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
