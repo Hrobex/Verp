@@ -1,5 +1,15 @@
 // الملف: api/tts-voices.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+type Genders = {
+  Male?: string[];
+  Female?: string[];
+};
+
+type LanguageData = {
+  code: string;
+  name: string;
+  genders: Genders;
+};
 
 const voicesData: LanguageData[] = [
   { code: "af-ZA", name: "Afrikaans (South Africa)", genders: { Male: ["af-ZA-WillemNeural"], Female: ["af-ZA-AdriNeural"] } },
