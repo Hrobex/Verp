@@ -68,7 +68,7 @@ function ImageEnhancerPageArabic() {
     formData.append('scale', selectedScale.toString());
 
     try {
-      const response = await fetch(apiEndpoint, {
+      const response = await fetch('/api/tools?tool=image-enhancer', {
         method: 'POST',
         body: formData,
       });
