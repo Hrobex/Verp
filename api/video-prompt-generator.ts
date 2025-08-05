@@ -4,7 +4,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
 
 // النموذج المستهدف للتجربة الأولية
-const TARGET_MODEL = "gemini-2.5-pro-exp-03-25"; 
+const TARGET_MODEL = "gemini-2.5-pro"; 
 
 // إعدادات الأمان
 const SAFETY_SETTINGS = [
