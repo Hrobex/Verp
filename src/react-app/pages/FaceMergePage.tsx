@@ -77,7 +77,8 @@ function FaceMergePage() {
     formData.append('destination_file', destinationFile);
     formData.append('source_face_index', sourcePersonNumber);
     formData.append('destination_face_index', destinationPersonNumber);
-    
+
+    try {
     const response = await fetch('/api/tools?tool=face-merge', {
         method: 'POST',
         body: formData,
