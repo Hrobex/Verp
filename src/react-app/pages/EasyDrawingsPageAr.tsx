@@ -1,6 +1,5 @@
 // الملف: EasyDrawingsPageAr.tsx
 import { useState, useRef } from 'react';
-import { Link } from 'react-router-dom'; // تأكد من استيراد Link إذا كنت تستخدم React Router
 
 const faqData = [
   {
