@@ -125,12 +125,12 @@ function StorygenPage() {
     navigator.clipboard.writeText(generatedStory).catch(() => setError('Failed to copy the story.'));
   };
 
-  // --- تم تصحيح هذه الدالة ---
-  const getButtonText = () => {
+// --- تأكد من أن هذه الدالة مطابقة ---
+const getButtonText = () => {
     if (isLoading) return 'Writing Your Story...';
-    // تم حذف التحقق من isAiReady لأنه لم يعد موجوداً
+    // السطر الذي كان يسبب المشكلة تم حذفه
     return 'Generate Story from Image';
-  };
+};
   
   return (
     <>
