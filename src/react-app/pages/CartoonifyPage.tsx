@@ -1,7 +1,6 @@
+// الملف: CartoonifyPage.tsx (النسخة المحدثة بمنطق face-merge)
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
-
-// --- Data Constants ---
 
 const faqData = [
     {
@@ -27,15 +26,7 @@ const faqData = [
     },
 ];
 
-// دالة مساعدة لتحويل الصورة إلى صيغة Base64
-async function fileToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve((reader.result as string).split(',')[1]);
-        reader.onerror = error => reject(error);
-    });
-}
+// تم حذف دالة fileToBase64 من هنا لأننا لم نعد بحاجة إليها
 
 function CartoonifyPage() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
@@ -57,6 +48,7 @@ function CartoonifyPage() {
     }
   };
 
+  // --- تم تعديل هذه الدالة بالكامل لتتبع منطق face-merge ---
   const handleCartoonifyClick = async () => {
     if (!sourceFile) {
       setError('Please upload an image to cartoonify.');
@@ -67,32 +59,28 @@ function CartoonifyPage() {
     setResultImageUrl(null);
 
     try {
-        // تحويل الصورة إلى Base64 لإرسالها
-        const base64Image = await fileToBase64(sourceFile);
+      // 1. إنشاء FormData مباشرة (أبسط وأسرع)
+      const formData = new FormData();
+      formData.append('file', sourceFile);
 
-        // استدعاء الواجهة الخلفية الآمنة
-        const response = await fetch('/api/cartoonify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                imageData: base64Image,
-                mimeType: sourceFile.type,
-                filename: sourceFile.name,
-            }),
-        });
+      // 2. استدعاء الواجهة الخلفية الذكية مع الملصق الصحيح
+      const response = await fetch('/api/tools?tool=cartoonify', {
+        method: 'POST',
+        body: formData,
+      });
 
-        if (response.ok) {
-            // الواجهة الخلفية الآن تعيد الصورة مباشرة
-            const imageBlob = await response.blob();
-            const imageUrl = URL.createObjectURL(imageBlob);
-            setResultImageUrl(imageUrl);
-        } else {
-            // محاولة قراءة الخطأ كـ JSON، وإلا عرض رسالة عامة
-            const errorData = await response.json().catch(() => ({ error: 'Oops! Something went wrong.' }));
-            setError(errorData.error || 'Please try again later.');
-        }
-    } catch (err) {
-      setError('An unknown error occurred. Please check your connection and try again.');
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to cartoonify the image. Please try again.');
+      }
+      
+      // 3. التعامل مع الرد كصورة مباشرة
+      const imageBlob = await response.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
+      setResultImageUrl(imageUrl);
+
+    } catch (err: any) {
+      setError(err.message || 'An unknown error occurred. Please check your connection and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -107,7 +95,7 @@ function CartoonifyPage() {
     link.click();
     document.body.removeChild(link);
   };
-    
+
   return (
     <>
       <title>Cartoonify Yourself Free | AI Photo to Cartoon Generator</title>
