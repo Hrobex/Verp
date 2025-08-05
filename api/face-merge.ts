@@ -13,12 +13,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     try {
         // تمرير الطلب كما هو (pass-through) إلى الخدمة السرية
-        // هذا هو الأسلوب الصحيح الذي لا يتطلب مكتبات خارجية
         const apiResponse = await fetch(EXTERNAL_API_URL, {
             method: 'POST',
             headers: {
                 // نمرر نوع المحتوى الأصلي من الطلب القادم من المتصفح
-                // هذا يضمن أن الخدمة الخارجية تفهم أنها تستقبل FormData
                 'Content-Type': req.headers['content-type']!,
             },
             // نمرر جسم الطلب (بيانات FormData) كما هو بدون أي معالجة
