@@ -1,9 +1,9 @@
+// الملف: ImageEnhancerPage.tsx (النسخة الجديدة والآمنة)
 import { useState, useRef, ChangeEvent } from 'react';
 
 // --- Data Constants ---
 const versions = ['v1.4', 'v2.1', 'v3.0'];
 const scales = [2, 4];
-const apiEndpoint = 'https://makhinur-furd.hf.space/upload/';
 
 const faqData = [
   {
@@ -68,7 +68,8 @@ function ImageEnhancerPage() {
     formData.append('scale', selectedScale.toString());
 
     try {
-      const response = await fetch(apiEndpoint, {
+      // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
+      const response = await fetch('/api/image-enhancer', {
         method: 'POST',
         body: formData,
       });
