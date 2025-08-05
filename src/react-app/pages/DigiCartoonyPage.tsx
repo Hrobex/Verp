@@ -116,7 +116,7 @@ function DigiCartoonyPage() {
       formData.append('if_face', detectFace ? 'Yes' : 'No');
 
       // تم تغيير الرابط فقط. كل المنطق الآخر يبقى كما هو
-      const response = await fetch('/api/digicartoony', {
+        const response = await fetch('/api/tools?tool=digicartoony', {
         method: 'POST',
         body: formData,
       });
