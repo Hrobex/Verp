@@ -167,7 +167,7 @@ function LineArtifyPage() {
       formData.append('version', version);
 
       // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
-      const response = await fetch('/api/lineartify', {
+      const response = await fetch('/api/tools?tool=lineartify', {
         method: 'POST',
         body: formData,
       });
