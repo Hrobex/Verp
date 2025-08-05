@@ -80,7 +80,7 @@ function FaceMergePage() {
     
     try {
       // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
-      const response = await fetch('/api/face-merge', {
+      const response = await fetch('/api/tools?tool=face-merge',
         method: 'POST',
         body: formData,
       });
