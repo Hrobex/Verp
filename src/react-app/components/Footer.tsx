@@ -46,7 +46,7 @@ const footerTranslations = {
     ],
     الشركة: [
       { name: 'حولنا', href: '/ar/about' }, // Updated to point to the correct page
-      { name: 'المدونة', href: '/ar#blog' }, // Updated to be an internal link
+      { name: 'المدونة', href: '/ar/blog' }, // Updated to be an internal link
       { name: 'تواصل', href: 'mailto:info@aiconvert.online' },
     ],
     قانوني: [
