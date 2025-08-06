@@ -27,6 +27,7 @@ import EasyDrawingsPage from "@/react-app/pages/EasyDrawingsPage"; // <-- تمت
 import PhotoRevivePage from "@/react-app/pages/PhotoRevivePage";
 import PrivacyPolicyPage from "@/react-app/pages/PrivacyPolicyPage";
 import TermsOfServicePage from "@/react-app/pages/TermsOfServicePage";
+import AboutPage from "@/react-app/pages/AboutPage";
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -76,6 +77,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="restore-and-repair-old-photos" element={<PhotoRevivePage />} /> 
           <Route path="privacy-policy" element={<PrivacyPolicyPage />} /> 
           <Route path="terms-of-service" element={<TermsOfServicePage />} /> 
+          <Route path="about" element={<AboutPage />} /> 
 
           {/* --- Arabic Route Group --- */}
           <Route path="ar">
