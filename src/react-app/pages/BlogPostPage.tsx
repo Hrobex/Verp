@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { blogPosts } from '@/data/blogPosts';
+import { blogPostsAr } from '@/data/blogPostsAr'; // <<< 1. استيراد بيانات المقالات العربية
 import ReactMarkdown from 'react-markdown';
 import SmartLink from '@/react-app/components/SmartLink';
 
@@ -9,6 +10,9 @@ export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
   const post = blogPosts.find(p => p.slug === slug);
   const [content, setContent] = useState('');
+
+  // <<< 2. التحقق من وجود نسخة عربية مطابقة
+  const hasArabicVersion = post ? blogPostsAr.some(p => p.slug === post.slug) : false;
 
   const customComponents = {
     h2: (props: any) => <h2 className="text-3xl font-bold text-white mt-12 mb-6 border-l-4 border-amber-500 pl-4" {...props} />,
@@ -73,6 +77,16 @@ export default function BlogPostPage() {
       <title>{post.title} - AIConvert Blog</title>
       <meta name="description" content={post.description} />
       <link rel="canonical" href={`https://aiconvert.online/blog/${post.slug}`} />
+      
+      {/* --- 3. إضافة وسوم hreflang بشكل شرطي --- */}
+      {hasArabicVersion && (
+        <>
+          <link rel="alternate" hrefLang="en" href={`https://aiconvert.online/blog/${post.slug}`} />
+          <link rel="alternate" hrefLang="ar" href={`https://aiconvert.online/ar/blog/${post.slug}`} />
+          <link rel="alternate" hrefLang="x-default" href={`https://aiconvert.online/blog/${post.slug}`} />
+        </>
+      )}
+
       <link rel="preload" as="image" href={post.image} />
 
       <div className="bg-gray-900 text-gray-300 pt-32 pb-20">
@@ -88,7 +102,6 @@ export default function BlogPostPage() {
                 {post.title}
               </h1>
               <p className="mt-4 text-gray-400">
-                {/* --- تم تصحيح الخطأ الإملائي هنا --- */}
                 Published on <time dateTime={post.date}>{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
               </p>
             </header>
