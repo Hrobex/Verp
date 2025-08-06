@@ -31,7 +31,9 @@ export default function AboutPage() {
     <>
       <title>About Us - AIConvert</title>
       <meta name="description" content="Learn about the mission and principles behind AIConvert. We are dedicated to providing free, accessible, and powerful AI tools for everyone." />
-      <link rel="canonical" href="https://aiconvert.online/about" />
+      <link rel="canonical" href="https://aiconvert.online/about" />  
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/about" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/about" />
       
       <div className="bg-gray-900 text-gray-300 pt-32 pb-20">
         <main className="max-w-4xl mx-auto px-6 lg:px-8">
@@ -53,18 +55,14 @@ export default function AboutPage() {
               <h2 className="text-3xl font-bold text-white mb-6 border-b-2 border-cyan-500/30 pb-3">Our Story</h2>
               <div className="space-y-4">
                 <p>In a world where artificial intelligence is rapidly advancing, we noticed a growing gap. The most powerful creative tools were often locked behind expensive subscriptions, complex interfaces, or data-hungry sign-up forms.</p>
-                <p>
-                  AIConvert was born from a simple, yet powerful belief: **the power of AI creativity should be accessible to everyone, without barriers.** We set out to build a platform that wasn't just a collection of tools, but a public utility for creators, thinkers, and anyone with an idea.
-                </p>
+                <p>Driven by this idea, <strong>we launched AIConvert in 2023</strong> with a simple, yet powerful belief: the power of AI creativity should be accessible to everyone, without barriers. ...</p>
               </div>
             </section>
 
             {/* Our Mission Section */}
             <section>
               <h2 className="text-3xl font-bold text-white mb-6 border-b-2 border-cyan-500/30 pb-3">Our Mission</h2>
-              <blockquote className="border-r-4 border-amber-500 bg-gray-800/50 p-6 rounded-r-lg italic">
-                "Our mission is to democratize creativity by providing a comprehensive suite of high-quality AI tools, completely free, for everyone, forever."
-              </blockquote>
+              <blockquote ...> Our mission is to <strong>democratize creativity</strong> by providing a comprehensive suite of high-quality AI tools, <strong>completely free, for everyone, forever.</strong></blockquote>
             </section>
             
             {/* Our Principles Section */}
