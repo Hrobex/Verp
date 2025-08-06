@@ -10,7 +10,6 @@ export default function BlogPostPage() {
   const post = blogPosts.find(p => p.slug === slug);
   const [content, setContent] = useState('');
 
-  // مكونات التنسيق المخصصة للمقال
   const customComponents = {
     h2: (props: any) => <h2 className="text-3xl font-bold text-white mt-12 mb-6 border-l-4 border-amber-500 pl-4" {...props} />,
     h3: (props: any) => <h3 className="text-2xl font-bold text-white mt-10 mb-4" {...props} />,
@@ -89,7 +88,8 @@ export default function BlogPostPage() {
                 {post.title}
               </h1>
               <p className="mt-4 text-gray-400">
-                Published on <time dateTime={post.date}>{new Date(post.date).toLocaleDate-String('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+                {/* --- تم تصحيح الخطأ الإملائي هنا --- */}
+                Published on <time dateTime={post.date}>{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
               </p>
             </header>
 
