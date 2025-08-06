@@ -57,15 +57,15 @@ export default function PrivacyPolicyPage() {
             </section>
             
             <section>
-              <h2 className="text-3xl font-bold text-white mb-4">5. Cookies and Advertising (Google AdSense)</h2>
-              <p>We use Cookies to enhance your experience and to serve advertisements that help keep our services free.</p>
-               <ul className="list-disc list-inside space-y-4 mt-4">
-                  <li>Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to our website or other websites.</li>
-                  <li>Google's use of advertising cookies enables it and its partners to serve ads to our users based on their visit to our site and/or other sites on the Internet.</li>
-                  <li>Users may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">Google's Ads Settings</a>. Alternatively, you can opt out of a third-party vendor's use of cookies for personalized advertising by visiting <a href="https://optout.aboutads.info/" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">https://optout.aboutads.info/</a>.</li>
-              </ul>
-               <p className="mt-4">If you have not opted out of third-party ad serving, the cookies of other third-party vendors or ad networks may also be used to serve ads on our site.</p>
-            </section>
+             <h2 className="text-3xl font-bold text-white mb-4">5. Cookies and Advertising (Google AdSense)</h2>
+             <p>We use Cookies to enhance your experience and to serve advertisements that help keep our services free.</p>
+             <ul className="list-disc list-inside space-y-4 mt-4">
+              <li>Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to our website or other websites.</li>
+              <li>Google's use of advertising cookies enables it and its partners to serve ads to our users based on their visit to our site and/or other sites on the Internet.</li>
+              <li>Users may opt out of personalized advertising by visiting Google's <a href="https://myadcenter.google.com/" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">My Ad Center</a>. Alternatively, you can opt out of a third-party vendor's use of cookies for personalized advertising by visiting the DAA's opt-out portal at <a href="https://optout.aboutads.info/" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">https://optout.aboutads.info/</a>.</li>
+            </ul>
+             <p className="mt-4">If you have not opted out of third-party ad serving, the cookies of other third-party vendors or ad networks may also be used to serve ads on our site.</p>
+           </section>
             
             <section>
               <h2 className="text-3xl font-bold text-white mb-4">6. Security of Your Data</h2>
