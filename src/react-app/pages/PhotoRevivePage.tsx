@@ -69,7 +69,6 @@ function PhotoRevivePage() {
 
         const result = await response.json();
         
-        // Note: The API returns 'sketch_image_base64', we'll use it for the restored image
         if (result.sketch_image_base64) {
              setRestoredImage(result.sketch_image_base64);
         } else {
@@ -78,7 +77,6 @@ function PhotoRevivePage() {
 
     } catch (err: any) {
       setError(err.message);
-      console.error("Frontend Error:", err);
     } finally {
       setIsLoading(false);
     }
@@ -115,7 +113,6 @@ function PhotoRevivePage() {
           
           <div className="bg-gray-800/50 p-6 sm:p-8 rounded-2xl shadow-lg">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* "Before" Column */}
               <div className="w-full flex flex-col items-center">
                 <h3 className="text-xl font-semibold text-gray-300 mb-4">Before</h3>
                 <div className="w-full h-80 bg-gray-800 rounded-lg flex items-center justify-center p-2 border-2 border-dashed border-gray-600">
@@ -128,16 +125,17 @@ function PhotoRevivePage() {
                   )}
                 </div>
               </div>
-              {/* "After" Column */}
-              <div className="w-full flex flex-col items-center">
+              <div className="w-full flex flex-col items-center relative"> {/* Added relative positioning */}
                 <h3 className="text-xl font-semibold text-gray-300 mb-4">After</h3>
-                <div className="w-full h-80 bg-black/20 rounded-lg flex items-center justify-center p-2 border-2 border-dashed border-cyan-500/50">
-                   {isLoading && (
-                   <div className="text-center">
-                       <p className="text-lg text-amber-300">Reviving your memory...</p>
-                       <p className="text-sm text-gray-400">This may take up to a minute.</p>
-                   </div>
+                <div className="w-full h-80 bg-black/20 rounded-lg flex items-center justify-center p-2 border-2 border-dashed border-cyan-500/50 relative">
+                  {/* --- IMPROVED SPINNER --- */}
+                  {isLoading && (
+                    <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-lg">
+                      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-amber-500"></div>
+                      <p className="text-gray-300 mt-4">Reviving your memory...</p>
+                    </div>
                   )}
+                  {/* --- Original Content --- */}
                   {!isLoading && restoredImage && (
                     <img ref={resultImageRef} src={restoredImage} alt="AI restored photo" className="max-w-full max-h-full object-contain rounded-md" />
                   )}
@@ -175,6 +173,28 @@ function PhotoRevivePage() {
               )}
             </div>
           </div>
+          
+          {/* --- ADDED "HOW TO USE" SECTION --- */}
+          <section className="mt-20">
+              <div className="text-center">
+                  <h2 className="text-3xl font-bold mb-4">How to Restore Your Photo in 3 Simple Steps</h2>
+                  <p className="max-w-3xl mx-auto text-gray-400 mb-12">Our process is designed to be effortless. Get your beautifully restored photo in under a minute.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                  <div className="bg-gray-800/50 p-6 rounded-lg">
+                      <p className="text-amber-400 font-bold text-lg mb-2">1. Upload Your Photo</p>
+                      <p className="text-gray-300">Click the "Upload Photo" button and select an old, scratched, or faded picture from your device.</p>
+                  </div>
+                  <div className="bg-gray-800/50 p-6 rounded-lg">
+                      <p className="text-amber-400 font-bold text-lg mb-2">2. Click Restore</p>
+                      <p className="text-gray-300">Hit the "Restore Photo" button and let our AI analyze and repair the damage, from scratches to faded colors.</p>
+                  </div>
+                  <div className="bg-gray-800/50 p-6 rounded-lg">
+                      <p className="text-amber-400 font-bold text-lg mb-2">3. Download & Share</p>
+                      <p className="text-gray-300">Your revived memory will appear. Download the high-quality restored image and share it with your loved ones.</p>
+                  </div>
+              </div>
+          </section>
 
           <div className="mt-24">
               <section className="text-center">
