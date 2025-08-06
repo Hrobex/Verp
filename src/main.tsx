@@ -29,6 +29,7 @@ import PrivacyPolicyPage from "@/react-app/pages/PrivacyPolicyPage";
 import TermsOfServicePage from "@/react-app/pages/TermsOfServicePage";
 import AboutPage from "@/react-app/pages/AboutPage";
 import BlogPage from "@/react-app/pages/BlogPage";
+import BlogPostPage from "@/react-app/pages/BlogPostPage"; 
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -81,6 +82,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="terms-of-service" element={<TermsOfServicePage />} /> 
           <Route path="about" element={<AboutPage />} />
           <Route path="blog" element={<BlogPage />} />
+          <Route path="blog/:slug" element={<BlogPostPage />} /> 
 
           {/* --- Arabic Route Group --- */}
           <Route path="ar">
