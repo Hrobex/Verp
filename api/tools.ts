@@ -11,8 +11,9 @@ const API_LINKS = {
   'digicartoony': 'https://makhinur-angusad.hf.space/inference/',
   'image-enhancer': 'https://makhinur-furd.hf.space/upload/',
   'cartoonify': 'https://makhinur-cdonn.hf.space/cartoonize/',
+  'image-to-sketch': 'https://makhinur-itsd.hf.space/upload/',
   // --- الإضافة الجديدة ---
-  'image-to-sketch': 'https://makhinur-itsd.hf.space/upload/', 
+  'photo-restoration': 'https://makhinur-bopld.hf.space/upload/', 
 };
 
 // --- إعدادات Vercel (مرة واحدة هنا) ---
@@ -84,4 +85,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.error(`Error in tools handler for ${req.query.tool}:`, error.message);
         return res.status(500).json({ error: 'A critical server error occurred.' });
     }
-            }
+}
