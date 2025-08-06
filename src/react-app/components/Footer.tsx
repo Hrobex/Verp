@@ -1,9 +1,9 @@
-// src/react-app/components/Footer.tsx
+// الملف: src/react-app/components/Footer.tsx
 
-import { useLanguage } from '@/react-app/hooks/useLanguage'; // Import the new custom hook
+import { useLanguage } from '@/react-app/hooks/useLanguage';
 import { Twitter, Github, Mail, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom'; // <<< تم إضافة هذا السطر
 
-// This is the full, complete translations object.
 const translations = {
     logoAlt: { en: 'AI Convert Logo', ar: 'شعار AI Convert' },
     brandName: { en: 'AI Convert', ar: 'AI Convert' },
@@ -23,8 +23,6 @@ const translations = {
     forCreators: { en: 'for creators everywhere', ar: 'للمبدعين في كل مكان' },
 };
 
-// This is the full, complete footer links object.
-// The links have been updated to be absolute paths to ensure they work from any page.
 const footerTranslations = {
   en: {
     Product: [
@@ -33,7 +31,7 @@ const footerTranslations = {
     ],
     Company: [
       { name: 'About', href: '/about' },
-      { name: 'Blog', href: '#blog' }, // Assuming blog is a section for now
+      { name: 'Blog', href: '/#blog' }, // Updated to be an internal link
       { name: 'Contact', href: 'mailto:info@aiconvert.online' },
     ],
     Legal: [
@@ -47,8 +45,8 @@ const footerTranslations = {
       { name: 'المميزات', href: '/ar#features' },
     ],
     الشركة: [
-      { name: 'حولنا', href: '/ar#about' },
-      { name: 'المدونة', href: '/ar#blog' }, // Assuming blog is a section for now
+      { name: 'حولنا', href: '/ar/about' }, // Updated to point to the correct page
+      { name: 'المدونة', href: '/ar#blog' }, // Updated to be an internal link
       { name: 'تواصل', href: 'mailto:info@aiconvert.online' },
     ],
     قانوني: [
@@ -59,7 +57,7 @@ const footerTranslations = {
 };
 
 export default function Footer() {
-  const { lang, isArabic } = useLanguage(); // Use the hook to get language info
+  const { lang, isArabic } = useLanguage();
   const currentLinks = footerTranslations[lang];
 
   return (
@@ -104,12 +102,21 @@ export default function Footer() {
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link.name}>
-                    <a
-                      href={link.href}
-                      className="text-gray-400 hover:text-white transition-colors"
-                    >
-                      {link.name}
-                    </a>
+                    {link.href.startsWith('/') ? (
+                      <Link
+                        to={link.href}
+                        className="text-gray-400 hover:text-white transition-colors"
+                      >
+                        {link.name}
+                      </Link>
+                    ) : (
+                      <a
+                        href={link.href}
+                        className="text-gray-400 hover:text-white transition-colors"
+                      >
+                        {link.name}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
