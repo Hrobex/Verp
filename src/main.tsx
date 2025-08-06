@@ -48,6 +48,7 @@ import EasyDrawingsPageArabic from "@/react-app/pages/EasyDrawingsPageAr"; // <-
 import PhotoRevivePageArabic from "@/react-app/pages/PhotoRevivePageAr";
 import PrivacyPolicyPageAr from "@/react-app/pages/PrivacyPolicyPageAr";
 import TermsOfServicePageAr from "@/react-app/pages/TermsOfServicePageAr";
+import AboutPageAr from "@/react-app/pages/AboutPageAr"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -99,6 +100,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="restore-and-repair-old-photos" element={<PhotoRevivePageArabic />} /> 
             <Route path="privacy-policy" element={<PrivacyPolicyPageAr />} />
             <Route path="terms-of-service" element={<TermsOfServicePageAr />} /> 
+            <Route path="about" element={<AboutPageAr />} /> 
 
           </Route>
           
