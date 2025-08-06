@@ -45,6 +45,7 @@ import StorygenPageArabic from "@/react-app/pages/StorygenPageArabic";
 import VideoPromptPageArabic from "@/react-app/pages/VideoPromptPageAr";
 import EasyDrawingsPageArabic from "@/react-app/pages/EasyDrawingsPageAr"; // <-- تمت إضافة هذا السطر
 import PhotoRevivePageArabic from "@/react-app/pages/PhotoRevivePageAr";
+import PrivacyPolicyPageAr from "@/react-app/pages/PrivacyPolicyPageAr";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -92,6 +93,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="ai-video-prompt-generator" element={<VideoPromptPageArabic />} />
             <Route path="easy-drawings" element={<EasyDrawingsPageArabic />} /> 
             <Route path="restore-and-repair-old-photos" element={<PhotoRevivePageArabic />} /> 
+            <Route path="privacy-policy" element={<PrivacyPolicyPageAr />} />
           </Route>
           
         </Route>
