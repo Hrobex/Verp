@@ -19,18 +19,15 @@ export interface BlogPost {
 export const blogPosts: BlogPost[] = [
   {
     slug: 'sell-ai-art',
-    title: 'Sell AI Art: How and where to Sell AI-Generated Images',
-    description: 'Turn Your AI Art into Profit! Learn how & where to sell AI-generated images online. This guide unlocks platforms for selling your creations.',
+    title: 'Sell AI Art in 2025: Open Marketplaces vs. Closed Ecosystems',
+    description: 'Don\'t get rejected. Learn the crucial difference between open marketplaces (like Adobe Stock) and closed ecosystems (like Shutterstock) for selling your AI-generated art.',
     image: '/images/blog/sell-ai-art-online-guide.webp',
     imageDims: { width: 1536, height: 864 },
     date: '2025-08-06',
     category: 'AI Monetization',
     contentImageDims: {
       '/images/blog/selling-ai-generated-art-on-adobe-stock.webp': { width: 1080, height: 957 },
-      '/images/blog/sell-ai-generated-art-on-dreamstime.webp': { width: 1310, height: 1536 },
-      '/images/blog/sell-images-123Ref.webp': { width: 1080, height: 537 },
-      '/images/blog/selling-ai-generated-images-on-vecteezy.webp': { width: 1080, height: 786 },
+      '/images/blog/sell-ai-generated-art-on-dreamstime.webp': { width: 1310, height: 1536 }
     }
   }
-  // لإضافة مقال جديد، ستضيف كائنًا جديدًا هنا بكل معلوماته
 ];
