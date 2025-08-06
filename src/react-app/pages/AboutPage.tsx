@@ -1,5 +1,6 @@
 // الملف: AboutPage.tsx
 import { Gift, Rocket, Sparkles, MousePointerClick } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Define principles to easily manage them
 const principles = [
@@ -85,19 +86,20 @@ export default function AboutPage() {
                 ))}
               </div>
             </section>
-
+            
             {/* Call to Action Section */}
             <section className="text-center mt-24">
               <h2 className="text-3xl font-bold text-white">Ready to Create?</h2>
               <p className="text-xl text-gray-400 mt-4 mb-8 max-w-2xl mx-auto">
                 All of our tools are waiting for you. Dive in and see what you can create today.
               </p>
-              <a 
-                href="/#tools" 
+      
+              <Link 
+                to="/#tools" 
                 className="inline-block bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold text-lg py-4 px-10 rounded-lg hover:shadow-xl hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300"
               >
                 Explore Our Free AI Tools
-              </a>
+              </Link>
             </section>
 
           </div>
