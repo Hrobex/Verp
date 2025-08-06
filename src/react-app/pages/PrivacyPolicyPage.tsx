@@ -5,6 +5,7 @@ export default function PrivacyPolicyPage() {
       <title>Privacy Policy - AIConvert</title>
       <meta name="description" content="Read the Privacy Policy for AIConvert to understand how we handle your data. We prioritize your privacy and do not store your content." />
       <link rel="canonical" href="https://aiconvert.online/privacy-policy" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/privacy-policy" />
       
       <div className="bg-gray-900 text-gray-300 pt-32 pb-20">
         <main className="max-w-4xl mx-auto px-6 lg:px-8">
