@@ -1,11 +1,11 @@
-// src/react-app/components/Header.tsx
+// الملف: src/react-app/components/Header.tsx
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom'; // REMOVED useLocation as it's no longer needed for the switcher
 import { Menu, X } from 'lucide-react';
 import { useLanguage } from '@/react-app/hooks/useLanguage';
+import SmartLink from './SmartLink'; // <<< 1. استيراد المكون الذكي
 
-// ... (translations object remains the same)
+// ... (يبقى كائن translations كما هو)
 const translations = {
   logoAlt: { en: 'AI Convert Logo', ar: 'شعار AI Convert' },
   aiTools: { en: 'AI Tools', ar: 'أدوات الذكاء الاصطناعي' },
@@ -16,23 +16,27 @@ const translations = {
   brandName: { en: 'AI Convert', ar: 'AI Convert' }
 };
 
-
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { lang, isArabic } = useLanguage();
 
-  // ====================================================================
-  // THE ONLY CHANGE IS HERE: Simplified language switcher logic
-  // This new, simpler logic ALWAYS switches to the homepage of the other language.
   const languageSwitcherPath = isArabic ? '/' : '/ar';
-  // ====================================================================
-
   const homeLink = isArabic ? '/ar' : '/';
+
+  // <<< 2. إنشاء قائمة روابط مركزية لتجنب التكرار وتصحيح المسارات
+  const navLinks = [
+    { name: translations.aiTools[lang], href: `${homeLink}#tools` },
+    { name: translations.features[lang], href: `${homeLink}#features` },
+    { name: 'About', href: isArabic ? '/ar/about' : '/about' } // <<< 3. تصحيح رابط صفحة "من نحن"
+  ];
+  
+  // الرابط الخاص بزر "ابدأ مجانًا"
+  const getStartedLink = `${homeLink}#tools`;
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
       <div className={`mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8 ${isArabic ? 'flex-row-reverse' : ''}`}>
-        <Link to={homeLink} className={`flex items-center ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
+        <SmartLink to={homeLink} className={`flex items-center ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
           <img 
             src="/favicon.svg" 
             alt={translations.logoAlt[lang]} 
@@ -41,27 +45,25 @@ export default function Header() {
           <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
             {translations.brandName[lang]}
           </span>
-        </Link>
+        </SmartLink>
 
+        {/* --- 4. تحديث قائمة التنقل الرئيسية لاستخدام SmartLink --- */}
         <nav className={`hidden lg:flex items-center ${isArabic ? 'space-x-reverse space-x-8' : 'space-x-8'}`}>
-          <a href={`${homeLink}#tools`} className="text-gray-700 hover:text-purple-600 transition-colors">
-            {translations.aiTools[lang]}
-          </a>
-          <a href={`${homeLink}#features`} className="text-gray-700 hover:text-purple-600 transition-colors">
-            {translations.features[lang]}
-          </a>
-          <a href={`${homeLink}#about`} className="text-gray-700 hover:text-purple-600 transition-colors">
-            {translations.about[lang]}
-          </a>
+          {navLinks.map((link) => (
+            <SmartLink key={link.name} href={link.href} className="text-gray-700 hover:text-purple-600 transition-colors">
+              {link.name === 'About' ? translations.about[lang] : link.name}
+            </SmartLink>
+          ))}
         </nav>
         
         <div className={`hidden lg:flex items-center ${isArabic ? 'space-x-reverse space-x-4' : 'space-x-4'}`}>
-          <Link to={languageSwitcherPath} className="text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors">
+          <SmartLink to={languageSwitcherPath} className="text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors">
             {translations.langSwitcher[lang]}
-          </Link>
-          <button className="px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+          </SmartLink>
+          {/* --- 5. تحويل الزر إلى رابط ذكي --- */}
+          <SmartLink href={getStartedLink} className="px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl">
             {translations.getStarted[lang]}
-          </button>
+          </SmartLink>
         </div>
 
         <button
@@ -75,22 +77,19 @@ export default function Header() {
       {isMenuOpen && (
         <div className="lg:hidden bg-white border-t border-gray-200">
           <div className={`px-6 py-4 space-y-4 ${isArabic ? 'text-right' : 'text-left'}`}>
-            <a href={`${homeLink}#tools`} className="block text-gray-700 hover:text-purple-600 transition-colors">
-              {translations.aiTools[lang]}
-            </a>
-            <a href={`${homeLink}#features`} className="block text-gray-700 hover:text-purple-600 transition-colors">
-              {translations.features[lang]}
-            </a>
-            <a href={`${homeLink}#about`} className="block text-gray-700 hover:text-purple-600 transition-colors">
-              {translations.about[lang]}
-            </a>
+            {/* --- 6. تحديث قائمة التنقل في الجوال لاستخدام SmartLink --- */}
+            {navLinks.map((link) => (
+              <SmartLink key={link.name} href={link.href} className="block text-gray-700 hover:text-purple-600 transition-colors">
+                {link.name === 'About' ? translations.about[lang] : link.name}
+              </SmartLink>
+            ))}
             <hr />
-            <Link to={languageSwitcherPath} className="block text-gray-700 hover:text-purple-600 transition-colors font-medium">
+            <SmartLink to={languageSwitcherPath} className="block text-gray-700 hover:text-purple-600 transition-colors font-medium">
               {translations.langSwitcher[lang]}
-            </Link>
-            <button className="w-full px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200">
+            </SmartLink>
+            <SmartLink href={getStartedLink} className="block w-full text-center px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200">
               {translations.getStarted[lang]}
-            </button>
+            </SmartLink>
           </div>
         </div>
       )}
