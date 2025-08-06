@@ -7,6 +7,7 @@ import {
   Sparkles, 
   ArrowLeft, // Changed to ArrowLeft
   Zap,
+  Wand,
   Wand2,
   Pencil,
   Palette,
@@ -135,7 +136,16 @@ const toolsArabic = [
     color: 'from-orange-500 to-orange-600',
     features: ['تكبير 4x', 'تقليل الضوضاء', 'تحسين الجودة'],
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop'
-  }
+  },
+  {
+    id: 'restore-and-repair-old-photos',
+    title: 'ترميم وإصلاح الصور القديمة',
+    description: 'أعد الحياة لذكرياتك. أداتنا الذكية تصلح الصور القديمة والتالفة، تزيل الخدوش، وتحسن الجودة تلقائيًا.',
+    icon: Wand, // Or any other icon component you use
+    color: 'from-amber-500 to-cyan-600',
+    features: ['إزالة الخدوش', 'تحسين الجودة', 'مجاني وآمن'],
+    image: 'https://images.unsplash.com/photo-1541873676-a18131494184?w=400&h=300&fit=crop'
+}
 ];
 
 export default function AIToolsArabic() {
