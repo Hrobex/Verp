@@ -5,6 +5,7 @@ import {
   Scissors, 
   Volume2, 
   Sparkles, 
+  Wand,
   ArrowRight,
   Zap,
   Wand2,
