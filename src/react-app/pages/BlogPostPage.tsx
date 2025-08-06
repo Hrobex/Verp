@@ -9,7 +9,7 @@ export default function BlogPostPage() {
   if (!post) {
     return (
       <div className="bg-gray-900 text-gray-300 pt-32 pb-20">
-        <main className="max-w-4xl mx-auto px-6 lg-px-8 text-center">
+        <main className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
           <h1 className="text-4xl font-bold text-white">Post Not Found</h1>
           <p className="mt-4 text-lg text-gray-400">Sorry, we couldn't find the blog post you're looking for.</p>
           <Link to="/blog" className="mt-8 inline-block text-cyan-400 hover:text-cyan-300">
@@ -28,6 +28,7 @@ export default function BlogPostPage() {
 
       <div className="bg-gray-900 text-gray-300 pt-32 pb-20">
         <main className="max-w-3xl mx-auto px-6 lg:px-8">
+          {/* تم استبدال <article> بـ <div> هنا */}
           <div className="text-lg leading-relaxed">
             <header className="mb-12">
               <div className="flex items-center text-sm text-gray-400">
@@ -47,7 +48,6 @@ export default function BlogPostPage() {
               <img src={post.image} alt={post.title} className="w-full rounded-2xl shadow-xl" />
             </figure>
             
-            {/* الآن، نحن نعرض المحتوى الجاهز مباشرة */}
             {post.content}
             
             <div className="mt-16 border-t border-gray-700 pt-8">
@@ -55,9 +55,9 @@ export default function BlogPostPage() {
                     &larr; Back to All Posts
                 </Link>
             </div>
-          </article>
+          </div>  
         </main>
       </div>
     </>
   );
-}
+          }
