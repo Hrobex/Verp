@@ -128,13 +128,15 @@ function PhotoRevivePageAr() {
               </div>
               <div className="w-full flex flex-col items-center">
                 <h3 className="text-xl font-semibold text-gray-300 mb-4">بعد</h3>
-                <div className="w-full h-80 bg-black/20 rounded-lg flex items-center justify-center p-2 border-2 border-dashed border-cyan-500/50">
-                   {isLoading && (
-                   <div className="text-center">
-                       <p className="text-lg text-amber-300">نعيد إحياء ذكرياتك...</p>
-                       <p className="text-sm text-gray-400">قد يستغرق الأمر دقيقة.</p>
-                   </div>
+                <div className="w-full h-80 bg-black/20 rounded-lg flex items-center justify-center p-2 border-2 border-dashed border-cyan-500/50 relative">
+                  {/* --- SPINNER مُحسَّن --- */}
+                  {isLoading && (
+                    <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-lg">
+                      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-amber-500"></div>
+                      <p className="text-gray-300 mt-4">نعيد إحياء ذكرياتك...</p>
+                    </div>
                   )}
+                  {/* --- المحتوى الأصلي --- */}
                   {!isLoading && restoredImage && (
                     <img ref={resultImageRef} src={restoredImage} alt="صورة قديمة بعد ترميمها بالذكاء الاصطناعي" className="max-w-full max-h-full object-contain rounded-md" />
                   )}
@@ -172,6 +174,28 @@ function PhotoRevivePageAr() {
               )}
             </div>
           </div>
+          
+          {/* --- قسم "كيفية الاستخدام" المضاف --- */}
+          <section className="mt-20">
+              <div className="text-center">
+                  <h2 className="text-3xl font-bold mb-4">كيفية ترميم صورتك في 3 خطوات بسيطة</h2>
+                  <p className="max-w-3xl mx-auto text-gray-400 mb-12">تم تصميم عمليتنا لتكون سهلة للغاية. احصل على صورتك المرممة بشكل جميل في أقل من دقيقة.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-right">
+                  <div className="bg-gray-800/50 p-6 rounded-lg">
+                      <p className="text-amber-400 font-bold text-lg mb-2">1. ارفع صورتك</p>
+                      <p className="text-gray-300">انقر على زر "رفع صورة" واختر صورة قديمة، مخدوشة أو باهتة من جهازك.</p>
+                  </div>
+                  <div className="bg-gray-800/50 p-6 rounded-lg">
+                      <p className="text-amber-400 font-bold text-lg mb-2">2. اضغط على "ترميم"</p>
+                      <p className="text-gray-300">اضغط على زر "ترميم الصورة" ودع الذكاء الاصطناعي يحلل ويصلح التلف، من الخدوش إلى الألوان الباهتة.</p>
+                  </div>
+                  <div className="bg-gray-800/50 p-6 rounded-lg">
+                      <p className="text-amber-400 font-bold text-lg mb-2">3. حمّل وشارك</p>
+                      <p className="text-gray-300">ستظهر ذكرىك التي تم إحياؤها. قم بتنزيل الصورة المرممة عالية الجودة وشاركها مع أحبائك.</p>
+                  </div>
+              </div>
+          </section>
 
           <div className="mt-24">
               <section className="text-center">
