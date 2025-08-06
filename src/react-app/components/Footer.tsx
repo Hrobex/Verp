@@ -2,7 +2,7 @@
 
 import { useLanguage } from '@/react-app/hooks/useLanguage';
 import { Twitter, Github, Mail, Heart } from 'lucide-react';
-import { Link } from 'react-router-dom'; // <<< تم إضافة هذا السطر
+import SmartLink from './SmartLink'; // <<< تم إضافة هذا السطر
 
 const translations = {
     logoAlt: { en: 'AI Convert Logo', ar: 'شعار AI Convert' },
@@ -100,26 +100,17 @@ export default function Footer() {
             <div key={category} className={isArabic ? 'text-right' : 'text-left'}>
               <h3 className="text-lg font-semibold mb-4">{category}</h3>
               <ul className="space-y-3">
-                {links.map((link) => (
-                  <li key={link.name}>
-                    {link.href.startsWith('/') ? (
-                      <Link
-                        to={link.href}
-                        className="text-gray-400 hover:text-white transition-colors"
-                      >
-                        {link.name}
-                      </Link>
-                    ) : (
-                      <a
-                        href={link.href}
-                        className="text-gray-400 hover:text-white transition-colors"
-                      >
-                        {link.name}
-                      </a>
-                    )}
-                  </li>
-                ))}
-              </ul>
+  {links.map((link) => (
+    <li key={link.name}>
+      <SmartLink
+        href={link.href}
+        className="text-gray-400 hover:text-white transition-colors"
+      >
+        {link.name}
+      </SmartLink>
+    </li>
+  ))}
+</ul>
             </div>
           ))}
         </div>
