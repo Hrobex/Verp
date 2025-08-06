@@ -47,6 +47,9 @@ export default function BlogPage() {
       <title>Blog - AIConvert</title>
       <meta name="description" content="Insights, tutorials, and the latest in AI creativity. Your guide to mastering the world of digital art and content creation." />
       <link rel="canonical" href="https://aiconvert.online/blog" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/blog" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/blog" />
+      
       
       <div className="bg-gray-900 text-gray-300 pt-32 pb-20">
         <main className="max-w-7xl mx-auto px-6 lg:px-8">
