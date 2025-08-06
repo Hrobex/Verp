@@ -1,6 +1,4 @@
 // الملف: PrivacyPolicyPage.tsx
-import { Link } from 'react-router-dom'; // Or your router's Link component
-
 export default function PrivacyPolicyPage() {
   return (
     <>
