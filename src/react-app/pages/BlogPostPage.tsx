@@ -11,9 +11,8 @@ export default function BlogPostPage() {
   const [content, setContent] = useState('');
 
   // مكونات التنسيق المخصصة للمقال
-  // الآن تقرأ أبعاد الصور ديناميكيًا من بيانات المقال
   const customComponents = {
-    h2: (props: any) => <h2 className="text-3xl font-bold text-white mt-12 mb-6" {...props} />,
+    h2: (props: any) => <h2 className="text-3xl font-bold text-white mt-12 mb-6 border-l-4 border-amber-500 pl-4" {...props} />,
     h3: (props: any) => <h3 className="text-2xl font-bold text-white mt-10 mb-4" {...props} />,
     p: (props: any) => <p className="mb-6 leading-loose" {...props} />,
     ul: (props: any) => <ul className="list-disc list-inside space-y-3 my-6 pl-4" {...props} />,
@@ -35,10 +34,11 @@ export default function BlogPostPage() {
     },
     img: (props: any) => {
       if (!post || !props.src) return null;
-      const dims = post.contentImageDims[props.src] || { width: 1200, height: 675 };
+      const dims = post.contentImageDims[props.src];
+      if (!dims) return <img {...props} alt={props.alt || ''} className="w-full h-auto rounded-lg shadow-lg" />;
       return (
           <figure className="my-8">
-              <img {...props} width={dims.width} height={dims.height} className="w-full h-auto rounded-lg shadow-lg" />
+              <img {...props} alt={props.alt || ''} width={dims.width} height={dims.height} className="w-full h-auto rounded-lg shadow-lg" />
           </figure>
       );
     },
@@ -89,7 +89,7 @@ export default function BlogPostPage() {
                 {post.title}
               </h1>
               <p className="mt-4 text-gray-400">
-                Published on <time dateTime={post.date}>{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+                Published on <time dateTime={post.date}>{new Date(post.date).toLocaleDate-String('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
               </p>
             </header>
 
