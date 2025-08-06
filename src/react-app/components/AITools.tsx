@@ -136,7 +136,16 @@ const tools = [
     color: 'from-orange-500 to-orange-600',
     features: ['4x upscaling', 'Noise reduction', 'Quality boost'],
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop'
-  }
+  },
+  {
+    id: 'restore-and-repair-old-photos',
+    title: 'PhotoRevive: AI Photo Restoration',
+    description: 'Breathe new life into your memories. Our AI automatically repairs old, damaged, and faded photos, removing scratches and enhancing quality.',
+    icon: Wand, // Or any other icon component you use
+    color: 'from-amber-500 to-cyan-600',
+    features: ['Remove Scratches', 'Enhance Quality', 'Free & Secure'],
+    image: 'https://images.unsplash.com/photo-1541873676-a18131494184?w=400&h=300&fit=crop'
+}
 ];
 
 export default function AITools() {
