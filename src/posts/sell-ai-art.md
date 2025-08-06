@@ -2,11 +2,11 @@ The world of art is changing fast, and AI-generated art is at the heart of it. T
 
 This guide will walk you through the practical steps and best platforms to start selling your AI-generated art in 2025.
 
-### Why Even Sell AI Art?
+## Why Even Sell AI Art?
 
 Simply put, there's a growing demand. Businesses, marketers, and individuals are tired of seeing the same generic stock photos everywhere. They're actively looking for unique, high-quality images that stand out. Your AI art can fill that need perfectly. And with tools like our own [ArtigenV2](/artigenv2), creating stunning pieces has never been easier.
 
-### Understanding the Market: Where to Sell
+## Understanding the Market: Where to Sell
 
 The stock photography world is dominated by a few big names, but their attitude towards AI art varies. Here's the breakdown:
 
@@ -46,9 +46,27 @@ While it's very competitive, the platform boasts over 50 million users and offer
 
 [Join Dreamstime &rarr;](https://www.dreamstime.com/#res54001661)
 
+### 4. 123RF
+
+With over 5 million buyers, 123RF is another solid option.
+
+![An earnings table for contributors on 123RF.](/images/blog/sell-images-123Ref.webp)
+
+They offer enticing commissions ranging from 30% to 60%, depending on your contributor level.
+
+[Contribute to 123RF &rarr;](https://www.123rf.com/contributors/)
+
+### 5. Vecteezy
+
+Vecteezy offers a fair 50-50 revenue share and is a great way to get your work in front of a fresh audience.
+
+![The Vecteezy contributor sign-up page.](/images/blog/selling-ai-generated-images-on-vecteezy.webp)
+
+[Start with Vecteezy &rarr;](https://www.vecteezy.com/contributors)
+
 ---
 
-### Conclusion: Your Next Steps
+## Conclusion: Your Next Steps
 
 Generative AI has opened up a whole new world for artists. The platforms above are some of the best places to start selling your work, but remember that success comes from quality and consistency.
 
