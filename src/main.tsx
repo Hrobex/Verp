@@ -26,7 +26,7 @@ import VideoPromptPage from "@/react-app/pages/VideoPromptPage";
 import EasyDrawingsPage from "@/react-app/pages/EasyDrawingsPage"; // <-- تمت إضافة هذا السطر
 import PhotoRevivePage from "@/react-app/pages/PhotoRevivePage";
 import PrivacyPolicyPage from "@/react-app/pages/PrivacyPolicyPage";
-
+import TermsOfServicePage from "@/react-app/pages/TermsOfServicePage";
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -46,6 +46,7 @@ import VideoPromptPageArabic from "@/react-app/pages/VideoPromptPageAr";
 import EasyDrawingsPageArabic from "@/react-app/pages/EasyDrawingsPageAr"; // <-- تمت إضافة هذا السطر
 import PhotoRevivePageArabic from "@/react-app/pages/PhotoRevivePageAr";
 import PrivacyPolicyPageAr from "@/react-app/pages/PrivacyPolicyPageAr";
+import TermsOfServicePageAr from "@/react-app/pages/TermsOfServicePageAr";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -74,6 +75,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="easy-drawings" element={<EasyDrawingsPage />} /> {/* <-- تمت إضافة هذا السطر */}
           <Route path="restore-and-repair-old-photos" element={<PhotoRevivePage />} /> 
           <Route path="privacy-policy" element={<PrivacyPolicyPage />} /> 
+          <Route path="terms-of-service" element={<TermsOfServicePage />} /> 
 
           {/* --- Arabic Route Group --- */}
           <Route path="ar">
@@ -94,6 +96,8 @@ createRoot(document.getElementById("root")!).render(
             <Route path="easy-drawings" element={<EasyDrawingsPageArabic />} /> 
             <Route path="restore-and-repair-old-photos" element={<PhotoRevivePageArabic />} /> 
             <Route path="privacy-policy" element={<PrivacyPolicyPageAr />} />
+            <Route path="terms-of-service" element={<TermsOfServicePageAr />} /> 
+
           </Route>
           
         </Route>
