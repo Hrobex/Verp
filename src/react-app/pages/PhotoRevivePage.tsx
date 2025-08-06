@@ -98,6 +98,7 @@ function PhotoRevivePage() {
       <meta name="description" content="Breathe new life into your memories. Our free AI photo restoration tool automatically repairs old, damaged, and faded photos. Fix scratches, enhance quality, and restore old photos online." />
       <link rel="canonical" href="https://aiconvert.online/restore-and-repair-old-photos" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/restore-and-repair-old-photos" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/restore-and-repair-old-photos" />
       
       <div className="pt-24 bg-gray-900 text-white min-h-screen">
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
