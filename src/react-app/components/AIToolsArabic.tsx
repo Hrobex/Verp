@@ -7,6 +7,7 @@ import {
   Sparkles, 
   ArrowLeft, // Changed to ArrowLeft
   Zap,
+  Wand,
   Wand2,
   Pencil,
   Palette,
