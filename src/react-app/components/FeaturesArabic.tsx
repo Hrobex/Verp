@@ -6,7 +6,7 @@ import {
   Layers,
   Gift,
   MousePointerClick,
-  Languages, // أيقونة جديدة لدعم اللغات
+  Languages,
   Users
 } from 'lucide-react';
 
@@ -42,7 +42,7 @@ const featuresArabic = [
     description: 'لا توجد إعدادات معقدة أو صعوبة في التعلم. تم تصميم كل أداة لتكون مباشرة: ارفع ملفك أو اكتب نصك، انقر، وقم بالتحميل.'
   },
   {
-    icon: Languages, // الميزة الجديدة والمهمة
+    icon: Languages,
     title: 'دعم كامل للغة العربية',
     description: 'نحن نفخر بتقديم واجهات وأدوات تدعم اللغة العربية بشكل كامل، مع فهم عميق للسياق لتقديم أفضل النتائج للمستخدم العربي.'
   },
@@ -55,11 +55,11 @@ const featuresArabic = [
 
 export default function FeaturesArabic() {
   return (
-    <section id="features" className="py-20 lg:py-28 bg-gradient-to-br from-gray-50 to-blue-50" dir="rtl">
+    <section id="features" dir="rtl" className="py-20 lg:py-28 bg-gradient-to-br from-gray-50 to-blue-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 mb-6 border border-purple-200">
+          <div className="inline-flex items-center space-x-reverse space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 mb-6 border border-purple-200">
             <Sparkles className="h-4 w-4 text-purple-600" />
             <span className="text-sm font-medium text-purple-900">لماذا تختار AIConvert</span>
           </div>
@@ -78,10 +78,10 @@ export default function FeaturesArabic() {
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {features.map((feature, index) => (
+          {featuresArabic.map((feature, index) => (
             <div
               key={index}
-              className="group relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 transform hover:-translate-y-1"
+              className="group relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 transform hover:-translate-y-1 text-right"
             >
               <div className="mb-6">
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 shadow-lg group-hover:shadow-xl transition-shadow">
@@ -106,7 +106,7 @@ export default function FeaturesArabic() {
         <div className="mt-20 text-center">
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-12 border border-white/20 shadow-xl">
             <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-8">
-              يثق بها المبدعون في كل مكان
+              يثق بها المبدعون حول العالم
             </h3>
             
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
