@@ -80,7 +80,7 @@ export default function PrivacyPolicyPage() {
 
             <section>
               <h2 className="text-3xl font-bold text-white mb-4">8. Links to Other Websites</h2>
-              <p>Our Service may contain links to other websites that are not operated by Us. If You click on a third-party link, You will be directed to that third party's site. We strongly advise You to review the Privacy Policy of every site You visit. We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.</p>
+             <p>Our Service may contain links to other websites that are not operated by Us. If You click on a third-party link, You will be directed to that third party's site. We strongly advise You to review the Privacy Policy of every site You visit. We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.</p>
             </section>
 
             <section>
@@ -89,9 +89,15 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section>
-              <h2 className="text-3xl font-bold text-white mb-4">10. Contact Us</h2>
-              <p>If you have any questions about this Privacy Policy, you can contact us by visiting the <Link to="/contact" className="text-cyan-400 hover:underline">Contact Us</Link> page on our website.</p>
-            </section>
+             <h2 className="text-3xl font-bold text-white mb-4">10. Contact Us</h2>
+             <p>
+             If you have any questions about this Privacy Policy, you can contact us by email at: 
+             <a href="mailto:info@aiconvert.online" className="text-cyan-400 hover:underline ml-2">
+            info@aiconvert.online
+    </a>
+  </p>
+</section>
+        
 
           </div>
         </main>
