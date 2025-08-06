@@ -1,5 +1,6 @@
 // الملف: AboutPageAr.tsx
 import { Gift, Rocket, Sparkles, MousePointerClick } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // تعريف المبادئ باللغة العربية
 const principles = [
@@ -94,10 +95,8 @@ export default function AboutPageAr() {
               <p className="text-xl text-gray-400 mt-4 mb-8 max-w-2xl mx-auto">
                 جميع أدواتنا في انتظارك. استكشفها الآن وشاهد ما يمكنك إنشاؤه اليوم.
               </p>
-              <Link 
-              to="/ar#tools" 
-              className="inline-block bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold text-lg py-4 px-10 rounded-lg hover:shadow-xl hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300"> استكشف أدواتنا المجانية
-              </Link>         
+              <Link to="/ar#tools" 
+              className="inline-block bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold text-lg py-4 px-10 rounded-lg hover:shadow-xl hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300">استكشف أدواتنا المجانية</Link>         
             </section>
 
           </div>
