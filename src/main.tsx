@@ -24,6 +24,7 @@ import PromptigenPage from "@/react-app/pages/PromptigenPage";
 import StorygenPage from "@/react-app/pages/StorygenPage";
 import VideoPromptPage from "@/react-app/pages/VideoPromptPage";
 import EasyDrawingsPage from "@/react-app/pages/EasyDrawingsPage"; // <-- تمت إضافة هذا السطر
+import PhotoRevivePage from "@/react-app/pages/PhotoRevivePage";
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -41,6 +42,7 @@ import PromptigenPageArabic from "@/react-app/pages/PromptigenPageArabic";
 import StorygenPageArabic from "@/react-app/pages/StorygenPageArabic";
 import VideoPromptPageArabic from "@/react-app/pages/VideoPromptPageAr";
 import EasyDrawingsPageArabic from "@/react-app/pages/EasyDrawingsPageAr"; // <-- تمت إضافة هذا السطر
+import PhotoRevivePageArabic from "@/react-app/pages/PhotoRevivePageAr";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -67,7 +69,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="ai-story-generator" element={<StorygenPage />} />
           <Route path="ai-video-prompt-generator" element={<VideoPromptPage />} />
           <Route path="easy-drawings" element={<EasyDrawingsPage />} /> {/* <-- تمت إضافة هذا السطر */}
-
+          <Route path="restore-and-repair-old-photos" element={<PhotoRevivePage />} /> 
 
           {/* --- Arabic Route Group --- */}
           <Route path="ar">
@@ -85,7 +87,8 @@ createRoot(document.getElementById("root")!).render(
             <Route path="prompt-generator" element={<PromptigenPageArabic />} />
             <Route path="ai-story-generator" element={<StorygenPageArabic />} />
             <Route path="ai-video-prompt-generator" element={<VideoPromptPageArabic />} />
-            <Route path="easy-drawings" element={<EasyDrawingsPageArabic />} /> {/* <-- تمت إضافة هذا السطر */}
+            <Route path="easy-drawings" element={<EasyDrawingsPageArabic />} /> 
+            <Route path="restore-and-repair-old-photos" element={<PhotoRevivePageArabic />} /> 
           </Route>
           
         </Route>
