@@ -2,7 +2,6 @@
 import { Gift, Rocket, Sparkles, MousePointerClick } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// تعريف المبادئ باللغة العربية
 const principles = [
   {
     icon: Gift,
@@ -38,7 +37,6 @@ export default function AboutPageAr() {
       <div className="bg-gray-900 text-gray-300 pt-32 pb-20 font-sans">
         <main className="max-w-4xl mx-auto px-6 lg:px-8" dir="rtl">
           
-          {/* قسم العنوان */}
           <div className="text-center mb-16">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-white">
               عن موقع AIConvert
@@ -50,26 +48,23 @@ export default function AboutPageAr() {
 
           <div className="space-y-16 text-lg leading-relaxed">
             
-            {/* قسم قصتنا */}
             <section>
               <h2 className="text-3xl font-bold text-white mb-6 border-b-2 border-cyan-500/30 pb-3">قصتنا</h2>
               <div className="space-y-4">
                 <p>في عالم يتطور فيه الذكاء الاصطناعي بسرعة، لاحظنا وجود فجوة متزايدة. كانت أقوى الأدوات الإبداعية غالبًا ما تكون محصورة خلف اشتراكات باهظة، أو واجهات معقدة، أو نماذج تسجيل تطلب بيانات لا داعي لها.</p>
                 <p>
-                  وُلد موقع AIConvert من إيمان بسيط ولكنه قوي: **يجب أن تكون قوة الإبداع في الذكاء الاصطناعي متاحة للجميع، دون أي حواجز.** لقد شرعنا في بناء منصة ليست مجرد مجموعة من الأدوات، بل خدمة عامة للمبدعين والمفكرين وأي شخص لديه فكرة.
+                  انطلاقًا من هذه الفكرة، <strong>أطلقنا موقع AIConvert في عام 2023</strong> بإيمان بسيط ولكنه قوي: يجب أن تكون قوة الإبداع في الذكاء الاصطناعي متاحة للجميع، دون أي حواجز. لقد شرعنا في بناء منصة ليست مجرد مجموعة من الأدوات، بل خدمة عامة للمبدعين والمفكرين وأي شخص لديه فكرة.
                 </p>
               </div>
             </section>
 
-            {/* قسم مهمتنا */}
             <section>
               <h2 className="text-3xl font-bold text-white mb-6 border-b-2 border-cyan-500/30 pb-3">مهمتنا</h2>
               <blockquote className="border-l-4 border-amber-500 bg-gray-800/50 p-6 rounded-l-lg italic">
-                "مهمتنا هي دمقرطة الإبداع من خلال توفير مجموعة شاملة من أدوات الذكاء الاصطناعي عالية الجودة، مجانًا بالكامل، للجميع، وإلى الأبد."
+                مهمتنا هي <strong>دمقرطة الإبداع</strong> من خلال توفير مجموعة شاملة من أدوات الذكاء الاصطناعي عالية الجودة، <strong>مجانًا بالكامل، للجميع، وإلى الأبد.</strong>
               </blockquote>
             </section>
             
-            {/* قسم مبادئنا الأساسية */}
             <section>
               <h2 className="text-3xl font-bold text-white mb-8 border-b-2 border-cyan-500/30 pb-3">مبادئنا الأساسية</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -89,14 +84,17 @@ export default function AboutPageAr() {
               </div>
             </section>
 
-            {/* قسم الدعوة لاتخاذ إجراء */}
             <section className="text-center mt-24">
               <h2 className="text-3xl font-bold text-white">هل أنت مستعد للإبداع؟</h2>
               <p className="text-xl text-gray-400 mt-4 mb-8 max-w-2xl mx-auto">
                 جميع أدواتنا في انتظارك. استكشفها الآن وشاهد ما يمكنك إنشاؤه اليوم.
               </p>
-              <Link to="/ar#tools" 
-              className="inline-block bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold text-lg py-4 px-10 rounded-lg hover:shadow-xl hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300">استكشف أدواتنا المجانية</Link>         
+              <Link 
+                to="/ar#tools" 
+                className="inline-block bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold text-lg py-4 px-10 rounded-lg hover:shadow-xl hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300"
+              >
+                استكشف أدواتنا المجانية
+              </Link>
             </section>
 
           </div>
