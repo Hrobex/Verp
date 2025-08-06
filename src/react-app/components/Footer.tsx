@@ -31,7 +31,7 @@ const footerTranslations = {
     ],
     Company: [
       { name: 'About', href: '/about' },
-      { name: 'Blog', href: '/#blog' }, // Updated to be an internal link
+      { name: 'Blog', href: '/blog' }, 
       { name: 'Contact', href: 'mailto:info@aiconvert.online' },
     ],
     Legal: [
