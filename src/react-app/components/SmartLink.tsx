@@ -1,20 +1,30 @@
 // الملف: src/react-app/components/SmartLink.tsx
 import { Link } from 'react-router-dom';
+import React from 'react';
 
-// هذا المكون يقبل نفس الخصائص التي يقبلها أي رابط عادي
-// ولكنه يقرر بذكاء ما إذا كان يجب استخدام Link أو a
-const SmartLink = ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => {
+// نُعرِّف نوع الخصائص ليكون أكثر مرونة
+// سيقبل الآن `href` بالإضافة إلى أي خصائص أخرى صالحة لوسم <a>
+type SmartLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+  href: string;
+};
+
+const SmartLink = ({ href, children, ...rest }: SmartLinkProps) => {
+  // نستخدم "rest operator" (...) لجمع كل الخصائص الأخرى (مثل className, onClick) في كائن واحد
+
   if (href.startsWith('/')) {
     // إذا كان رابطًا داخليًا، استخدم Link من react-router-dom
+    // ونقوم بتمرير جميع الخصائص الأخرى إليه باستخدام {...rest}
     return (
-      <Link to={href} className={className}>
+      <Link to={href} {...rest}>
         {children}
       </Link>
     );
   }
-  // وإلا، استخدم وسم a العادي للروابط الخارجية (mailto:, https://)
+  
+  // وإلا، استخدم وسم <a> العادي للروابط الخارجية
+  // ونضيف إليه خصائص الأمان القياسية ونمرر باقي الخصائص
   return (
-    <a href={href} className={className} target="_blank" rel="noopener noreferrer">
+    <a href={href} target="_blank" rel="noopener noreferrer" {...rest}>
       {children}
     </a>
   );
