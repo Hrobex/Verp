@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { blogPostsAr } from '@/data/blogPostsAr';
+import { blogPosts } from '@/data/blogPosts'; // <<< 1. استيراد بيانات المقالات الإنجليزية
 import ReactMarkdown from 'react-markdown';
 import SmartLink from '@/react-app/components/SmartLink';
 
@@ -9,6 +10,9 @@ export default function BlogPostPageAr() {
   const { slug } = useParams<{ slug: string }>();
   const post = blogPostsAr.find(p => p.slug === slug);
   const [content, setContent] = useState('');
+
+  // <<< 2. التحقق من وجود نسخة إنجليزية مطابقة
+  const hasEnglishVersion = post ? blogPosts.some(p => p.slug === post.slug) : false;
 
   const customComponents = {
     h2: (props: any) => <h2 className="text-3xl font-bold text-white mt-12 mb-6 border-r-4 border-amber-500 pr-4" {...props} />,
@@ -45,7 +49,6 @@ export default function BlogPostPageAr() {
 
   useEffect(() => {
     if (post) {
-      // يستورد المحتوى من المجلد العربي
       import(`../../posts/ar/${post.slug}.md?raw`)
         .then(module => setContent(module.default))
         .catch(err => {
@@ -74,8 +77,16 @@ export default function BlogPostPageAr() {
       <title>{post.title} - مدونة AIConvert</title>
       <meta name="description" content={post.description} />
       <link rel="canonical" href={`https://aiconvert.online/ar/blog/${post.slug}`} />
-      <link rel="alternate" hrefLang="ar" href={`https://aiconvert.online/ar/blog/${post.slug}`} />
-      <link rel="alternate" hrefLang="en" href={`https://aiconvert.online/blog/${post.slug}`} />
+
+      {/* --- 3. إضافة وسوم hreflang بشكل شرطي --- */}
+      {hasEnglishVersion && (
+        <>
+          <link rel="alternate" hrefLang="ar" href={`https://aiconvert.online/ar/blog/${post.slug}`} />
+          <link rel="alternate" hrefLang="en" href={`https://aiconvert.online/blog/${post.slug}`} />
+          <link rel="alternate" hrefLang="x-default" href={`https://aiconvert.online/blog/${post.slug}`} />
+        </>
+      )}
+
       <link rel="preload" as="image" href={post.image} />
 
       <div className="bg-gray-900 text-gray-300 pt-32 pb-20 font-sans">
