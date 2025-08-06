@@ -123,8 +123,10 @@ function VideoPromptPageAr() {
     <>
       <title>مولد وصف (Prompt) فيديو بالذكاء الاصطناعي | مجاني وبدون تسجيل</title>
       <meta name="description" content="حوّل أي صورة ثابتة إلى وصف فيديو سينمائي احترافي. أداتنا المجانية تكتب لك أوامر فيديو دقيقة لأشهر المنصات مثل Sora، Veo، وRunway. لا حاجة للتسجيل." />
-      <link rel="canonical" href="https://aiconvert.online/ai-video-prompt-generator" />
+      <link rel="canonical" href="https://aiconvert.online/ar/ai-video-prompt-generator" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-video-prompt-generator" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/ai-video-prompt-generator" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/ai-video-prompt-generator" />
       
       <div className="pt-24 bg-gray-900 text-white min-h-screen font-sans">
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8" dir="rtl">
