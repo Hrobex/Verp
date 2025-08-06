@@ -28,7 +28,7 @@ export default function BlogPostPage() {
 
       <div className="bg-gray-900 text-gray-300 pt-32 pb-20">
         <main className="max-w-3xl mx-auto px-6 lg:px-8">
-          <article className="prose prose-invert prose-lg lg:prose-xl mx-auto">
+          <div className="text-lg leading-relaxed">
             <header className="mb-12">
               <div className="flex items-center text-sm text-gray-400">
                 <Link to="/blog" className="hover:text-white">Blog</Link>
