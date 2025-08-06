@@ -5,9 +5,40 @@ import { blogPosts } from '@/data/blogPosts';
 import ReactMarkdown from 'react-markdown';
 import SmartLink from '@/react-app/components/SmartLink';
 
-const MarkdownLink = ({ href, children }: { href?: string; children?: React.ReactNode }) => {
-  if (!href) return <>{children}</>;
-  return <SmartLink href={href}>{children}</SmartLink>;
+// --- مكونات التنسيق المخصصة للمقال ---
+// هذا هو الحل لمشكلة التنسيق. نحن نخبر react-markdown
+// بالكلاسات التي يجب استخدامها لكل عنصر HTML.
+
+const customComponents = {
+  h2: (props: any) => <h2 className="text-3xl font-bold text-white mt-12 mb-6" {...props} />,
+  h3: (props: any) => <h3 className="text-2xl font-bold text-white mt-10 mb-4" {...props} />,
+  p: (props: any) => <p className="mb-6 leading-loose" {...props} />,
+  ul: (props: any) => <ul className="list-disc list-inside space-y-3 my-6 pl-4" {...props} />,
+  li: (props: any) => <li className="mb-2" {...props} />,
+  strong: (props: any) => <strong className="font-bold text-white" {...props} />,
+  hr: (props: any) => <hr className="my-12 border-gray-700" {...props} />,
+  // نستخدم SmartLink للروابط الداخلية والخارجية
+  a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
+    if (!href) return <>{children}</>;
+    // نجعل الروابط الخارجية لها زر مميز
+    if (!href.startsWith('/')) {
+        return (
+            <div className="my-6">
+                <SmartLink href={href} className="inline-block bg-cyan-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-cyan-700 transition-colors">
+                    {children}
+                </SmartLink>
+            </div>
+        );
+    }
+    // الروابط الداخلية
+    return <SmartLink href={href} className="text-cyan-400 hover:underline">{children}</SmartLink>;
+  },
+  // تنسيق الصور داخل المقال
+  img: (props: any) => (
+    <figure className="my-8">
+        <img {...props} className="w-full rounded-lg shadow-lg" />
+    </figure>
+  ),
 };
 
 export default function BlogPostPage() {
@@ -17,7 +48,6 @@ export default function BlogPostPage() {
 
   useEffect(() => {
     if (postMetadata) {
-      // استيراد ملف الـ Markdown ديناميكيًا كـ "نص خام"
       import(`../../posts/${postMetadata.slug}.md?raw`)
         .then(module => {
           setContent(module.default);
@@ -51,7 +81,8 @@ export default function BlogPostPage() {
 
       <div className="bg-gray-900 text-gray-300 pt-32 pb-20">
         <main className="max-w-3xl mx-auto px-6 lg:px-8">
-          <article className="prose prose-invert prose-lg lg:prose-xl mx-auto">
+          {/* لم نعد نستخدم `prose` هنا */}
+          <div className="text-lg leading-relaxed">
             <header className="mb-12">
               <div className="flex items-center text-sm text-gray-400">
                 <Link to="/blog" className="hover:text-white">Blog</Link>
@@ -70,7 +101,7 @@ export default function BlogPostPage() {
               <img src={postMetadata.image} alt={postMetadata.title} className="w-full rounded-2xl shadow-xl" />
             </figure>
             
-            <ReactMarkdown components={{ a: MarkdownLink }}>
+            <ReactMarkdown components={customComponents}>
               {content}
             </ReactMarkdown>
             
@@ -79,7 +110,7 @@ export default function BlogPostPage() {
                     &larr; Back to All Posts
                 </Link>
             </div>
-          </article>
+          </div>
         </main>
       </div>
     </>
