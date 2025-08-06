@@ -6,6 +6,8 @@ export default function TermsOfServicePage() {
       <title>Terms of Service - AIConvert</title>
       <meta name="description" content="Read the Terms of Service for AIConvert. By using our services, you agree to these terms." />
       <link rel="canonical" href="https://aiconvert.online/terms-of-service" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/terms-of-service" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/terms-of-service" />
       
       <div className="bg-gray-900 text-gray-300 pt-32 pb-20">
         <main className="max-w-4xl mx-auto px-6 lg:px-8">
