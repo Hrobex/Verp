@@ -1,7 +1,7 @@
 // الملف: src/react-app/pages/BlogPostPage.tsx
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { blogPosts, ImageDimensions } from '@/data/blogPosts';
+import { blogPosts } from '@/data/blogPosts';
 import ReactMarkdown from 'react-markdown';
 import SmartLink from '@/react-app/components/SmartLink';
 
