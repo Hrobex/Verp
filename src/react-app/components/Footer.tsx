@@ -32,7 +32,7 @@ const footerTranslations = {
       { name: 'Features', href: '/#features' },
     ],
     Company: [
-      { name: 'About', href: '/#about' },
+      { name: 'About', href: '/about' },
       { name: 'Blog', href: '#blog' }, // Assuming blog is a section for now
       { name: 'Contact', href: 'mailto:info@aiconvert.online' },
     ],
