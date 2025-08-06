@@ -72,7 +72,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="ai-video-prompt-generator" element={<VideoPromptPage />} />
           <Route path="easy-drawings" element={<EasyDrawingsPage />} /> {/* <-- تمت إضافة هذا السطر */}
           <Route path="restore-and-repair-old-photos" element={<PhotoRevivePage />} /> 
-          <Route path="restore-and-repair-old-photos" element={<PrivacyPolicyPage />} /> 
+          <Route path="privacy-policy" element={<PrivacyPolicyPage />} /> 
 
           {/* --- Arabic Route Group --- */}
           <Route path="ar">
@@ -91,7 +91,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="ai-story-generator" element={<StorygenPageArabic />} />
             <Route path="ai-video-prompt-generator" element={<VideoPromptPageArabic />} />
             <Route path="easy-drawings" element={<EasyDrawingsPageArabic />} /> 
-            <Route path="privacy-policy" element={<PhotoRevivePageArabic />} /> 
+            <Route path="restore-and-repair-old-photos" element={<PhotoRevivePageArabic />} /> 
           </Route>
           
         </Route>
