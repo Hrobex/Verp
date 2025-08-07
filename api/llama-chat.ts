@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // الثوابت تبقى كما هي
-const GROQ_API_KEY = "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";
+const GROQ_API_KEY = "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";
 const MODEL_FALLBACK_CHAIN = [
   "meta-llama/llama-4-maverick-17b-128e-instruct",
   "meta-llama/llama-4-scout-17b-16e-instruct",
