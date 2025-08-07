@@ -15,5 +15,16 @@
       "source": "/((?!api|assets|sw.js|_next|favicon.ico|static).*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "images": {
+    "sizes": [
+      400,
+      640,
+      828,
+      1080,
+      1200
+    ],
+    "domains": [],
+    "minimumCacheTTL": 60
+  }
 }
