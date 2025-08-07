@@ -190,7 +190,12 @@ function Llama4ChatPage() {
   return (
     <>
       <title>Llama-4 Chat Interface</title>
-      <meta name="robots" content="noindex, follow" />
+<meta name="description" content="..."/>
+<meta name="robots" content="noindex, follow" />
+<link rel="canonical" href="https://aiconvert.online/llama-4/chat" />
+<link rel="alternate" hrefLang="en" href="https://aiconvert.online/llama-4/chat" />
+<link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/llama-4/chat" />
+<link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/llama-4/chat" />
       
       <div className="flex flex-col bg-gray-900 text-white font-sans relative" style={{ minHeight: 'calc(100vh - 80px)' }}>
         <h1 className="sr-only">Llama-4 Chat Interface</h1>
@@ -211,7 +216,7 @@ function Llama4ChatPage() {
               <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask Llama-4 anything..." className="flex-1 p-3 bg-gray-700 border border-gray-600 rounded-full" disabled={isLoading}/>
               <button type="submit" className="p-3 bg-emerald-600 rounded-full" disabled={isLoading || !input.trim()}><Send size={24} /></button>
             </form>
-            <div className="absolute right-0 -bottom-8">
+            <div className="absolute right-0 -bottom-10">
               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-gray-400 hover:text-white" title="Options">
                 <Settings size={20} />
               </button>
