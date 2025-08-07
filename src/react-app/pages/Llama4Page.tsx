@@ -1,253 +1,158 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { Copy, Edit2, Download, XCircle, Send, PlusCircle, ArrowLeft, Settings, Trash2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { BrainCircuit, BookOpen, ShieldCheck, Infinity, Edit2, Download, Save, Code } from 'lucide-react';
 
-// واجهة الرسالة لضمان التناسق
-interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-}
-const generateUniqueId = () => `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-
-// ===============================================================
-// --- المكونات المساعدة ---
-// ===============================================================
-
-const ChatMessage = ({ message, onEdit }: { message: Message; onEdit: (id: string) => void }) => {
-  const isUser = message.role === 'user';
-  return (
-    <div className={`flex items-start gap-3 ${isUser ? 'flex-row-reverse' : ''}`}>
-      {!isUser && <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center font-bold text-white">L4</div>}
-      <div className={`group relative max-w-2xl lg:max-w-3xl px-4 py-3 rounded-xl shadow-md ${isUser ? 'bg-blue-600' : 'bg-gray-700'}`}>
-        <ReactMarkdown
-          components={{
-            code({ node, className, children, ...props }) {
-              const match = /language-(\w+)/.exec(className || '');
-              return match ? (
-                <div className="my-2 bg-gray-800/50 rounded-md overflow-hidden text-sm">
-                  <div className="px-3 py-1 bg-gray-900/70 text-xs text-gray-400 flex justify-between items-center">
-                    <span>{match[1]}</span>
-                    <button onClick={() => navigator.clipboard.writeText(String(children))} className="text-xs hover:text-white p-1 rounded-md">Copy</button>
-                  </div>
-                  <SyntaxHighlighter style={vscDarkPlus} language={match[1]} PreTag="div">
-                    {String(children).replace(/\n$/, '')}
-                  </SyntaxHighlighter>
-                </div>
-              ) : (
-                <code className="bg-gray-800/50 text-emerald-300 py-0.5 px-1.5 rounded-md text-sm" {...props}>{children}</code>
-              );
-            },
-            a({href, children}) { return <a href={href} target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">{children}</a> }
-          }}
-        >
-          {message.content}
-        </ReactMarkdown>
-        <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button onClick={() => navigator.clipboard.writeText(message.content)} className="p-1.5 hover:bg-black/20 rounded-md" title="Copy"><Copy size={14}/></button>
-          {isUser && <button onClick={() => onEdit(message.id)} className="p-1.5 hover:bg-black/20 rounded-md" title="Edit & Resend"><Edit2 size={14}/></button>}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const EditModal = ({ message, onSave, onClose }: { message: Message; onSave: (id: string, newContent: string) => void; onClose: () => void }) => {
-  const [editText, setEditText] = useState(message.content);
-  return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
-      <div className="bg-gray-800 rounded-lg p-6 w-full max-w-2xl shadow-2xl">
-        <h3 className="text-lg font-bold mb-4">Edit Message</h3>
-        <textarea value={editText} onChange={(e) => setEditText(e.target.value)} className="w-full h-40 p-3 bg-gray-700 rounded-md mb-4" rows={5} />
-        <div className="flex justify-end gap-4">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-600 rounded-md hover:bg-gray-500">Cancel</button>
-          <button onClick={() => onSave(message.id, editText)} className="px-4 py-2 bg-emerald-600 rounded-md hover:bg-emerald-500">Save & Regenerate</button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ===============================================================
-// --- المكون الرئيسي لواجهة الشات ---
-// ===============================================================
-function Llama4ChatPage() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const navigate = useNavigate();
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
-
-  // تحميل وحفظ المحادثة
-  useEffect(() => {
-    try { const saved = localStorage.getItem('llama4-chat-history'); if(saved) setMessages(JSON.parse(saved)); } catch (e) {}
-  }, []);
-  useEffect(() => {
-    const messagesToSave = messages.filter(m => !(m.role === 'assistant' && m.content === ''));
-    if(messagesToSave.length > 0) localStorage.setItem('llama4-chat-history', JSON.stringify(messagesToSave));
-  }, [messages]);
-
-  // التمرير للأسفل
-  useEffect(() => {
-    if (messages.length > 1) chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages.length]);
-
-  const handleSendMessage = useCallback(async (content: string, history: Message[]) => {
-    if (isLoading || !content.trim()) return;
-    setIsLoading(true);
-    abortControllerRef.current = new AbortController();
-    const newHistory = [...history, { role: 'assistant' as const, content: '', id: generateUniqueId() }];
-    setMessages(newHistory);
-    try {
-      const response = await fetch('/api/llama-4-chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history.map(({id, ...rest}) => rest) }),
-        signal: abortControllerRef.current.signal,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: { message: 'Failed to parse server error.' }}));
-        throw new Error(errorData.error?.message || response.statusText);
-      }
-      
-      if (!response.body) throw new Error('Response body is null');
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let accumulatedResponse = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n\n');
-        lines.forEach(line => {
-          if (line.startsWith('data: ')) {
-            const dataStr = line.substring(6);
-            if (dataStr.trim() === '[DONE]') return;
-            try {
-              const data = JSON.parse(dataStr);
-              const delta = data.choices[0]?.delta?.content || '';
-              if (delta) {
-                accumulatedResponse += delta;
-                setMessages(current => {
-                  const updated = [...current];
-                  updated[updated.length - 1].content = accumulatedResponse;
-                  return updated;
-                });
-              }
-            } catch (e) { /* ignore */ }
-          }
-        });
-      }
-    } catch (error: any) {
-      if (error.name !== 'AbortError') {
-        setMessages(current => {
-          const updated = [...current];
-          updated[updated.length - 1].content = `**Error:** ${error.message}`;
-          return updated;
-        });
-      }
-    } finally { setIsLoading(false); abortControllerRef.current = null; }
-  }, [isLoading]);
-
-  const handleSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (!input.trim()) return;
-    const newUserMessage = { role: 'user' as const, content: input, id: generateUniqueId() };
-    const updatedHistory = [...messages, newUserMessage];
-    setMessages(updatedHistory);
-    setInput('');
-    handleSendMessage(input, updatedHistory);
-  };
-
-  const handleEdit = (id: string, newContent: string) => {
-    const msgIndex = messages.findIndex(m => m.id === id);
-    if (msgIndex === -1) return;
-    const history = messages.slice(0, msgIndex + 1);
-    history[msgIndex].content = newContent;
-    setMessages(history);
-    setEditingMessageId(null);
-    handleSendMessage(newContent, history);
-  };
-
-  const handleDownload = () => {
-    const text = messages.map(m => `### ${m.role.toUpperCase()}\n\n${m.content}`).join('\n\n---\n\n');
-    const blob = new Blob([text], {type: 'text/markdown;charset=utf-8'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'llama-4-chat.md';
-    a.click();
-    URL.revokeObjectURL(url);
-    setIsMenuOpen(false);
-  };
-  
-  const handleNewChat = () => {
-    setMessages([]);
-    localStorage.removeItem('llama4-chat-history');
-    setIsMenuOpen(false);
+const faqData = [
+  {
+    question: "Is Llama-4 truly free to use?",
+    answer: "Yes, absolutely. We believe powerful AI tools should be accessible to everyone. There are no subscriptions, hidden fees, or usage limits. Your curiosity is the only thing that matters."
+  },
+  {
+    question: "What makes Llama-4 different from other AI chatbots?",
+    answer: "Llama-4 combines several unique strengths: it leverages massive language models for exceptional reasoning, has a vast context memory to track long conversations, and is powered by an ultra-fast engine, all delivered in a completely free and private experience."
+  },
+  {
+    question: "What kind of tasks does Llama-4 excel at?",
+    answer: "It's a highly versatile partner. Use it for brainstorming complex ideas, drafting professional emails and articles, solving coding and logic problems, or even summarizing dense research papers and translating text."
+  },
+  {
+    question: "Are my conversations with Llama-4 private and secure?",
+    answer: "Yes. Your privacy is paramount. We do not store your conversation history. Each session is stateless and belongs only to you."
   }
+];
 
-  const stopGeneration = () => { if (abortControllerRef.current) abortControllerRef.current.abort(); };
-
+function Llama4Page() {
   return (
     <>
-      <title>Llama-4 Chat Interface</title>
-      <meta name="robots" content="noindex, follow" />
-      
-      <div className="flex flex-col bg-gray-900 text-white font-sans relative" style={{ minHeight: 'calc(100vh - 80px)' }}> {/* تعديل للعمل تحت هيدر الموقع */}
-        <h1 className="sr-only">Llama-4 Chat Interface</h1>
-        
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-          {messages.map((msg) => ( <ChatMessage key={msg.id} message={msg} onEdit={setEditingMessageId} /> ))}
-          <div ref={chatEndRef} />
-        </main>
+      <title>Llama-4: Free, Unlimited Online AI Chatbot Assistant</title>
+      <meta name="description" content="Meet Llama-4, a next-generation AI chat assistant. Ask complex questions, write content, and get instant answers from an advanced AI. Completely free, no signup required." />
+      <link rel="canonical" href="https://aiconvert.online/llama-4" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/llama-4" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/llama-4" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/llama-4" />
+      <script type="application/ld+json">
+        {`
+          {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "Llama-4: Free Online AI Chatbot",
+            "operatingSystem": "WEB",
+            "applicationCategory": "ProductivityApplication",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.9",
+              "ratingCount": "1820"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "applicationSuite": "AI Convert Online Tools"
+          }
+        `}
+      </script>
 
-        <footer className="p-4 bg-gray-900/80 backdrop-blur-sm sticky bottom-0">
-          {isLoading && (
-              <button onClick={stopGeneration} className="mx-auto mb-2 flex items-center gap-2 px-4 py-2 text-sm bg-red-600 hover:bg-red-700 rounded-full">
-                  <XCircle size={16}/> Stop Generating
-              </button>
-          )}
-          <div className="relative max-w-4xl mx-auto">
-            <form onSubmit={handleSubmit} className="flex items-center gap-2">
-              <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask Llama-4 anything..." className="flex-1 p-3 bg-gray-700 border border-gray-600 rounded-full" disabled={isLoading}/>
-              <button type="submit" className="p-3 bg-emerald-600 rounded-full" disabled={isLoading || !input.trim()}><Send size={24} /></button>
-            </form>
-            <div className="absolute right-0 -bottom-8">
-              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-gray-400 hover:text-white" title="Options">
-                <Settings size={20} />
-              </button>
-            </div>
-            {isMenuOpen && (
-                <div className="absolute bottom-full right-0 mb-2 w-64 bg-gray-800 rounded-lg shadow-lg border border-gray-700">
-                    <button onClick={() => navigate('/llama-4')} className="flex items-center gap-3 w-full text-left px-4 py-3 hover:bg-gray-700 rounded-t-lg">
-                        <ArrowLeft size={16} /> Return to previous page
-                    </button>
-                    <button onClick={handleDownload} className="flex items-center gap-3 w-full text-left px-4 py-3 hover:bg-gray-700">
-                        <Download size={16} /> Download Chat
-                    </button>
-                    <button onClick={handleNewChat} className="flex items-center gap-3 w-full text-left px-4 py-3 hover:bg-gray-700 rounded-b-lg text-red-400">
-                        <Trash2 size={16} /> Start New Chat
-                    </button>
-                </div>
-            )}
+      <div className="pt-24 bg-gray-900 text-white min-h-screen font-sans">
+        <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+
+          {/* --- Hero Section --- */}
+          <section className="text-center mb-12">
+            <h1 className="text-4xl sm:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-amber-500">
+              Llama-4: Free, Unlimited Online AI Chatbot
+            </h1>
+            <p className="mt-6 text-lg text-gray-300 max-w-3xl mx-auto">
+              Go beyond the ordinary. It's time for an AI assistant that truly understands you. Ask complex questions, generate creative content, and get instant, intelligent answers.
+            </p>
+          </section>
+
+          {/* --- Primary Call to Action (CTA) --- */}
+          <div className="text-center mb-20">
+            <Link
+              to="/llama-4/chat"
+              className="inline-block py-4 px-10 text-lg font-bold text-gray-900 bg-amber-500 rounded-full shadow-lg hover:bg-amber-400 focus:outline-none focus:ring-4 focus:ring-amber-300 transform hover:scale-105 transition-all duration-300"
+            >
+              Start Chatting for Free
+            </Link>
+            <p className="mt-4 text-sm text-gray-500">No Signup Required.</p>
           </div>
-        </footer>
 
-        {editingMessageId && ( <EditModal message={messages.find(m => m.id === editingMessageId)!} onSave={handleEdit} onClose={() => setEditingMessageId(null)} /> )}
+          {/* --- AI Features Section (Original) --- */}
+          <section className="text-center mb-24">
+            <h2 className="text-3xl font-bold mb-4">An AI Assistant with Superpowers</h2>
+            <p className="max-w-3xl mx-auto text-gray-400 mb-12">
+              We didn't just offer another chatbot. We engineered the Llama-4 experience to be your partner in thought and creativity.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-emerald-500/20 transition-shadow">
+                <BrainCircuit className="h-10 w-10 mx-auto mb-4 text-emerald-400" />
+                <h3 className="text-xl font-bold text-white mb-2">Advanced Reasoning</h3>
+                <p className="text-gray-300">Challenge it with your toughest problems. Llama-4 excels at understanding complex context, delivering logical and well-analyzed solutions.</p>
+              </div>
+              <div className="bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-emerald-500/20 transition-shadow">
+                <BookOpen className="h-10 w-10 mx-auto mb-4 text-emerald-400" />
+                <h3 className="text-xl font-bold text-white mb-2">Vast Context Memory</h3>
+                <p className="text-gray-300">Tired of repeating yourself? Its large context window allows it to remember details from long conversations, perfect for multi-step projects.</p>
+              </div>
+              <div className="bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-emerald-500/20 transition-shadow">
+                <ShieldCheck className="h-10 w-10 mx-auto mb-4 text-emerald-400" />
+                <h3 className="text-xl font-bold text-white mb-2">Unwavering Reliability</h3>
+                <p className="text-gray-300">Our intelligent backend system dynamically routes your requests to ensure high availability, so you always get the best possible response.</p>
+              </div>
+              <div className="bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-emerald-500/20 transition-shadow">
+                <Infinity className="h-10 w-10 mx-auto mb-4 text-emerald-400" />
+                <h3 className="text-xl font-bold text-white mb-2">Limitless & Free Forever</h3>
+                <p className="text-gray-300">Unleash your creativity without worrying about costs or quotas. A powerful AI chat assistant for free, with no strings attached.</p>
+              </div>
+            </div>
+          </section>
+
+          {/* --- Interface Features Section (New) --- */}
+          <section className="text-center mb-24">
+            <h2 className="text-3xl font-bold mb-4">A Chat Experience Designed for You</h2>
+            <p className="max-w-3xl mx-auto text-gray-400 mb-12">
+              We focused on the details to create an interface that's not just powerful, but also intuitive and a pleasure to use.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-amber-500/20 transition-shadow">
+                <Edit2 className="h-10 w-10 mx-auto mb-4 text-amber-400" />
+                <h3 className="text-xl font-bold text-white mb-2">Edit & Refine</h3>
+                <p className="text-gray-300">Made a typo? Easily edit any of your previous messages and regenerate a new response to perfect your conversation.</p>
+              </div>
+              <div className="bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-amber-500/20 transition-shadow">
+                <Download className="h-10 w-10 mx-auto mb-4 text-amber-400" />
+                <h3 className="text-xl font-bold text-white mb-2">Export Your Chats</h3>
+                <p className="text-gray-300">Keep a permanent record of your ideas. Export your entire conversation as a clean Markdown file with a single click.</p>
+              </div>
+              <div className="bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-amber-500/20 transition-shadow">
+                <Save className="h-10 w-10 mx-auto mb-4 text-amber-400" />
+                <h3 className="text-xl font-bold text-white mb-2">Never Lose Context</h3>
+                <p className="text-gray-300">Accidentally closed the tab? No problem. Your current chat is automatically saved in your browser, ready for you to pick up.</p>
+              </div>
+              <div className="bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-amber-500/20 transition-shadow">
+                <Code className="h-10 w-10 mx-auto mb-4 text-amber-400" />
+                <h3 className="text-xl font-bold text-white mb-2">Rich Formatting</h3>
+                <p className="text-gray-300">Our chat understands and beautifully formats code blocks, lists, and other elements, making complex answers easy to read.</p>
+              </div>
+            </div>
+          </section>
+
+          {/* --- FAQ Section --- */}
+          <section className="mt-20 max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-10">Have Questions? We Have Answers.</h2>
+            <div className="space-y-6">
+              {faqData.map((faq, index) => (
+                <div key={index} className="bg-gray-800 p-6 rounded-lg">
+                  <h3 className="font-bold text-lg text-emerald-400 mb-2">{faq.question}</h3>
+                  <p className="text-gray-300 leading-relaxed">{faq.answer}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+        </main>
       </div>
     </>
   );
 }
 
-export default Llama4ChatPage;
+export default Llama4Page;
