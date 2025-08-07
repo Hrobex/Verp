@@ -81,12 +81,20 @@ function Llama4ChatPage() {
     const messagesToSave = messages.filter(m => !(m.role === 'assistant' && m.content === ''));
     if(messagesToSave.length > 0) localStorage.setItem('llama4-chat-history', JSON.stringify(messagesToSave));
   }, [messages]);
-
+  
   // التمرير للأسفل
-  useEffect(() => {
-    if (messages.length > 1) chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages.length]);
-
+useEffect(() => {
+  // قم بالتمرير دائمًا عند تغيير الرسائل، إلا إذا كانت الصفحة قد حُملت للتو
+  // وكان هناك أكثر من رسالة واحدة (محادثة قديمة)
+  const isInitialLoadWithHistory = messages.length > 1 && !isLoading;
+  if (isInitialLoadWithHistory && chatEndRef.current) {
+    // تمرير فوري بدون تأثير "smooth" عند التحميل الأولي
+    chatEndRef.current.scrollIntoView();
+  } else if (chatEndRef.current) {
+    // تمرير ناعم للرسائل الجديدة
+    chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  }
+}, [messages, isLoading]);
 
   const handleSendMessage = useCallback(async (content: string, history: Message[]) => {
     if (isLoading || !content.trim()) return;
