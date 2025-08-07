@@ -30,6 +30,7 @@ import TermsOfServicePage from "@/react-app/pages/TermsOfServicePage";
 import AboutPage from "@/react-app/pages/AboutPage";
 import BlogPage from "@/react-app/pages/BlogPage";
 import BlogPostPage from "@/react-app/pages/BlogPostPage"; 
+import Llama4Page from "@/react-app/pages/Llama4Page"; 
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -78,13 +79,14 @@ createRoot(document.getElementById("root")!).render(
           <Route path="prompt-generator" element={<PromptigenPage />} />
           <Route path="ai-story-generator" element={<StorygenPage />} />
           <Route path="ai-video-prompt-generator" element={<VideoPromptPage />} />
-          <Route path="easy-drawings" element={<EasyDrawingsPage />} /> {/* <-- تمت إضافة هذا السطر */}
+          <Route path="easy-drawings" element={<EasyDrawingsPage />} /> 
           <Route path="restore-and-repair-old-photos" element={<PhotoRevivePage />} /> 
           <Route path="privacy-policy" element={<PrivacyPolicyPage />} /> 
           <Route path="terms-of-service" element={<TermsOfServicePage />} /> 
           <Route path="about" element={<AboutPage />} />
           <Route path="blog" element={<BlogPage />} />
           <Route path="blog/:slug" element={<BlogPostPage />} /> 
+          <Route path="free-online-llama-4-ai-chatbot" element={<Llama4Page />} />
 
           {/* --- Arabic Route Group --- */}
           <Route path="ar">
