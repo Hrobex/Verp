@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+// --- تمت إزالة كل المكتبات التي تسببت في الخطأ ---
 import { Copy, Edit2, Download, XCircle, Send, Settings, Trash2, ArrowLeft } from 'lucide-react';
 
 // واجهة الرسالة لضمان التناسق
@@ -11,7 +12,7 @@ interface Message {
 }
 const generateUniqueId = () => `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-// --- المكونات المساعدة ---
+// --- المكونات المساعدة (تم تبسيطها لتعمل بدون مكتبات خارجية) ---
 const ChatMessage = ({ message, onEdit }: { message: Message; onEdit: (id: string) => void }) => {
   const isUser = message.role === 'user';
   return (
@@ -20,11 +21,14 @@ const ChatMessage = ({ message, onEdit }: { message: Message; onEdit: (id: strin
       <div className={`group relative max-w-2xl lg:max-w-3xl px-4 py-3 rounded-xl shadow-md ${isUser ? 'bg-blue-600' : 'bg-gray-700'}`}>
         <ReactMarkdown
           components={{
-            code: ({ children }) => (
-              <pre className="bg-gray-800/50 p-3 my-2 rounded-md overflow-x-auto text-sm">
-                <code>{String(children)}</code>
-              </pre>
-            ),
+            code({ children }) {
+              // --- عرض بسيط وموثوق للأكواد بدون تلوين ---
+              return (
+                <pre className="bg-gray-800/50 p-3 my-2 rounded-md overflow-x-auto text-sm">
+                  <code>{String(children)}</code>
+                </pre>
+              );
+            },
             a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">{children}</a>
           }}
         >
@@ -78,10 +82,10 @@ function Llama4ChatPage() {
     if(messagesToSave.length > 0) localStorage.setItem('llama4-chat-history', JSON.stringify(messagesToSave));
   }, [messages]);
 
-  // --- استخدام منطق التمرير الأصلي والبسيط ---
+  // التمرير للأسفل
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    if (messages.length > 1) chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages.length]);
 
 
   const handleSendMessage = useCallback(async (content: string, history: Message[]) => {
@@ -193,17 +197,14 @@ function Llama4ChatPage() {
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/llama-4/chat" />
       <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/llama-4/chat" />
       
-      {/* --- التصميم الجديد الذي لا يتعارض مع هيدر موقعك --- */}
-      <div className="flex flex-col bg-gray-900 text-white font-sans" style={{ minHeight: 'calc(100vh - 80px)' }}>
+      <div className="flex flex-col bg-gray-900 text-white font-sans relative" style={{ minHeight: 'calc(100vh - 80px)' }}>
         <h1 className="sr-only">Llama-4 Chat Interface</h1>
         
-        {/* منطقة عرض الرسائل: flex-grow تجعلها تملأ المساحة */}
         <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
           {messages.map((msg) => ( <ChatMessage key={msg.id} message={msg} onEdit={setEditingMessageId} /> ))}
           <div ref={chatEndRef} />
         </main>
 
-        {/* منطقة الإدخال: تبقى في الأسفل */}
         <footer className="p-4 bg-gray-900/80 backdrop-blur-sm sticky bottom-0">
           {isLoading && (
               <button onClick={stopGeneration} className="mx-auto mb-2 flex items-center gap-2 px-4 py-2 text-sm bg-red-600 hover:bg-red-700 rounded-full">
@@ -215,7 +216,6 @@ function Llama4ChatPage() {
               <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask Llama-4 anything..." className="flex-1 p-3 bg-gray-700 border border-gray-600 rounded-full" disabled={isLoading}/>
               <button type="submit" className="p-3 bg-emerald-600 rounded-full" disabled={isLoading || !input.trim()}><Send size={24} /></button>
             </form>
-            {/* --- زر الترس على مسافة -bottom-10 --- */}
             <div className="absolute right-0 -bottom-10">
               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-gray-400 hover:text-white" title="Options">
                 <Settings size={20} />
