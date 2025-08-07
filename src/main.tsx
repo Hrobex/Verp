@@ -55,6 +55,8 @@ import TermsOfServicePageAr from "@/react-app/pages/TermsOfServicePageAr";
 import AboutPageAr from "@/react-app/pages/AboutPageAr";
 import BlogPageAr from "@/react-app/pages/BlogPageAr";
 import BlogPostPageAr from "@/react-app/pages/BlogPostPageAr";
+import Llama4PageAr from "@/react-app/pages/Llama4PageAr"; 
+import Llama4ChatPageAr from "@/react-app/pages/Llama4ChatPageAr"; 
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -113,6 +115,8 @@ createRoot(document.getElementById("root")!).render(
             <Route path="about" element={<AboutPageAr />} /> 
             <Route path="blog" element={<BlogPageAr />} />
             <Route path="blog/:slug" element={<BlogPostPageAr />} />
+            <Route path="llama-4" element={<Llama4PageAr />} />
+            <Route path="/llama-4/chat" element={<Llama4ChatPageAr />} />
 
           </Route>
           
