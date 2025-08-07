@@ -31,6 +31,7 @@ import AboutPage from "@/react-app/pages/AboutPage";
 import BlogPage from "@/react-app/pages/BlogPage";
 import BlogPostPage from "@/react-app/pages/BlogPostPage"; 
 import Llama4Page from "@/react-app/pages/Llama4Page"; 
+import Llama4ChatPage from "@/react-app/pages/Llama4ChatPage"; 
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -86,7 +87,8 @@ createRoot(document.getElementById("root")!).render(
           <Route path="about" element={<AboutPage />} />
           <Route path="blog" element={<BlogPage />} />
           <Route path="blog/:slug" element={<BlogPostPage />} /> 
-          <Route path="free-online-llama-4-ai-chatbot" element={<Llama4Page />} />
+          <Route path="llama-4" element={<Llama4Page />} />
+          <Route path="llama-4" element={<Llama4ChatPage />} />
 
           {/* --- Arabic Route Group --- */}
           <Route path="ar">
