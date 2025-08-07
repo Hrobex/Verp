@@ -1,24 +1,13 @@
 // src/react-app/components/AIToolsArabic.tsx
 
 import { 
-  Image, 
-  Scissors, 
-  Volume2, 
-  Sparkles, 
-  ArrowLeft, // Changed to ArrowLeft
-  Zap,
-  Wand,
-  Wand2,
-  Pencil,
-  Palette,
-  SprayCan,
-  Drama,
-  Smile,
-  Film,
-  Paintbrush
+  Image, Scissors, Volume2, Sparkles, ArrowLeft, Zap, Wand, Wand2,
+  Pencil, Palette, SprayCan, Drama, Smile, Film, Paintbrush
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import VercelImage from './VercelImage'; // <-- 1. استيراد مكون الصور
 
+// 2. تحديث مصفوفة الأدوات بالكامل مع المسارات والنصوص البديلة العربية
 const toolsArabic = [
     {
     id: 'artigenv2',
@@ -27,7 +16,8 @@ const toolsArabic = [
     icon: Palette, 
     color: 'from-yellow-500 to-orange-600',
     features: ['أسلوب فني مميز', 'نتائج فائقة الجودة', 'مجاني بالكامل'],
-    image: 'https://images.unsplash.com/photo-1620421680280-d02b54174780?w=400&h=300&fit=crop'
+    image: '/images/artigenv2-ai-image-generator.webp',
+    alt: 'صورة ترويجية لأداة ArtigenV2 لتوليد الصور مع خلفية فنية باللونين الأصفر والبرتقالي.'
   },
   {
     id: 'generate-image-pro',
@@ -36,7 +26,8 @@ const toolsArabic = [
     icon: Image,
     color: 'from-purple-500 to-purple-600',
     features: ['أنماط متعددة', 'دقة عالية', 'استخدام تجاري'],
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop'
+    image: '/images/artigen-pro-ai-image-creator.webp',
+    alt: 'صورة مميزة لأداة Artigen Pro مع خلفية لسديم كوني يرمز لقدرات الذكاء الاصطناعي.'
   },
     {
     id: 'anime-ai',
@@ -45,7 +36,8 @@ const toolsArabic = [
     icon: SprayCan, 
     color: 'from-pink-500 to-orange-600',
     features: ['أنماط متنوعة', 'شخصيات أصلية', 'مجاني وبلا حدود'],
-    image: 'https://images.unsplash.com/photo-1613376023733-0a752709423d?w=400&h=300&fit=crop'
+    image: '/images/ai-anime-generation.jpg',
+    alt: 'مجموعة من شخصيات ورسومات الأنمي التي تم إنشاؤها بواسطة الذكاء الاصطناعي.'
   },
   {
     id: 'line-drawing',
@@ -54,25 +46,28 @@ const toolsArabic = [
     icon: Pencil,
     color: 'from-cyan-500 to-blue-600',
     features: ['تحويل فوري', 'رسم عالي الجودة', 'للفنانين والمبدعين'],
-    image: 'https://images.unsplash.com/photo-1608447047976-50a1b6a71404?w=400&h=300&fit=crop'
+    image: '/images/image-to-line-drawing-ai.webp',
+    alt: 'صورة توضيحية لخدمة تحويل الصور إلى رسومات خطية، تعرض صورة قبل وبعد التحويل.'
   },
   {
     id: 'ai-video-prompt-generator',
     title: 'مولد وصف الفيديو بالذكاء الاصطناعي',
     description: 'حوّل أي صورة ثابتة إلى وصف فيديو سينمائي. يكتب الذكاء الاصطناعي أوامر احترافية لمنصات مثل Sora و Veo و Runway.',
-    icon: Film, // Or any other icon component you use
+    icon: Film,
     color: 'from-rose-500 to-teal-600',
     features: ['أوصاف سينمائية', 'لمنصات Sora و Veo وغيرها', 'مجاني وبدون تسجيل'],
-    image: 'https://images.unsplash.com/photo-1574717521952-9430d440513d?w=400&h=300&fit=crop'
+    image: '/images/ai-video-prompt-generation.jpg',
+    alt: 'تصميم ثلاثي الأبعاد لكلمات "مولد وصف الفيديو بالذكاء الاصطناعي" بأسلوب سينمائي.'
   },
   {
-  "id": "prompt-generator",
-  "title": "Promptigen: تحويل الصورة إلى وصف نصي",
-  "description": "حوّل أي صورة إلى وصف نصي احترافي لاستخدامه في مولدات الصور بالذكاء الاصطناعي مثل ميدجورني.",
-  "icon": Pencil,
-  "color": "from-sky-500 to-violet-600",
-  "features": ["هندسة عكسية للصور", "أوصاف نصية احترافية", "مجاني وغير محدود"],
-  "image": "YOUR_UNSPLASH_IMAGE_URL_HERE?w=400&h=300&fit=crop"
+  id: "prompt-generator",
+  title: "Promptigen: تحويل الصورة إلى وصف نصي",
+  description: "حوّل أي صورة إلى وصف نصي احترافي لاستخدامه في مولدات الصور بالذكاء الاصطناعي مثل ميدجورني.",
+  icon: Pencil,
+  color: "from-sky-500 to-violet-600",
+  features: ["هندسة عكسية للصور", "أوصاف نصية احترافية", "مجاني وغير محدود"],
+  image: "/images/promptigen-image-to-prompt.webp",
+  alt: "صورة لأداة Promptigen التي تقوم بتحويل الصور إلى أوامر نصية لاستخدامها في مولدات الفن."
   },
   {
     id: 'remove-background',
@@ -81,7 +76,8 @@ const toolsArabic = [
     icon: Scissors,
     color: 'from-blue-500 to-blue-600',
     features: ['معالجة فورية', 'كشف الحواف', 'معالجة جماعية'],
-    image: 'https://images.unsplash.com/photo-1618004912476-29818d81ae2e?w=400&h=300&fit=crop'
+    image: '/images/remove-images-background.webp',
+    alt: 'مثال يوضح دقة أداة إزالة الخلفية، يعرض صورة قبل وبعد إزالة الخلفية.'
   },
   {
     id: 'text-to-speech',
@@ -90,7 +86,8 @@ const toolsArabic = [
     icon: Volume2,
     color: 'from-green-500 to-green-600',
     features: ['أصوات طبيعية', 'أكثر من 50 لغة', 'سرعة مخصصة'],
-    image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=400&h=300&fit=crop'
+    image: '/images/free-ai-text-to-speech.jpg',
+    alt: 'صورة مميزة لخدمة تحويل النص إلى كلام مع خلفية رقمية تكنولوجية.'
   },
   {
   id: 'ai-face-merge',
@@ -99,7 +96,8 @@ const toolsArabic = [
   icon: Drama,
   color: 'from-purple-500 to-fuchsia-600',
   features: ['دمج واقعي بالذكاء الاصطناعي', 'دعم الصور الجماعية', 'خصوصية وأمان'],
-  image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop'
+  image: '/images/mergify-face-swap.jpg',
+  alt: 'عرض لتقنية دمج وتبديل الوجوه، يظهر كيف يمكن دمج وجه في صور فنية مختلفة.'
 },
   {
     id: 'cartoonify',
@@ -108,7 +106,8 @@ const toolsArabic = [
     icon: Smile, 
     color: 'from-rose-400 to-purple-600',
     features: ['تحويل فوري', 'أسلوب كرتوني كلاسيكي', 'مجاني وبسيط'],
-    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop'
+    image: '/images/cartoonify-yourself.webp',
+    alt: 'صورة توضيحية لامرأة قبل وبعد تحويل صورتها إلى كرتون بأسلوب فني.'
   },
   {
     id: 'cartoony-art',
@@ -117,16 +116,18 @@ const toolsArabic = [
     icon: Paintbrush, 
     color: 'from-teal-500 to-cyan-600',
     features: ['أسلوب الرسم الرقمي', 'تحديد الوجه', 'فن عالي الجودة'],
-    image: 'https://images.unsplash.com/photo-1582573514932-349103231f16?w=400&h=300&fit=crop'
+    image: '/images/digicartoony-digital-art.webp',
+    alt: 'مثال يوضح تحويل صورة رجل إلى لوحة فنية رقمية باستخدام أداة DigiCartoony.'
   },
   {
-  "id": "ai-story-generator",
+  id: "ai-story-generator",
   "title": "Storygen: مولد القصص بالذكاء الاصطناعي",
   "description": "أطلق العنان لإبداعك. حوّل أي صورة إلى قصة فريدة قائمة على السرد باستخدام الذكاء الاصطناعي المتطور.",
   "icon": Pencil,
   "color": "from-indigo-500 to-violet-600",
   "features": ["سرد قصصي عميق", "كاتب متعدد اللغات", "إلهام فوري"],
-  "image": "YOUR_UNSPLASH_IMAGE_URL_HERE?w=400&h=300&fit=crop"
+  image: "/images/ai-image-to-story-generator.jpg",
+  alt: "صورة رمزية لمولد القصص، تظهر كتابًا مفتوحًا تنبثق منه قصة خيالية."
   },
   {
     id: 'ai-image-enhancer',
@@ -135,17 +136,19 @@ const toolsArabic = [
     icon: Sparkles,
     color: 'from-orange-500 to-orange-600',
     features: ['تكبير 4x', 'تقليل الضوضاء', 'تحسين الجودة'],
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop'
+    image: '/images/ai-image-enhancement.webp',
+    alt: 'صورة "قبل وبعد" توضح تحسين جودة صورة وجه باستخدام الذكاء الاصطناعي.'
   },
   {
     id: 'restore-and-repair-old-photos',
     title: 'ترميم وإصلاح الصور القديمة',
     description: 'أعد الحياة لذكرياتك. أداتنا الذكية تصلح الصور القديمة والتالفة، تزيل الخدوش، وتحسن الجودة تلقائيًا.',
-    icon: Wand, // Or any other icon component you use
+    icon: Wand,
     color: 'from-amber-500 to-cyan-600',
     features: ['إزالة الخدوش', 'تحسين الجودة', 'مجاني وآمن'],
-    image: 'https://images.unsplash.com/photo-1541873676-a18131494184?w=400&h=300&fit=crop'
-}
+    image: '/images/photorevive-ai-photo-restoration.webp',
+    alt: 'مثال يوضح ترميم صورة قديمة وتالفة وإعادتها لحالتها الأصلية.'
+  }
 ];
 
 export default function AIToolsArabic() {
@@ -175,9 +178,10 @@ export default function AIToolsArabic() {
               className="group relative bg-white rounded-2xl border border-gray-200 hover:border-gray-300 transition-all duration-300 overflow-hidden hover:shadow-2xl"
             >
               <div className="relative h-48 lg:h-56 overflow-hidden">
-                <img
+                {/* 3. استبدال <img> بـ <VercelImage> */}
+                <VercelImage
                   src={tool.image}
-                  alt={tool.title}
+                  alt={tool.alt}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
