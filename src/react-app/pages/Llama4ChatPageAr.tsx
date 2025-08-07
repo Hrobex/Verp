@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { Copy, Edit2, Download, XCircle, Send, Settings, Trash2, ArrowLeft } from 'lucide-react';
 
-// الواجهات والدوال المساعدة تبقى كما هي بدون تغيير
+// واجهة الرسالة لضمان التناسق
 interface Message {
   id: string;
   role: 'user' | 'assistant';
@@ -18,7 +18,18 @@ const ChatMessage = ({ message, onEdit }: { message: Message; onEdit: (id: strin
     <div className={`flex items-start gap-3 ${isUser ? 'flex-row-reverse' : ''}`}>
       {!isUser && <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center font-bold text-white">L4</div>}
       <div className={`group relative max-w-2xl lg:max-w-3xl px-4 py-3 rounded-xl shadow-md ${isUser ? 'bg-blue-600' : 'bg-gray-700'}`}>
-        <ReactMarkdown components={{ code: ({ children }) => <pre className="bg-gray-800/50 p-3 my-2 rounded-md overflow-x-auto text-sm text-left" dir="ltr"><code>{String(children)}</code></pre>, a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">{children}</a> }}>
+        <ReactMarkdown
+          components={{
+            code({ children }) {
+              return (
+                <pre className="bg-gray-800/50 p-3 my-2 rounded-md overflow-x-auto text-sm text-left" dir="ltr">
+                  <code>{String(children)}</code>
+                </pre>
+              );
+            },
+            a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">{children}</a>
+          }}
+        >
           {message.content}
         </ReactMarkdown>
         <div className="absolute top-1 left-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -60,20 +71,21 @@ function Llama4ChatPageAr() {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // المنطق البرمجي يبقى كما هو تمامًا
-  useEffect(() => { try { const saved = localStorage.getItem('llama4-chat-history-ar'); if(saved) setMessages(JSON.parse(saved)); } catch (e) {} }, []);
-  useEffect(() => { const messagesToSave = messages.filter(m => !(m.role === 'assistant' && m.content === '')); if(messagesToSave.length > 0) localStorage.setItem('llama4-chat-history-ar', JSON.stringify(messagesToSave)); }, [messages]);
-  useEffect(() => { if (messages.length > 1) chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages.length]);
+  // تحميل وحفظ المحادثة
+  useEffect(() => {
+    try { const saved = localStorage.getItem('llama4-chat-history-ar'); if(saved) setMessages(JSON.parse(saved)); } catch (e) {}
+  }, []);
+  useEffect(() => {
+    const messagesToSave = messages.filter(m => !(m.role === 'assistant' && m.content === ''));
+    if(messagesToSave.length > 0) localStorage.setItem('llama4-chat-history-ar', JSON.stringify(messagesToSave));
+  }, [messages]);
 
-  const handleSendMessage = useCallback(async (content: string, history: Message[]) => { /* ... المنطق يبقى كما هو ... */ }, [isLoading]);
-  const handleSubmit = (e?: React.FormEvent) => { /* ... المنطق يبقى كما هو ... */ };
-  const handleEdit = (id: string, newContent: string) => { /* ... المنطق يبقى كما هو ... */ };
-  const handleDownload = () => { /* ... المنطق يبقى كما هو ... */ };
-  const handleNewChat = () => { /* ... المنطق يبقى كما هو ... */ };
-  const stopGeneration = () => { /* ... المنطق يبقى كما هو ... */ };
-  
-  // -- لصق المنطق الكامل هنا لتجنب أي ارتباك --
-  const fullHandleSendMessage = useCallback(async (content: string, history: Message[]) => {
+  // التمرير للأسفل
+  useEffect(() => {
+    if (messages.length > 1) chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages.length]);
+
+  const handleSendMessage = useCallback(async (content: string, history: Message[]) => {
     if (isLoading || !content.trim()) return;
     setIsLoading(true);
     abortControllerRef.current = new AbortController();
@@ -81,7 +93,8 @@ function Llama4ChatPageAr() {
     setMessages(newHistory);
     try {
       const response = await fetch('/api/llama-4-chat', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: history.map(({id, ...rest}) => rest) }),
         signal: abortControllerRef.current.signal,
       });
@@ -131,45 +144,46 @@ function Llama4ChatPageAr() {
     } finally { setIsLoading(false); abortControllerRef.current = null; }
   }, [isLoading]);
 
-  const fullHandleSubmit = (e?: React.FormEvent) => {
+  const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!input.trim()) return;
     const newUserMessage = { role: 'user' as const, content: input, id: generateUniqueId() };
     const updatedHistory = [...messages, newUserMessage];
     setMessages(updatedHistory);
     setInput('');
-    fullHandleSendMessage(input, updatedHistory);
+    handleSendMessage(input, updatedHistory);
   };
 
-  const fullHandleEdit = (id: string, newContent: string) => {
+  const handleEdit = (id: string, newContent: string) => {
     const msgIndex = messages.findIndex(m => m.id === id);
     if (msgIndex === -1) return;
     const history = messages.slice(0, msgIndex + 1);
     history[msgIndex].content = newContent;
     setMessages(history);
     setEditingMessageId(null);
-    fullHandleSendMessage(newContent, history);
+    handleSendMessage(newContent, history);
   };
-  
-  const fullHandleDownload = () => {
+
+  const handleDownload = () => {
     const text = messages.map(m => `### ${m.role === 'user' ? 'المستخدم' : 'المساعد'}\n\n${m.content}`).join('\n\n---\n\n');
     const blob = new Blob([text], {type: 'text/markdown;charset=utf-8'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = 'محارثة-Llama-4.md';
-    a.click(); URL.revokeObjectURL(url);
+    a.click();
+    URL.revokeObjectURL(url);
     setIsMenuOpen(false);
   };
   
-  const fullHandleNewChat = () => {
+  const handleNewChat = () => {
     setMessages([]);
     localStorage.removeItem('llama4-chat-history-ar');
     setIsMenuOpen(false);
   }
 
-  const fullStopGeneration = () => { if (abortControllerRef.current) abortControllerRef.current.abort(); };
-  
+  const stopGeneration = () => { if (abortControllerRef.current) abortControllerRef.current.abort(); };
+
   return (
     <>
       <title>واجهة محادثة Llama-4</title>
@@ -190,29 +204,29 @@ function Llama4ChatPageAr() {
 
         <footer className="p-4 bg-gray-900/80 backdrop-blur-sm sticky bottom-0">
           {isLoading && (
-              <button onClick={fullStopGeneration} className="mx-auto mb-2 flex items-center gap-2 px-4 py-2 text-sm bg-red-600 hover:bg-red-700 rounded-full">
+              <button onClick={stopGeneration} className="mx-auto mb-2 flex items-center gap-2 px-4 py-2 text-sm bg-red-600 hover:bg-red-700 rounded-full">
                   <XCircle size={16}/> إيقاف التوليد
               </button>
           )}
           <div className="relative max-w-4xl mx-auto">
-            <form onSubmit={fullHandleSubmit} className="flex items-center gap-2">
+            <form onSubmit={handleSubmit} className="flex items-center gap-2">
               <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="اسأل Llama-4 أي شيء..." className="flex-1 p-3 bg-gray-700 border border-gray-600 rounded-full" disabled={isLoading}/>
               <button type="submit" className="p-3 bg-emerald-600 rounded-full" disabled={isLoading || !input.trim()}><Send size={24} /></button>
             </form>
-            <div className="absolute left-0 -bottom-10"> {/* تم تغيير right إلى left ليتناسب مع RTL */}
+            <div className="absolute left-0 -bottom-10">
               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-gray-400 hover:text-white" title="خيارات">
                 <Settings size={20} />
               </button>
             </div>
             {isMenuOpen && (
                 <div className="absolute bottom-full left-0 mb-2 w-64 bg-gray-800 rounded-lg shadow-lg border border-gray-700 z-10">
-                    <button onClick={() => navigate('/ar/llama-4')} className="flex items-center gap-3 w-full text-left px-4 py-3 hover:bg-gray-700 rounded-t-lg">
+                    <button onClick={() => navigate('/ar/llama-4')} className="flex items-center gap-3 w-full text-right px-4 py-3 hover:bg-gray-700 rounded-t-lg">
                         <ArrowLeft size={16} /> العودة للصفحة السابقة
                     </button>
-                    <button onClick={fullHandleDownload} className="flex items-center gap-3 w-full text-left px-4 py-3 hover:bg-gray-700">
+                    <button onClick={handleDownload} className="flex items-center gap-3 w-full text-right px-4 py-3 hover:bg-gray-700">
                         <Download size={16} /> تنزيل المحادثة
                     </button>
-                    <button onClick={fullHandleNewChat} className="flex items-center gap-3 w-full text-left px-4 py-3 hover:bg-gray-700 rounded-b-lg text-red-400">
+                    <button onClick={handleNewChat} className="flex items-center gap-3 w-full text-right px-4 py-3 hover:bg-gray-700 rounded-b-lg text-red-400">
                         <Trash2 size={16} /> بدء محادثة جديدة
                     </button>
                 </div>
@@ -220,7 +234,7 @@ function Llama4ChatPageAr() {
           </div>
         </footer>
 
-        {editingMessageId && ( <EditModal message={messages.find(m => m.id === editingMessageId)!} onSave={fullHandleEdit} onClose={() => setEditingMessageId(null)} /> )}
+        {editingMessageId && ( <EditModal message={messages.find(m => m.id === editingMessageId)!} onSave={handleEdit} onClose={() => setEditingMessageId(null)} /> )}
       </div>
     </>
   );
