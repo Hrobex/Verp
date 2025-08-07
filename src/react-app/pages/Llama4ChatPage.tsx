@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-// --- تمت إزالة كل المكتبات التي تسببت في الخطأ ---
 import { Copy, Edit2, Download, XCircle, Send, Settings, Trash2, ArrowLeft } from 'lucide-react';
 
 // واجهة الرسالة لضمان التناسق
@@ -12,7 +11,7 @@ interface Message {
 }
 const generateUniqueId = () => `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-// --- المكونات المساعدة (تم تبسيطها لتعمل بدون مكتبات خارجية) ---
+// --- المكونات المساعدة ---
 const ChatMessage = ({ message, onEdit }: { message: Message; onEdit: (id: string) => void }) => {
   const isUser = message.role === 'user';
   return (
@@ -21,14 +20,11 @@ const ChatMessage = ({ message, onEdit }: { message: Message; onEdit: (id: strin
       <div className={`group relative max-w-2xl lg:max-w-3xl px-4 py-3 rounded-xl shadow-md ${isUser ? 'bg-blue-600' : 'bg-gray-700'}`}>
         <ReactMarkdown
           components={{
-            code({ children }) {
-              // --- عرض بسيط وموثوق للأكواد بدون تلوين ---
-              return (
-                <pre className="bg-gray-800/50 p-3 my-2 rounded-md overflow-x-auto text-sm">
-                  <code>{String(children)}</code>
-                </pre>
-              );
-            },
+            code: ({ children }) => (
+              <pre className="bg-gray-800/50 p-3 my-2 rounded-md overflow-x-auto text-sm">
+                <code>{String(children)}</code>
+              </pre>
+            ),
             a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">{children}</a>
           }}
         >
@@ -81,20 +77,12 @@ function Llama4ChatPage() {
     const messagesToSave = messages.filter(m => !(m.role === 'assistant' && m.content === ''));
     if(messagesToSave.length > 0) localStorage.setItem('llama4-chat-history', JSON.stringify(messagesToSave));
   }, [messages]);
-  
-  // التمرير للأسفل
-useEffect(() => {
-  // قم بالتمرير دائمًا عند تغيير الرسائل، إلا إذا كانت الصفحة قد حُملت للتو
-  // وكان هناك أكثر من رسالة واحدة (محادثة قديمة)
-  const isInitialLoadWithHistory = messages.length > 1 && !isLoading;
-  if (isInitialLoadWithHistory && chatEndRef.current) {
-    // تمرير فوري بدون تأثير "smooth" عند التحميل الأولي
-    chatEndRef.current.scrollIntoView();
-  } else if (chatEndRef.current) {
-    // تمرير ناعم للرسائل الجديدة
-    chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  }
-}, [messages, isLoading]);
+
+  // --- استخدام منطق التمرير الأصلي والبسيط ---
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
 
   const handleSendMessage = useCallback(async (content: string, history: Message[]) => {
     if (isLoading || !content.trim()) return;
@@ -198,21 +186,24 @@ useEffect(() => {
   return (
     <>
       <title>Llama-4 Chat Interface</title>
-<meta name="description" content="..."/>
-<meta name="robots" content="noindex, follow" />
-<link rel="canonical" href="https://aiconvert.online/llama-4/chat" />
-<link rel="alternate" hrefLang="en" href="https://aiconvert.online/llama-4/chat" />
-<link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/llama-4/chat" />
-<link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/llama-4/chat" />
+      <meta name="description" content="Start your conversation with the Llama-4 AI assistant." />
+      <meta name="robots" content="noindex, follow" />
+      <link rel="canonical" href="https://aiconvert.online/llama-4/chat" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/llama-4/chat" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/llama-4/chat" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/llama-4/chat" />
       
-      <div className="flex flex-col bg-gray-900 text-white font-sans relative" style={{ minHeight: 'calc(100vh - 80px)' }}>
+      {/* --- التصميم الجديد الذي لا يتعارض مع هيدر موقعك --- */}
+      <div className="flex flex-col bg-gray-900 text-white font-sans" style={{ minHeight: 'calc(100vh - 80px)' }}>
         <h1 className="sr-only">Llama-4 Chat Interface</h1>
         
+        {/* منطقة عرض الرسائل: flex-grow تجعلها تملأ المساحة */}
         <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
           {messages.map((msg) => ( <ChatMessage key={msg.id} message={msg} onEdit={setEditingMessageId} /> ))}
           <div ref={chatEndRef} />
         </main>
 
+        {/* منطقة الإدخال: تبقى في الأسفل */}
         <footer className="p-4 bg-gray-900/80 backdrop-blur-sm sticky bottom-0">
           {isLoading && (
               <button onClick={stopGeneration} className="mx-auto mb-2 flex items-center gap-2 px-4 py-2 text-sm bg-red-600 hover:bg-red-700 rounded-full">
@@ -224,6 +215,7 @@ useEffect(() => {
               <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask Llama-4 anything..." className="flex-1 p-3 bg-gray-700 border border-gray-600 rounded-full" disabled={isLoading}/>
               <button type="submit" className="p-3 bg-emerald-600 rounded-full" disabled={isLoading || !input.trim()}><Send size={24} /></button>
             </form>
+            {/* --- زر الترس على مسافة -bottom-10 --- */}
             <div className="absolute right-0 -bottom-10">
               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-gray-400 hover:text-white" title="Options">
                 <Settings size={20} />
