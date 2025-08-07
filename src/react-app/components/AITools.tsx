@@ -5,9 +5,8 @@ import {
   Pencil, Palette, SprayCan, Drama, Smile, Film, Paintbrush
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import VercelImage from './VercelImage'; // <-- 1. استيراد مكون الصور الجديد
+import VercelImage from './VercelImage'; // <-- استيراد مكون الصور المحسّن
 
-// 2. تحديث مصفوفة الأدوات بالكامل مع المسارات والنصوص البديلة الجديدة
 const tools = [
     {
     id: 'artigenv2',
@@ -178,7 +177,6 @@ export default function AITools() {
               className="group relative bg-white rounded-2xl border border-gray-200 hover:border-gray-300 transition-all duration-300 overflow-hidden hover:shadow-2xl"
             >
               <div className="relative h-48 lg:h-56 overflow-hidden">
-                {/* 3. استبدال <img> بـ <VercelImage> */}
                 <VercelImage
                   src={tool.image}
                   alt={tool.alt}
