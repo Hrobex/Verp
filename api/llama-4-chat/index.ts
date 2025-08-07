@@ -1,13 +1,20 @@
-// --- لا يوجد أي استيراد لمكتبة "ai" ---
+// لا يوجد أي استيراد لمكتبة "ai" الخارجية
+// الكود مكتفٍ ذاتيًا ويعمل في بيئة Vercel Edge
 
-// --- إخبار Vercel بأن هذه دالة حافة ---
 export const config = {
   runtime: 'edge',
 };
 
 const GROQ_API_KEY = "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";
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-const TARGET_MODEL = "llama3-8b-8192";
+
+// --- قائمة النماذج التي سيتم تجربتها بالترتيب ---
+const MODEL_FALLBACK_CHAIN = [
+  "llama3-8b-8192",          // نبدأ بالنموذج السريع والمستقر
+  "gemma2-9b-it",              // نموذج جوجل القوي كخيار ثانٍ
+  "llama3-70b-8192",         // النموذج الأكبر كخيار ثالث
+  "meta-llama/llama-4-scout-17b-16e-instruct" // وأخيرًا نموذج الكشافة
+];
 
 export default async function handler(req: Request) {
   try {
@@ -20,27 +27,54 @@ export default async function handler(req: Request) {
       return new Response(JSON.stringify({ error: 'Missing "messages"' }), { status: 400 });
     }
 
-    const requestBody = {
-      model: TARGET_MODEL,
-      messages: messages,
-      stream: true,
-    };
+    let groqResponse: Response | null = null;
 
-    const groqResponse = await fetch(GROQ_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROQ_API_KEY}`,
-      },
-      body: JSON.stringify(requestBody),
-    });
+    // --- حلقة التبديل التلقائي (نفس منطق ملفك العامل) ---
+    for (const model of MODEL_FALLBACK_CHAIN) {
+      try {
+        console.log(`Attempting to connect with model: ${model}`);
+        
+        const requestBody = {
+          model: model,
+          messages: messages,
+          stream: true,
+        };
 
-    // إذا فشل الطلب من Groq، أرسل الخطأ مباشرة
-    if (!groqResponse.ok) {
-        return groqResponse;
+        const response = await fetch(GROQ_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${GROQ_API_KEY}`,
+          },
+          body: JSON.stringify(requestBody),
+        });
+        
+        // إذا نجح الطلب، قم بتخزين الاستجابة واخرج من الحلقة
+        if (response.ok) {
+          groqResponse = response;
+          console.log(`Successfully connected with model: ${model}`);
+          break; // أهم خطوة: الخروج من الحلقة عند أول نجاح
+        } else {
+          // إذا فشل الطلب (مثل 429 Too Many Requests)، سجل الخطأ واستمر
+          console.warn(`Model ${model} failed with status: ${response.status}`);
+        }
+
+      } catch (error) {
+        // إذا فشل الاتصال بالكامل (مشكلة شبكة)، سجل الخطأ واستمر
+        console.error(`A network error occurred while trying model ${model}:`, error);
+      }
     }
-    
-    // --- منطق البث اليدوي (بدون مكتبة خارجية) ---
+
+    // --- التحقق من وجود رد ناجح بعد انتهاء الحلقة ---
+    if (!groqResponse) {
+      // إذا فشلت كل النماذج في السلسلة
+      return new Response(JSON.stringify({ error: 'All AI models are currently unavailable. Please try again later.' }), {
+        status: 502, // Bad Gateway
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // --- منطق البث اليدوي (يعمل الآن على الاستجابة الناجحة) ---
     const stream = new ReadableStream({
       async start(controller) {
         if (!groqResponse.body) {
@@ -50,9 +84,7 @@ export default async function handler(req: Request) {
         const reader = groqResponse.body.getReader();
         while (true) {
           const { done, value } = await reader.read();
-          if (done) {
-            break;
-          }
+          if (done) break;
           controller.enqueue(value);
         }
         controller.close();
