@@ -16,7 +16,7 @@ const faqData = [
   },
   {
     question: "Are my conversations with Llama-4 private and secure?",
-    answer: "Yes. Your privacy is paramount. We do not store your conversation history. Each session is stateless and belongs only to you."
+    answer: "Yes. Your privacy and security are our top priority. We do not store your conversation history on our servers—ever. Your chat is saved directly and only in your own browser's local storage, giving you the convenience of picking up where you left off without your data ever leaving your device.."
   }
 ];
 
