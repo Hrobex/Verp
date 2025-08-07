@@ -13,6 +13,7 @@ interface Message {
 // دالة لإنشاء ID فريد
 const generateUniqueId = () => `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
+
 // ---------------------------------------------------------------
 // --- المكون الرئيسي لواجهة الشات ---
 // ---------------------------------------------------------------
@@ -70,12 +71,24 @@ function Llama4ChatPage() {
       const response = await fetch('/api/llama-4-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history.map(({id, ...rest}) => rest) }), // إزالة الـ ID قبل الإرسال
+        body: JSON.stringify({ messages: history.map(({id, ...rest}) => rest) }),
         signal: abortControllerRef.current.signal,
       });
 
-      if (!response.ok || !response.body) {
-        throw new Error('Network response was not ok.');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: { message: 'Failed to parse error response.' }}));
+        const errorMessage = `Error from API: ${errorData.error?.message || response.statusText}`;
+        setMessages(currentMessages => {
+            const updated = [...currentMessages];
+            updated[updated.length - 1].content = errorMessage;
+            return updated;
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      if (!response.body) {
+        throw new Error('Response body is null');
       }
       
       const reader = response.body.getReader();
@@ -86,13 +99,13 @@ function Llama4ChatPage() {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value);
+        const chunk = decoder.decode(value, { stream: true });
         const lines = chunk.split('\n\n');
 
         lines.forEach(line => {
           if (line.startsWith('data: ')) {
             const dataStr = line.substring(6);
-            if (dataStr === '[DONE]') return;
+            if (dataStr.trim() === '[DONE]') return;
 
             try {
               const data = JSON.parse(dataStr);
@@ -108,7 +121,9 @@ function Llama4ChatPage() {
                   return updatedMessages;
                 });
               }
-            } catch (e) { /* ignore parsing errors */ }
+            } catch (e) {
+              console.error("Failed to parse stream data:", dataStr, e);
+            }
           }
         });
       }
@@ -118,7 +133,7 @@ function Llama4ChatPage() {
             const updatedMessages = [...currentMessages];
             const lastMsgIndex = updatedMessages.length - 1;
             if (lastMsgIndex >= 0 && updatedMessages[lastMsgIndex].role === 'assistant') {
-              updatedMessages[lastMsgIndex].content = "Sorry, something went wrong. Please try again.";
+              updatedMessages[lastMsgIndex].content = "A critical error occurred. Please check the connection.";
             }
             return updatedMessages;
         });
@@ -174,7 +189,6 @@ function Llama4ChatPage() {
 
   return (
     <>
-      {/* --- قسم SEO ورأس الصفحة --- */}
       <title>Llama-4 Chat Interface</title>
       <meta name="description" content="Start your conversation with the Llama-4 AI assistant. Ask questions, get answers, and explore the capabilities of our advanced AI." />
       <meta name="robots" content="noindex, follow" />
@@ -186,7 +200,6 @@ function Llama4ChatPage() {
       <div className="flex flex-col h-screen bg-gray-900 text-white font-sans">
         <h1 className="sr-only">Llama-4 Chat Interface</h1>
         
-        {/* --- الشريط العلوي --- */}
         <header className="flex items-center justify-between p-4 bg-gray-800 shadow-md">
           <Link to="/llama-4" className="p-2 hover:bg-gray-700 rounded-full" title="Back to Llama-4 Home">
             <ArrowLeft size={20}/>
@@ -200,7 +213,6 @@ function Llama4ChatPage() {
           </div>
         </header>
 
-        {/* --- منطقة عرض الرسائل --- */}
         <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
           {messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg} onEdit={setEditingMessageId} />
@@ -218,7 +230,6 @@ function Llama4ChatPage() {
           <div ref={chatEndRef} />
         </main>
 
-        {/* --- منطقة الإدخال --- */}
         <footer className="p-4 bg-gray-900 border-t border-gray-700">
           {isLoading && (
               <button onClick={stopGeneration} className="mx-auto mb-2 flex items-center gap-2 px-4 py-2 text-sm bg-red-600 hover:bg-red-700 rounded-full">
@@ -240,7 +251,6 @@ function Llama4ChatPage() {
           </form>
         </footer>
 
-        {/* --- نافذة تعديل الرسالة (Modal) --- */}
         {editingMessageId && (
           <EditModal 
               message={messages.find(m => m.id === editingMessageId)!} 
@@ -254,7 +264,6 @@ function Llama4ChatPage() {
 }
 
 
-// --- مكون مساعد لعرض رسالة واحدة ---
 const ChatMessage = ({ message, onEdit }: { message: Message, onEdit: (id: string) => void }) => {
     const isUser = message.role === 'user';
     return (
@@ -286,7 +295,6 @@ const ChatMessage = ({ message, onEdit }: { message: Message, onEdit: (id: strin
     );
 };
 
-// --- مكون مساعد لنافذة التعديل ---
 const EditModal = ({ message, onSave, onClose }: { message: Message, onSave: (id: string, newContent: string) => void, onClose: () => void }) => {
     const [editText, setEditText] = useState(message.content);
     return (
@@ -308,4 +316,4 @@ const EditModal = ({ message, onSave, onClose }: { message: Message, onSave: (id
     );
 };
 
-export default Llama4ChatPage;
+export default Llama4ChatPage;```
