@@ -1,25 +1,13 @@
 // src/react-app/components/AITools.tsx
 
 import { 
-  Image, 
-  Scissors, 
-  Volume2, 
-  Sparkles, 
-  Wand,
-  ArrowRight,
-  Zap,
-  Wand2,
-  Pencil,
-  Palette,
-  SprayCan,
-  Drama, 
-  Smile,
-  Film,
-  Paintbrush
-  
+  Image, Scissors, Volume2, Sparkles, Wand, ArrowRight, Zap, Wand2, 
+  Pencil, Palette, SprayCan, Drama, Smile, Film, Paintbrush
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import VercelImage from './VercelImage'; // <-- 1. استيراد مكون الصور الجديد
 
+// 2. تحديث مصفوفة الأدوات بالكامل مع المسارات والنصوص البديلة الجديدة
 const tools = [
     {
     id: 'artigenv2',
@@ -28,7 +16,8 @@ const tools = [
     icon: Palette, 
     color: 'from-yellow-500 to-orange-600',
     features: ['Distinct Artistic Style', 'High-Quality Results', 'Completely Free'],
-    image: 'https://images.unsplash.com/photo-1620421680280-d02b54174780?w=400&h=300&fit=crop'
+    image: '/images/artigenv2-ai-image-generator.webp',
+    alt: 'صورة ترويجية لأداة ArtigenV2 لتوليد الصور بالذكاء الاصطناعي مع خلفية فنية ملونة.'
   },
   {
     id: 'generate-image-pro',
@@ -37,7 +26,8 @@ const tools = [
     icon: Image,
     color: 'from-purple-500 to-purple-600',
     features: ['Multiple styles', 'High resolution', 'Commercial use'],
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop'
+    image: '/images/artigen-pro-ai-image-creator.webp',
+    alt: 'صورة لأداة Artigen Pro مع خلفية سديم كوني ترمز للإمكانيات الإبداعية.'
   },
     {
     id: 'anime-ai',
@@ -46,7 +36,8 @@ const tools = [
     icon: SprayCan,
     color: 'from-pink-500 to-orange-600',
     features: ['Multiple Styles', 'OC Creation', 'Free & Unlimited'],
-    image: 'https://images.unsplash.com/photo-1613376023733-0a752709423d?w=400&h=300&fit=crop'
+    image: '/images/ai-anime-generation.jpg',
+    alt: 'مجموعة من شخصيات الأنمي المتنوعة التي تم إنشاؤها بواسطة مولد الأنمي بالذكاء الاصطناعي.'
   },
   {
     id: 'line-drawing',
@@ -55,7 +46,8 @@ const tools = [
     icon: Pencil,
     color: 'from-cyan-500 to-blue-600',
     features: ['Instant conversion', 'High-quality sketch', 'For artists & creators'],
-    image: 'https://images.unsplash.com/photo-1569336415962-a4294509e385?w=400&h=300&fit=crop'
+    image: '/images/image-to-line-drawing-ai.webp',
+    alt: 'مثال على أداة تحويل الصور إلى رسومات خطية، يظهر صورة قبل وبعد التحويل.'
   },
   {
     id: 'ai-video-prompt-generator',
@@ -64,16 +56,18 @@ const tools = [
     icon: Film, 
     color: 'from-rose-500 to-teal-600',
     features: ['Cinematic Descriptions', 'For Sora, Veo & More', 'Free & No Sign-up'],
-    image: 'https://images.unsplash.com/photo-1574717521952-9430d440513d?w=400&h=300&fit=crop'
+    image: '/images/ai-video-prompt-generation.jpg',
+    alt: 'تصميم سينمائي ثلاثي الأبعاد لكلمات AI Video Prompt Generator.'
   },
   {
-  "id": "prompt-generator",
-  "title": "Promptigen: Image to Prompt",
-  "description": "Reverse-engineer any image into a detailed, creative text prompt for AI art generators like Midjourney.",
-  "icon": Pencil,
-  "color": "from-sky-500 to-violet-600",
-  "features": ["Reverse Engineer Images", "Expert-Level Prompts", "Free & Unlimited"],
-  "image": "YOUR_UNSPLASH_IMAGE_URL_HERE?w=400&h=300&fit=crop"
+  id: "prompt-generator",
+  title: "Promptigen: Image to Prompt",
+  description: "Reverse-engineer any image into a detailed, creative text prompt for AI art generators like Midjourney.",
+  icon: Pencil,
+  color: "from-sky-500 to-violet-600",
+  features: ["Reverse Engineer Images", "Expert-Level Prompts", "Free & Unlimited"],
+  image: "/images/promptigen-image-to-prompt.webp",
+  alt: "صورة ترويجية لأداة Promptigen التي تحول الصور إلى أوامر نصية فنية."
   },
   {
     id: 'remove-background',
@@ -82,7 +76,8 @@ const tools = [
     icon: Scissors,
     color: 'from-blue-500 to-blue-600',
     features: ['Instant processing', 'Edge detection', 'Custom Backgrounds'],
-    image: 'https://images.unsplash.com/photo-1618004912476-29818d81ae2e?w=400&h=300&fit=crop'
+    image: '/images/remove-images-background.webp',
+    alt: 'مثال على أداة إزالة الخلفية، يعرض صورة قبل وبعد إزالة الخلفية بدقة.'
   },
   {
     id: 'text-to-speech',
@@ -91,7 +86,8 @@ const tools = [
     icon: Volume2,
     color: 'from-green-500 to-green-600',
     features: ['Natural voices', '138+ languages', 'Custom speed'],
-    image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=400&h=300&fit=crop'
+    image: '/images/free-ai-text-to-speech.jpg',
+    alt: 'صورة مميزة لأداة تحويل النص إلى كلام مع خلفية رقمية.'
   },
   {
   id: 'ai-face-merge',
@@ -100,7 +96,8 @@ const tools = [
   icon: Drama, 
   color: 'from-purple-500 to-fuchsia-600',
   features: ['Realistic AI Swaps', 'Group Photo Support', 'Privacy Focused'],
-  image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop' // صورة مقترحة، يمكن تغييرها
+  image: '/images/mergify-face-swap.jpg',
+  alt: 'عرض لأداة دمج الوجوه بالذكاء الاصطناعي يظهر دمج وجه في صور فنية متنوعة.'
   },
   {
     id: 'cartoonify',
@@ -109,7 +106,8 @@ const tools = [
     icon: Smile, 
     color: 'from-rose-400 to-purple-600',
     features: ['Instant Conversion', 'Classic 2D Style', 'Free & Simple'],
-    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop'
+    image: '/images/cartoonify-yourself.webp',
+    alt: 'صورة قبل وبعد لأداة Cartoonify، تظهر تحويل صورة فتاة إلى شخصية كرتونية.'
   },
   {
     id: 'cartoony-art',
@@ -118,16 +116,18 @@ const tools = [
     icon: Paintbrush, 
     color: 'from-teal-500 to-cyan-600',
     features: ['Digital Painting Style', 'Face Detection', 'High-Quality Art'],
-    image: 'https://images.unsplash.com/photo-1582573514932-349103231f16?w=400&h=300&fit=crop'
+    image: '/images/digicartoony-digital-art.webp',
+    alt: 'مثال على أداة DigiCartoony لتحويل صورة رجل إلى لوحة فنية رقمية.'
   },
   {
-  "id": "ai-story-generator",
-  "title": "Storygen: AI Story Generator",
-  "description": "Unleash your creativity. Turn any picture into a unique, narrative-driven story with our advanced AI.",
-  "icon": Pencil,
-  "color": "from-indigo-500 to-violet-600",
-  "features": ["Deep Narrative AI", "Multi-Lingual Writer", "Instant Inspiration"],
-  "image": "YOUR_UNSPLASH_IMAGE_URL_HERE?w=400&h=300&fit=crop"
+  id: "ai-story-generator",
+  title: "Storygen: AI Story Generator",
+  description: "Unleash your creativity. Turn any picture into a unique, narrative-driven story with our advanced AI.",
+  icon: Pencil,
+  color: "from-indigo-500 to-violet-600",
+  features: ["Deep Narrative AI", "Multi-Lingual Writer", "Instant Inspiration"],
+  image: "/images/ai-image-to-story-generator.jpg",
+  alt: "صورة خيالية لأداة Storygen تظهر كتابًا تنبثق منه قصة."
   },
   {
     id: 'ai-image-enhancer',
@@ -136,17 +136,19 @@ const tools = [
     icon: Sparkles,
     color: 'from-orange-500 to-orange-600',
     features: ['4x upscaling', 'Noise reduction', 'Quality boost'],
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop'
+    image: '/images/ai-image-enhancement.webp',
+    alt: 'مثال قبل وبعد لأداة تحسين جودة الصور يظهر تحسين تفاصيل وجه.'
   },
   {
     id: 'restore-and-repair-old-photos',
     title: 'PhotoRevive: AI Photo Restoration',
     description: 'Breathe new life into your memories. Our AI automatically repairs old, damaged, and faded photos, removing scratches and enhancing quality.',
-    icon: Wand, // Or any other icon component you use
+    icon: Wand,
     color: 'from-amber-500 to-cyan-600',
     features: ['Remove Scratches', 'Enhance Quality', 'Free & Secure'],
-    image: 'https://images.unsplash.com/photo-1541873676-a18131494184?w=400&h=300&fit=crop'
-}
+    image: '/images/photorevive-ai-photo-restoration.webp',
+    alt: 'مثال قبل وبعد لأداة PhotoRevive لإصلاح صورة قديمة ومتشققة.'
+  }
 ];
 
 export default function AITools() {
@@ -176,9 +178,10 @@ export default function AITools() {
               className="group relative bg-white rounded-2xl border border-gray-200 hover:border-gray-300 transition-all duration-300 overflow-hidden hover:shadow-2xl"
             >
               <div className="relative h-48 lg:h-56 overflow-hidden">
-                <img
+                {/* 3. استبدال <img> بـ <VercelImage> */}
+                <VercelImage
                   src={tool.image}
-                  alt={tool.title}
+                  alt={tool.alt}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
@@ -203,7 +206,6 @@ export default function AITools() {
                     </span>
                   ))}
                 </div>
-                {/* THIS IS THE ONLY LINE THAT WAS CHANGED, TO MAKE THE LINK ABSOLUTE */}
                 <Link to={`/${tool.id}`} className="group/btn flex items-center space-x-2 text-purple-600 hover:text-purple-700 font-semibold transition-colors">
                   <span>Try {tool.title}</span>
                   <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
