@@ -12,10 +12,6 @@
   ],
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    },
-    {
       "source": "/((?!api|assets|sw.js|_next|favicon.ico|static).*)",
       "destination": "/index.html"
     }
