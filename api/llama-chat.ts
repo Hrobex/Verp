@@ -1,14 +1,16 @@
+// نستمر في استخدام "import type" لأنها خاصة بـ TypeScript وتُزال عند التحويل إلى JavaScript
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // --- الثوابت الأساسية ---
 const GROQ_API_KEY = "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";
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-// --- تبسيط: سنستخدم نموذجًا واحدًا وموثوقًا للتشخيص ---
-const TARGET_MODEL = "llama3-8b-8192"; // اخترنا نموذجًا صغيرًا وسريعًا ومستقرًا للاختبار
+// --- نستخدم نفس الإصدار المبسط الذي يركز على نموذج واحد وموثوق ---
+const TARGET_MODEL = "llama3-8b-8192";
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-    console.log("--- Llama-4 API Handler Started ---");
+// --- تعريف الدالة الرئيسية ---
+async function handler(req: VercelRequest, res: VercelResponse) {
+    console.log("--- Llama-4 API Handler (CommonJS) Started ---");
 
     if (req.method !== 'POST') {
         res.setHeader('Allow', 'POST');
@@ -25,8 +27,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         console.log(`Attempting to call Groq with model: ${TARGET_MODEL}`);
-        console.log(`Number of messages received: ${messages.length}`);
-
+        
         const requestBody = {
             model: TARGET_MODEL,
             messages: messages,
@@ -44,9 +45,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         
         console.log("Groq fetch call completed. Response status:", apiResponse.status);
 
-        // --- فحص دقيق للرد من Groq ---
         if (!apiResponse.ok) {
-            // إذا فشل الطلب، سجل الخطأ من Groq وأرسل ردًا واضحًا
             const errorBody = await apiResponse.json();
             console.error("Groq API Error:", errorBody);
             return res.status(apiResponse.status).json({
@@ -54,17 +53,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             });
         }
         
-        // --- نجاح: إعداد البث إلى المستخدم ---
+        if (!apiResponse.body) {
+            throw new Error("Response body from Groq is null");
+        }
+
         res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
         res.setHeader('Cache-Control', 'no-cache, no-transform');
         res.setHeader('Connection', 'keep-alive');
         
         console.log("Headers set for streaming. Starting to pipe stream to client.");
-
-        // --- استخدام النمط الحديث والموثوق للبث ---
-        if (!apiResponse.body) {
-            throw new Error("Response body is null");
-        }
 
         for await (const chunk of apiResponse.body) {
             res.write(chunk);
@@ -74,17 +71,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.log("--- Stream finished successfully ---");
 
     } catch (error: any) {
-        // --- التعامل مع أي أخطاء غير متوقعة ---
-        console.error("--- A critical error occurred in the handler ---");
-        console.error("Error name:", error.name);
-        console.error("Error message:", error.message);
-        console.error("Error stack:", error.stack);
+        console.error("--- A critical error occurred in the handler ---", error);
         
-        // تأكد من أننا لا نرسل ردًا إذا كان البث قد بدأ بالفعل
         if (!res.headersSent) {
             res.status(500).json({ error: 'An internal server error occurred.' });
         } else {
-            res.end(); // إذا بدأ البث، فقط أنهِ الاتصال
+            res.end();
         }
     }
 }
+
+// --- التغيير الأهم: تصدير الدالة باستخدام صيغة CommonJS ---
+module.exports = handler;
