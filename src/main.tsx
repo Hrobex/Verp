@@ -88,7 +88,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="blog" element={<BlogPage />} />
           <Route path="blog/:slug" element={<BlogPostPage />} /> 
           <Route path="llama-4" element={<Llama4Page />} />
-          <Route path="llama-4" element={<Llama4ChatPage />} />
+          <Route path="/llama-4/chat" element={<Llama4ChatPage />} />
 
           {/* --- Arabic Route Group --- */}
           <Route path="ar">
