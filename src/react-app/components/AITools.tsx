@@ -1,7 +1,7 @@
 // src/react-app/components/AITools.tsx
 
 import {
-Image, Scissors, Volume2, Sparkles, Wand, ArrowRight, Zap, Wand2,
+Image, Scissors, Volume2, Sparkles, MessageSquare, Wand, ArrowRight, Zap, Wand2,
 Pencil, Palette, SprayCan, Drama, Smile, Film, Paintbrush
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -98,6 +98,16 @@ const tools = [
     features: ['Realistic AI Swaps', 'Group Photo Support', 'Privacy Focused'],
     image: '/images/mergify-face-swap.jpg',
     alt: 'Demonstration of the AI face merge tool, showing a face blended into various artistic images.'
+  },
+  {
+  id: 'llama-4-chat',
+  title: 'Llama-4: Advanced AI Chat',
+  description: 'Engage in intelligent conversations with a next-gen AI assistant. Features a vast context memory, chat history, and advanced reasoning capabilities.',
+  icon: MessageSquare, 
+  color: 'from-emerald-500 to-amber-600',
+  features: ['Vast Context Memory', 'Lightning-Fast Speed', 'Export Chat'],
+  image: '/images/free-llama-4-ai-chatbot.jpg',
+  alt: 'The title "Llama 4: Free Unlimited" in bold, 3D chrome text floating in front of a dynamic, futuristic explosion of light and particles.'
   },
   {
     id: 'cartoonify',
