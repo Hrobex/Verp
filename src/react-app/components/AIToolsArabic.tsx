@@ -1,7 +1,7 @@
 // src/react-app/components/AIToolsArabic.tsx
 
 import { 
-  Image, Scissors, Volume2, Sparkles, ArrowLeft, Zap, Wand, Wand2,
+  Image, Scissors, Volume2, Sparkles, ArrowLeft, MessageSquare, Zap, Wand, Wand2,
   Pencil, Palette, SprayCan, Drama, Smile, Film, Paintbrush
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -99,6 +99,16 @@ const toolsArabic = [
   image: '/images/mergify-face-swap.jpg',
   alt: 'عرض لتقنية دمج وتبديل الوجوه، يظهر كيف يمكن دمج وجه في صور فنية مختلفة.'
 },
+  {
+  id: 'llama-4-chat',
+  title: 'Llama-4: شات الذكاء الاصطناعي المتقدم',
+  description: 'خض محادثات ذكية مع مساعد الذكاء الاصطناعي من الجيل الجديد. يتميز بذاكرة سياق واسعة، سجل للمحادثات، وقدرات استدلال متقدمة.',
+  icon: MessageSquare, 
+  color: 'from-emerald-500 to-amber-600',
+  features: ['ذاكرة سياق واسعة', 'سرعة رد فائقة', 'تصدير المحادثة'],
+  image: '/images/free-llama-4-ai-chatbot.jpg',
+  alt: 'عنوان "Llama 4: Free Unlimited" مكتوب بخط كروم ثلاثي الأبعاد وبارز، يطفو أمام انفجار ديناميكي ومستقبلي من الضوء والجسيمات.'
+  },
   {
     id: 'cartoonify',
     title: 'حوّل صورتك إلى كرتون',
