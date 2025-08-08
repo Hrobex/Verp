@@ -100,7 +100,7 @@ const tools = [
     alt: 'Demonstration of the AI face merge tool, showing a face blended into various artistic images.'
   },
   {
-  id: 'llama-4-chat',
+  id: 'llama-4',
   title: 'Llama-4: Advanced AI Chat',
   description: 'Engage in intelligent conversations with a next-gen AI assistant. Features a vast context memory, chat history, and advanced reasoning capabilities.',
   icon: MessageSquare, 
