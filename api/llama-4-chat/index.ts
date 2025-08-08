@@ -10,10 +10,11 @@ const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 // --- قائمة النماذج التي سيتم تجربتها بالترتيب ---
 const MODEL_FALLBACK_CHAIN = [
+  "meta-llama/llama-4-scout-17b-16e-instruct",
+  "meta-llama/llama-4-maverick-17b-128e-instruct",
   "llama3-8b-8192",          // نبدأ بالنموذج السريع والمستقر
   "gemma2-9b-it",              // نموذج جوجل القوي كخيار ثانٍ
-  "llama3-70b-8192",         // النموذج الأكبر كخيار ثالث
-  "meta-llama/llama-4-scout-17b-16e-instruct" // وأخيرًا نموذج الكشافة
+  "llama3-70b-8192"         // النموذج الأكبر كخيار ثالث
 ];
 
 export default async function handler(req: Request) {
