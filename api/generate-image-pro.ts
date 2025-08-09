@@ -3,7 +3,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // --- البيانات السرية والمنطق التشغيلي ---
 
-// 1. قائمة الأنماط التفصيلية (مخفية الآن في الخلفية)
+// 1. قائمة الأنماط التفصيلية (لا تزال مفيدة لتعديل النص)
 const styleOptions = [
   { name: 'Default', value: 'default', prompt_suffix: '' },
   { name: 'Cinematic', value: 'cinematic', prompt_suffix: ', cinematic style' },
@@ -16,7 +16,7 @@ const styleOptions = [
   { name: '3D Model', value: '3d-model', prompt_suffix: ', 3d model' },
 ];
 
-// 2. دالة الترجمة (مخفية الآن في الخلفية)
+// 2. دالة الترجمة (تبقى كما هي)
 async function translatePrompt(prompt: string): Promise<string> {
     if (/^[a-zA-Z0-9\s.,'"+-?!]*$/.test(prompt)) {
         return prompt;
@@ -45,6 +45,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
+        // لاحظ أن `size` سيتم استلامه ولكن لن يتم استخدامه
         const { userPrompt, style, size } = req.body;
 
         if (!userPrompt || !style || !size) {
@@ -54,11 +55,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const translatedPrompt = await translatePrompt(userPrompt);
         const styleSuffix = styleOptions.find(s => s.value === style)?.prompt_suffix || '';
         const finalPrompt = translatedPrompt + styleSuffix;
-
-        const [width, height] = size.split('x');
+        
         const encodedPrompt = encodeURIComponent(finalPrompt);
-        const seed = Date.now();
-        const constructedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
+
+        // --- التغيير الرئيسي هنا ---
+        // تم استبدال الرابط القديم بالجديد وإزالة المعاملات غير المدعومة (width, height, seed, etc.)
+        const constructedUrl = `https://AI-image-generator-free-API-for-everyone-no-restrictions.ajaysinghusesgi.repl.co/?query=${encodedPrompt}`;
 
         return res.status(200).json({ imageUrl: constructedUrl });
 
