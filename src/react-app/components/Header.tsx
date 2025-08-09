@@ -1,10 +1,8 @@
-// الملف: src/react-app/components/Header.tsx
-
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { useLanguage } from '@/react-app/hooks/useLanguage';
 import SmartLink from './SmartLink';
-import { useLocation } from 'react-router-dom'; // <-- الخطوة 1: استيراد useLocation
+import { useLocation } from 'react-router-dom';
 
 const translations = {
   logoAlt: { en: 'AI Convert Logo', ar: 'شعار AI Convert' },
@@ -19,7 +17,7 @@ const translations = {
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { lang, isArabic } = useLanguage();
-  const location = useLocation(); // <-- استخدام الخطاف للحصول على الموقع الحالي
+  const location = useLocation();
 
   const languageSwitcherPath = isArabic ? '/' : '/ar';
   const homeLink = isArabic ? '/ar' : '/';
@@ -32,25 +30,21 @@ export default function Header() {
   
   const getStartedLink = `${homeLink}#tools`;
 
-  // ========= بداية منطقة التعديل: الدالة الذكية =========
   const handleSmartScroll = (event: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
-    // التحقق إذا كنا بالفعل في الصفحة الرئيسية
-    if (location.pathname === homeLink) {
+    const targetPath = isArabic ? '/ar' : '/';
+    if (location.pathname === targetPath) {
       event.preventDefault();
       const element = document.getElementById(targetId);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
-        // تحديث الهاشتاج في الرابط يدوياً
         if (window.history.pushState) {
-          window.history.pushState(null, null, `#${targetId}`);
+          window.history.pushState(null, '', `#${targetId}`);
         } else {
           window.location.hash = targetId;
         }
       }
     }
-    // إذا لم نكن في الصفحة الرئيسية، دع SmartLink يقوم بعمله الطبيعي
   };
-  // ========= نهاية منطقة التعديل =========
 
   return (
     <>
