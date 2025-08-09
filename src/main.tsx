@@ -32,6 +32,7 @@ import BlogPage from "@/react-app/pages/BlogPage";
 import BlogPostPage from "@/react-app/pages/BlogPostPage"; 
 import Llama4Page from "@/react-app/pages/Llama4Page"; 
 import Llama4ChatPage from "@/react-app/pages/Llama4ChatPage"; 
+import ColorifyProPage from "@/react-app/pages/ColorifyProPage"; 
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -91,6 +92,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="blog/:slug" element={<BlogPostPage />} /> 
           <Route path="llama-4" element={<Llama4Page />} />
           <Route path="llama-4/chat" element={<Llama4ChatPage />} />
+          <Route path="ai-photo-colorizer" element={<ColorifyProPage />} />
 
           {/* --- Arabic Route Group --- */}
           <Route path="ar">
