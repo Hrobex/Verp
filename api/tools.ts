@@ -1,4 +1,3 @@
-// الملف: api/tools.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import formidable from 'formidable';
 import fs from 'fs';
@@ -12,8 +11,9 @@ const API_LINKS = {
   'image-enhancer': 'https://makhinur-furd.hf.space/upload/',
   'cartoonify': 'https://makhinur-cdonn.hf.space/cartoonize/',
   'image-to-sketch': 'https://makhinur-itsd.hf.space/upload/',
-  // --- الإضافة الجديدة ---
   'photo-restoration': 'https://makhinur-bopld.hf.space/upload/', 
+  // --- الإضافة الجديدة ---
+  'colorify-pro': 'https://asartb-ccd1.hf.space/upload/', // أداة تلوين الصور
 };
 
 // --- إعدادات Vercel (مرة واحدة هنا) ---
