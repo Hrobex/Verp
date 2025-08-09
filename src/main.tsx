@@ -58,6 +58,7 @@ import BlogPageAr from "@/react-app/pages/BlogPageAr";
 import BlogPostPageAr from "@/react-app/pages/BlogPostPageAr";
 import Llama4PageAr from "@/react-app/pages/Llama4PageAr"; 
 import Llama4ChatPageAr from "@/react-app/pages/Llama4ChatPageAr"; 
+import ColorifyProPageArabic from "@/react-app/pages/ColorifyProPageArabic"; 
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -119,6 +120,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="blog/:slug" element={<BlogPostPageAr />} />
             <Route path="llama-4" element={<Llama4PageAr />} />
             <Route path="llama-4/chat" element={<Llama4ChatPageAr />} />
+            <Route path="ai-photo-colorizer" element={<ColorifyProPageArabic />} />
 
           </Route>
           
