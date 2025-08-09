@@ -1,8 +1,31 @@
 // الملف: src/react-app/components/Footer.tsx
 
 import { useLanguage } from '@/react-app/hooks/useLanguage';
-import { Twitter, Github, Mail, Heart } from 'lucide-react';
-import SmartLink from './SmartLink'; // <<< تم إضافة هذا السطر
+// --- التغيير: تم استيراد أيقونة فيسبوك بدلاً من تويتر
+import { Facebook, Github, Mail, Heart } from 'lucide-react'; 
+import SmartLink from './SmartLink';
+
+// --- إضافة: تم إنشاء أيقونة مخصصة لـ Hugging Face لأنها غير موجودة في المكتبة
+const HuggingFaceIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M21.5 8.5c.3-1.6-1.6-3-3.3-2.2" />
+    <path d="M2.5 8.5c-.3-1.6 1.6-3 3.3-2.2" />
+    <path d="M12 12a3.5 3.5 0 0 0-7 0" />
+    <path d="M19 12a3.5 3.5 0 0 1-7 0" />
+    <path d="M12 18.5a2.5 2.5 0 0 1-5 0" />
+    <path d="M17 18.5a2.5 2.5 0 0 0-5 0" />
+  </svg>
+);
+
 
 const translations = {
     logoAlt: { en: 'AI Convert Logo', ar: 'شعار AI Convert' },
@@ -21,6 +44,13 @@ const translations = {
     copyright: { en: '© 2025 AI Convert. All rights reserved.', ar: '© 2025 AI Convert. جميع الحقوق محفوظة.' },
     madeWith: { en: 'Made with', ar: 'صُنع بـ' },
     forCreators: { en: 'for creators everywhere', ar: 'للمبدعين في كل مكان' },
+    // --- إضافة: تم إضافة ترجمات لأوصاف الروابط لحل مشكلة إمكانية الوصول
+    socials: {
+        facebook: { en: 'Visit our Facebook page', ar: 'تفضل بزيارة صفحتنا على Facebook' },
+        github: { en: 'Explore our GitHub repository', ar: 'تصفح مستودعاتنا على GitHub' },
+        huggingface: { en: 'Check out our Hugging Face profile', ar: 'اطلع على ملفنا الشخصي في Hugging Face' },
+        email: { en: 'Send us an email', ar: 'أرسل لنا بريدًا إلكترونيًا' }
+    }
 };
 
 const footerTranslations = {
@@ -45,8 +75,8 @@ const footerTranslations = {
       { name: 'المميزات', href: '/ar#features' },
     ],
     الشركة: [
-      { name: 'حولنا', href: '/ar/about' }, // Updated to point to the correct page
-      { name: 'المدونة', href: '/ar/blog' }, // Updated to be an internal link
+      { name: 'حولنا', href: '/ar/about' },
+      { name: 'المدونة', href: '/ar/blog' },
       { name: 'تواصل', href: 'mailto:info@aiconvert.online' },
     ],
     قانوني: [
@@ -81,18 +111,52 @@ export default function Footer() {
               {translations.description[lang]}
             </p>
             
-            {/* Social Links */}
+            {/* ========= بداية منطقة التعديل ========= */}
             <div className={`flex ${isArabic ? 'space-x-reverse space-x-4' : 'space-x-4'}`}>
-              <a href="#" className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors">
-                <Twitter className="h-5 w-5" />
+              {/* --- فيسبوك بدلاً من تويتر + حل مشكلة الوصول --- */}
+              <a 
+                href="https://www.facebook.com/aiconvert" 
+                aria-label={translations.socials.facebook[lang]}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+              >
+                <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors">
+
+              {/* --- تحديث رابط GitHub + حل مشكلة الوصول --- */}
+              <a 
+                href="https://github.com/Aiconvert/aiconvert" 
+                aria-label={translations.socials.github[lang]}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+              >
                 <Github className="h-5 w-5" />
               </a>
-              <a href="mailto:info@aiconvert.online" className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors">
+
+              {/* --- إضافة رابط Hugging Face + حل مشكلة الوصول --- */}
+              <a 
+                href="https://huggingface.co/Aiconvert" 
+                aria-label={translations.socials.huggingface[lang]}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+              >
+                <HuggingFaceIcon className="h-5 w-5" />
+              </a>
+              
+              {/* --- حل مشكلة الوصول لرابط البريد الإلكتروني --- */}
+              <a 
+                href="mailto:info@aiconvert.online" 
+                aria-label={translations.socials.email[lang]}
+                className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+              >
                 <Mail className="h-5 w-5" />
               </a>
             </div>
+            {/* ========= نهاية منطقة التعديل ========= */}
+
           </div>
 
           {/* Footer Links */}
@@ -100,17 +164,17 @@ export default function Footer() {
             <div key={category} className={isArabic ? 'text-right' : 'text-left'}>
               <h3 className="text-lg font-semibold mb-4">{category}</h3>
               <ul className="space-y-3">
-  {links.map((link) => (
-    <li key={link.name}>
-      <SmartLink
-        href={link.href}
-        className="text-gray-400 hover:text-white transition-colors"
-      >
-        {link.name}
-      </SmartLink>
-    </li>
-  ))}
-</ul>
+                {links.map((link) => (
+                  <li key={link.name}>
+                    <SmartLink
+                      href={link.href}
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      {link.name}
+                    </SmartLink>
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
