@@ -140,6 +140,16 @@ const tools = [
     alt: "A fantasy image for the Storygen tool, showing a story emerging from an open book."
   },
   {
+  id: 'ai-photo-colorizer',
+  title: 'ColorifyPro: AI Photo Colorizer',
+  description: 'Automatically add realistic color to black and white, sepia, or vintage photos, bringing your old memories back to life.',
+  icon: Image, // استبدل هذا بالأيقونة المناسبة من مكتبة الأيقونات لديك
+  color: 'from-red-500 to-green-600',
+  features: ['Colorize Old Photos', 'Realistic & Natural Colors', 'Bring Memories to Life'],
+  image: '/images/ai-photo-colorizer-before-after.webp',
+  alt: 'A before-and-after comparison from the AI photo colorizer tool, showing a vintage black and white portrait being transformed into a full-color image.'
+  },
+  {
     id: 'ai-image-enhancer',
     title: 'Image Enhancement',
     description: 'Upscale and enhance your images with AI. Increase resolution while maintaining quality.',
