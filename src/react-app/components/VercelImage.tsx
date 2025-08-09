@@ -1,11 +1,8 @@
-// src/react-app/components/VercelImage.tsx
-
 interface VercelImageProps {
   src: string;
   alt: string;
   className?: string;
-  // --- التعديل الأول: إضافة خاصية جديدة و اختيارية للأحجام ---
-  sizes?: string;
+  sizes: string;
 }
 
 const isDevelopment = import.meta.env.DEV;
@@ -33,8 +30,7 @@ export default function VercelImage({ src, alt, className, sizes }: VercelImageP
     <img
       src={`/_vercel/image?url=${encodeURIComponent(src)}&w=${widths[widths.length - 1]}&q=75`}
       srcSet={srcset}
-      // --- التعديل الثاني: استخدام خاصية الأحجام الجديدة، مع الاحتفاظ بالقيمة القديمة كخيار افتراضي ---
-      sizes={sizes || "(max-width: 1024px) 90vw, 45vw"}
+      sizes={sizes}
       alt={alt}
       className={className}
       loading="lazy"
