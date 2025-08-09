@@ -176,18 +176,17 @@ export default function Footer() {
             <form 
               method="POST" 
               action="https://29bd575d.sibforms.com/serve/MUIFAGmVZ_WK9i_7gek2AEwcoanp0Tjy3zZLWVhjRecctryIaHaHbK-nwziqsPUSCUlpSnMsbjCWuLhqh8S_gJDhPlf4HQpZ-RlSjFAx46gCQSlTfpxCMSNgvaMbz_CHOT5VUOXWjuyBoa8DBHsdw7-_yIviyKOsU4jTVG-3RA9YiNefWv8UC9KH-O1QA64UHCgqWv96of1k5EsA"
-              target="_blank"
             >
               <div className={`flex flex-col sm:flex-row space-y-3 sm:space-y-0 ${isArabic ? 'sm:flex-row-reverse sm:space-x-reverse sm:space-x-3' : 'sm:space-x-3'}`}>
                 <input
-                  type="email" 
-                  name="EMAIL" 
+                  type="email"
+                  name="EMAIL"
                   placeholder={translations.emailPlaceholder[lang]}
                   className={`w-full sm:w-auto px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400 ${isArabic ? 'text-right' : 'text-left'}`}
                   required
                 />
                 <button 
-                  type="submit" 
+                  type="submit"
                   className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
                   {translations.subscribe[lang]}
@@ -196,8 +195,6 @@ export default function Footer() {
               <input type="hidden" name="locale" value="en" />
               <input type="hidden" name="html_type" value="simple" />
             </form>
-          </div>
-        </div>
 
         {/* Bottom Bar */}
         <div className={`mt-12 pt-8 border-t border-gray-800 flex flex-col items-center lg:flex-row lg:justify-between space-y-4 lg:space-y-0 ${isArabic ? 'lg:flex-row-reverse' : ''}`}>
