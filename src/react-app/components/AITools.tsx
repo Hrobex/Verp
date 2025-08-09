@@ -201,7 +201,7 @@ export default function AITools() {
                 <VercelImage
   src={tool.image}
   alt={tool.alt}
-  sizes="(max-width: 1023px) calc(100vw - 3rem), calc(50vw - 4rem)"
+  sizes="(max-width: 1023px) calc(100vw - 3rem), (max-width: 1279px) calc(50vw - 3.5rem), 584px"
   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
