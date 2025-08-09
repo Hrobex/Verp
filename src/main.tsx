@@ -23,7 +23,7 @@ import DigiCartoonyPage from "@/react-app/pages/DigiCartoonyPage";
 import PromptigenPage from "@/react-app/pages/PromptigenPage";
 import StorygenPage from "@/react-app/pages/StorygenPage";
 import VideoPromptPage from "@/react-app/pages/VideoPromptPage";
-import EasyDrawingsPage from "@/react-app/pages/EasyDrawingsPage"; // <-- تمت إضافة هذا السطر
+import EasyDrawingsPage from "@/react-app/pages/EasyDrawingsPage";
 import PhotoRevivePage from "@/react-app/pages/PhotoRevivePage";
 import PrivacyPolicyPage from "@/react-app/pages/PrivacyPolicyPage";
 import TermsOfServicePage from "@/react-app/pages/TermsOfServicePage";
@@ -33,6 +33,7 @@ import BlogPostPage from "@/react-app/pages/BlogPostPage";
 import Llama4Page from "@/react-app/pages/Llama4Page"; 
 import Llama4ChatPage from "@/react-app/pages/Llama4ChatPage"; 
 import ColorifyProPage from "@/react-app/pages/ColorifyProPage"; 
+import ThankYouPage from "@/react-app/pages/Thankyou"; 
 
 // --- Arabic Page Imports ---
 import HomePageArabic from "@/react-app/pages/HomePageArabic";
@@ -49,7 +50,7 @@ import DigiCartoonyPageArabic from "@/react-app/pages/DigiCartoonyPageArabic";
 import PromptigenPageArabic from "@/react-app/pages/PromptigenPageArabic";
 import StorygenPageArabic from "@/react-app/pages/StorygenPageArabic";
 import VideoPromptPageArabic from "@/react-app/pages/VideoPromptPageAr";
-import EasyDrawingsPageArabic from "@/react-app/pages/EasyDrawingsPageAr"; // <-- تمت إضافة هذا السطر
+import EasyDrawingsPageArabic from "@/react-app/pages/EasyDrawingsPageAr";
 import PhotoRevivePageArabic from "@/react-app/pages/PhotoRevivePageAr";
 import PrivacyPolicyPageAr from "@/react-app/pages/PrivacyPolicyPageAr";
 import TermsOfServicePageAr from "@/react-app/pages/TermsOfServicePageAr";
@@ -94,6 +95,8 @@ createRoot(document.getElementById("root")!).render(
           <Route path="llama-4" element={<Llama4Page />} />
           <Route path="llama-4/chat" element={<Llama4ChatPage />} />
           <Route path="ai-photo-colorizer" element={<ColorifyProPage />} />
+          <Route path="thank-you" element={<ThankYouPage />} /> 
+
 
           {/* --- Arabic Route Group --- */}
           <Route path="ar">
@@ -121,6 +124,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="llama-4" element={<Llama4PageAr />} />
             <Route path="llama-4/chat" element={<Llama4ChatPageAr />} />
             <Route path="ai-photo-colorizer" element={<ColorifyProPageArabic />} />
+            <Route path="thank-you" element={<ThankYouPage />} /> 
 
           </Route>
           
