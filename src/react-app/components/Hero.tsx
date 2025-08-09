@@ -1,9 +1,8 @@
-// src/react-app/components/Hero.tsx  (The new unified component)
+// src/react-app/components/Hero.tsx
 
-import { Sparkles, ArrowRight, Play, ArrowLeft } from 'lucide-react';
+import { Sparkles, ChevronsDown, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/react-app/hooks/useLanguage';
 
-// 1. All translations are now in one place
 const translations = {
   badge: {
     en: 'AI-Powered Creative Suite',
@@ -17,7 +16,6 @@ const translations = {
     ar: 'حوّل سير عملك الإبداعي مع مجموعتنا من أدوات الذكاء الاصطناعي المتطورة. أنشئ صورًا مذهلة، وأزل الخلفيات فورًا، وحوّل النصوص إلى كلام، وحسّن الصور كما لم يحدث من قبل.',
   },
   ctaPrimary: { en: 'Start Creating Free', ar: 'ابدأ الإنشاء مجانًا' },
-  ctaSecondary: { en: 'Watch Demo', ar: 'شاهد العرض' },
   stat1: { en: 'Images Generated', ar: 'صورة تم توليدها' },
   stat2: { en: 'Happy Creators', ar: 'مُبدع سعيد' },
   stat3: { en: 'Uptime', ar: 'وقت التشغيل' },
@@ -25,10 +23,8 @@ const translations = {
 };
 
 export default function Hero() {
-  // 2. We use the hook to determine the language, just like in the Header
   const { lang, isArabic } = useLanguage();
 
-  // 3. The entire component structure is now defined ONLY ONCE
   return (
     <section 
       dir={isArabic ? 'rtl' : 'ltr'} 
@@ -64,18 +60,18 @@ export default function Hero() {
             {translations.subheadline[lang]}
           </p>
 
-          {/* CTA Buttons */}
-          <div className={`flex flex-col sm:items-center justify-center space-y-4 sm:space-y-0 mb-16 ${isArabic ? 'sm:flex-row-reverse sm:space-x-reverse sm:space-x-6' : 'sm:flex-row sm:space-x-6'}`}>
-            <button className={`group flex items-center px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
+          {/* ========= بداية منطقة التعديل ========= */}
+          {/* CTA Button */}
+          <div className="flex justify-center mb-16">
+            <a 
+              href="#tools"
+              className={`group inline-flex items-center px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}
+            >
               <span>{translations.ctaPrimary[lang]}</span>
-              {isArabic ? <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />}
-            </button>
-            
-            <button className={`group flex items-center px-8 py-4 text-lg font-semibold text-gray-900 bg-white/80 backdrop-blur-sm rounded-xl hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl border border-gray-200 ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
-              <Play className="h-5 w-5 text-purple-600 group-hover:scale-110 transition-transform" />
-              <span>{translations.ctaSecondary[lang]}</span>
-            </button>
+              <ChevronsDown className="h-5 w-5 group-hover:translate-y-1 transition-transform" />
+            </a>
           </div>
+          {/* ========= نهاية منطقة التعديل ========= */}
 
           {/* Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-4xl mx-auto">
