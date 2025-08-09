@@ -1,9 +1,10 @@
-// src/react-app/components/Header.tsx
+// الملف: src/react-app/components/Header.tsx
 
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { useLanguage } from '@/react-app/hooks/useLanguage';
 import SmartLink from './SmartLink';
+import { useLocation } from 'react-router-dom'; 
 
 const translations = {
   logoAlt: { en: 'AI Convert Logo', ar: 'شعار AI Convert' },
@@ -18,6 +19,7 @@ const translations = {
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { lang, isArabic } = useLanguage();
+  const location = useLocation(); 
 
   const languageSwitcherPath = isArabic ? '/' : '/ar';
   const homeLink = isArabic ? '/ar' : '/';
@@ -30,18 +32,19 @@ export default function Header() {
   
   const getStartedLink = `${homeLink}#tools`;
 
-  const handleScrollLinkClick = (event: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
-    event.preventDefault();
-    const element = document.getElementById(targetId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      if (window.history.pushState) {
-        window.history.pushState(null, '', `#${targetId}`);
-      } else {
-        window.location.hash = targetId;
+  const handleSmartScroll = (event: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    if (location.pathname === homeLink) {
+      event.preventDefault();
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        if (window.history.pushState) {
+          window.history.pushState(null, null, `#${targetId}`);
+        } else {
+          window.location.hash = targetId;
+        }
       }
     }
-  };
 
   return (
     <>
@@ -61,29 +64,30 @@ export default function Header() {
           <nav className={`hidden lg:flex items-center ${isArabic ? 'space-x-reverse space-x-8' : 'space-x-8'}`}>
             {navLinks.map((link) => {
               const targetId = link.href.includes('#') ? link.href.split('#')[1] : null;
-              if (targetId) {
-                return (
-                  <a key={link.name} href={link.href} onClick={(e) => handleScrollLinkClick(e, targetId)} className="text-gray-700 hover:text-purple-600 transition-colors">
-                    {link.name}
-                  </a>
-                );
-              }
               return (
-                <SmartLink key={link.name} href={link.href} className="text-gray-700 hover:text-purple-600 transition-colors">
+                <SmartLink 
+                  key={link.name} 
+                  href={link.href} 
+                  onClick={targetId ? (e) => handleSmartScroll(e, targetId) : undefined}
+                  className="text-gray-700 hover:text-purple-600 transition-colors"
+                >
                   {link.name === 'About' ? translations.about[lang] : link.name}
                 </SmartLink>
               );
             })}
           </nav>
-           
+          
           <div className={`hidden lg:flex items-center ${isArabic ? 'space-x-reverse space-x-4' : 'space-x-4'}`}>
             <SmartLink href={languageSwitcherPath} className="text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors">
               {translations.langSwitcher[lang]}
             </SmartLink>
-            
-            <a href={getStartedLink} onClick={(e) => handleScrollLinkClick(e, 'tools')} className="px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+            <SmartLink 
+              href={getStartedLink} 
+              onClick={(e) => handleSmartScroll(e, 'tools')}
+              className="px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
               {translations.getStarted[lang]}
-            </a>
+            </SmartLink>
           </div>
 
           <button
@@ -95,7 +99,7 @@ export default function Header() {
           </button>
         </div>
       </header>
-      
+
       {isMenuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
           <div 
@@ -121,18 +125,20 @@ export default function Header() {
                 <X className="h-6 w-6" />
               </button>
             </div>
+            
             <div className={`p-6 space-y-4 ${isArabic ? 'text-right' : 'text-left'}`}>
               {navLinks.map((link) => {
                 const targetId = link.href.includes('#') ? link.href.split('#')[1] : null;
-                if (targetId) {
-                  return (
-                    <a key={link.name} href={link.href} onClick={(e) => { handleScrollLinkClick(e, targetId); setIsMenuOpen(false); }} className="block text-gray-700 hover:text-purple-600 transition-colors py-2 text-lg">
-                      {link.name}
-                    </a>
-                  );
-                }
                 return (
-                  <SmartLink key={link.name} href={link.href} className="block text-gray-700 hover:text-purple-600 transition-colors py-2 text-lg" onClick={() => setIsMenuOpen(false)}>
+                  <SmartLink 
+                    key={link.name} 
+                    href={link.href} 
+                    className="block text-gray-700 hover:text-purple-600 transition-colors py-2 text-lg"
+                    onClick={(e) => { 
+                      if (targetId) handleSmartScroll(e, targetId);
+                      setIsMenuOpen(false); 
+                    }}
+                  >
                     {link.name === 'About' ? translations.about[lang] : link.name}
                   </SmartLink>
                 );
@@ -145,13 +151,16 @@ export default function Header() {
               >
                 {translations.langSwitcher[lang]}
               </SmartLink>
-              <a 
+              <SmartLink 
                 href={getStartedLink} 
-                onClick={(e) => { handleScrollLinkClick(e, 'tools'); setIsMenuOpen(false); }}
                 className="block w-full text-center mt-4 px-6 py-3 text-lg font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200"
+                onClick={(e) => { 
+                  handleSmartScroll(e, 'tools'); 
+                  setIsMenuOpen(false); 
+                }}
               >
                 {translations.getStarted[lang]}
-              </a>
+              </SmartLink>
             </div>
           </div>
         </div>
