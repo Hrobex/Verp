@@ -20,7 +20,7 @@ export default function VercelImage({ src, alt, className, sizes }: VercelImageP
     );
   }
 
-  const widths = [384, 640, 768, 1024, 1280];
+  const widths = [400, 640, 828, 1080, 1200];
 
   const srcset = widths
     .map(width => `/_vercel/image?url=${encodeURIComponent(src)}&w=${width}&q=75 ${width}w`)
