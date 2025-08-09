@@ -195,6 +195,8 @@ export default function Footer() {
               <input type="hidden" name="locale" value="en" />
               <input type="hidden" name="html_type" value="simple" />
             </form>
+            </div>
+        </div>
 
         {/* Bottom Bar */}
         <div className={`mt-12 pt-8 border-t border-gray-800 flex flex-col items-center lg:flex-row lg:justify-between space-y-4 lg:space-y-0 ${isArabic ? 'lg:flex-row-reverse' : ''}`}>
