@@ -1,6 +1,6 @@
 // src/react-app/components/Hero.tsx
 
-import { Sparkles, ChevronsDown, ArrowLeft } from 'lucide-react';
+import { Sparkles, ChevronsDown } from 'lucide-react';
 import { useLanguage } from '@/react-app/hooks/useLanguage';
 
 const translations = {
