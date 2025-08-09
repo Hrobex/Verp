@@ -1,6 +1,7 @@
 import { useLanguage } from '@/react-app/hooks/useLanguage';
 import { Facebook, Github, Mail, Heart } from 'lucide-react'; 
 import SmartLink from './SmartLink';
+import { useLocation } from 'react-router-dom';
 
 const HuggingFaceIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg 
@@ -21,7 +22,6 @@ const HuggingFaceIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <path d="M17 18.5a2.5 2.5 0 0 0-5 0" />
   </svg>
 );
-
 
 const translations = {
     logoAlt: { en: 'AI Convert Logo', ar: 'شعار AI Convert' },
@@ -83,13 +83,29 @@ const footerTranslations = {
 
 export default function Footer() {
   const { lang, isArabic } = useLanguage();
+  const location = useLocation();
   const currentLinks = footerTranslations[lang];
+
+  const handleSmartScroll = (event: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    const targetPath = isArabic ? '/ar' : '/';
+    if (location.pathname === targetPath) {
+      event.preventDefault();
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        if (window.history.pushState) {
+          window.history.pushState(null, '', `#${targetId}`);
+        } else {
+          window.location.hash = targetId;
+        }
+      }
+    }
+  };
 
   return (
     <footer className="bg-gray-900 text-white" dir={isArabic ? 'rtl' : 'ltr'}>
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-          {/* Logo and Description */}
           <div className="lg:col-span-2">
             <div className={`flex items-center mb-6 ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
               <img 
@@ -144,21 +160,24 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Footer Links */}
           {Object.entries(currentLinks).map(([category, links]) => (
             <div key={category} className={isArabic ? 'text-right' : 'text-left'}>
               <h3 className="text-lg font-semibold mb-4">{category}</h3>
               <ul className="space-y-3">
-                {links.map((link) => (
-                  <li key={link.name}>
-                    <SmartLink
-                      href={link.href}
-                      className="text-gray-400 hover:text-white transition-colors"
-                    >
-                      {link.name}
-                    </SmartLink>
-                  </li>
-                ))}
+                {links.map((link) => {
+                  const targetId = link.href.includes('#') ? link.href.split('#')[1] : null;
+                  return (
+                    <li key={link.name}>
+                      <SmartLink 
+                        href={link.href} 
+                        onClick={targetId ? (e) => handleSmartScroll(e, targetId) : undefined}
+                        className="text-gray-400 hover:text-white transition-colors"
+                      >
+                        {link.name}
+                      </SmartLink>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
@@ -198,7 +217,6 @@ export default function Footer() {
             </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className={`mt-12 pt-8 border-t border-gray-800 flex flex-col items-center lg:flex-row lg:justify-between space-y-4 lg:space-y-0 ${isArabic ? 'lg:flex-row-reverse' : ''}`}>
           <div className="text-gray-400 text-sm">
             {translations.copyright[lang]}
@@ -212,4 +230,4 @@ export default function Footer() {
       </div>
     </footer>
   );
-}
+          }
