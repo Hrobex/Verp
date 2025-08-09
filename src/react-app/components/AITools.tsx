@@ -5,7 +5,7 @@ Image, Scissors, Volume2, Sparkles, MessageSquare, Wand, ArrowRight, Zap, Wand2,
 Pencil, Palette, SprayCan, Drama, Smile, Film, Paintbrush
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import VercelImage from './VercelImage'; // <-- Import the optimized image component
+import VercelImage from './VercelImage'; 
 
 // The tools array with corrected English alt text
 const tools = [
@@ -199,10 +199,11 @@ export default function AITools() {
             >
               <div className="relative h-48 lg:h-56 overflow-hidden">
                 <VercelImage
-                  src={tool.image}
-                  alt={tool.alt}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+  src={tool.image}
+  alt={tool.alt}
+  sizes="(max-width: 1023px) calc(100vw - 3rem), calc(50vw - 4rem)"
+  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+/>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                 <div className={`absolute top-4 left-4 p-3 rounded-xl bg-gradient-to-r ${tool.color} shadow-lg`}>
                   <tool.icon className="h-6 w-6 text-white" />
