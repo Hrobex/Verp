@@ -44,7 +44,8 @@ export default function Header() {
           window.location.hash = targetId;
         }
       }
-    }
+    } 
+  };
 
   return (
     <>
