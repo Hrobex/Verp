@@ -1,5 +1,3 @@
-// الملف: src/react-app/components/Footer.tsx
-
 import { useLanguage } from '@/react-app/hooks/useLanguage';
 import { Facebook, Github, Mail, Heart } from 'lucide-react'; 
 import SmartLink from './SmartLink';
@@ -24,6 +22,7 @@ const HuggingFaceIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+
 const translations = {
     logoAlt: { en: 'AI Convert Logo', ar: 'شعار AI Convert' },
     brandName: { en: 'AI Convert', ar: 'AI Convert' },
@@ -41,7 +40,6 @@ const translations = {
     copyright: { en: '© 2025 AI Convert. All rights reserved.', ar: '© 2025 AI Convert. جميع الحقوق محفوظة.' },
     madeWith: { en: 'Made with', ar: 'صُنع بـ' },
     forCreators: { en: 'for creators everywhere', ar: 'للمبدعين في كل مكان' },
-    // --- إضافة: تم إضافة ترجمات لأوصاف الروابط لحل مشكلة إمكانية الوصول
     socials: {
         facebook: { en: 'Visit our Facebook page', ar: 'تفضل بزيارة صفحتنا على Facebook' },
         github: { en: 'Explore our GitHub repository', ar: 'تصفح مستودعاتنا على GitHub' },
@@ -118,7 +116,6 @@ export default function Footer() {
               >
                 <Facebook className="h-5 w-5" />
               </a>
-
               <a 
                 href="https://github.com/Aiconvert/aiconvert" 
                 aria-label={translations.socials.github[lang]}
@@ -128,7 +125,6 @@ export default function Footer() {
               >
                 <Github className="h-5 w-5" />
               </a>
-              
               <a 
                 href="https://huggingface.co/Aiconvert" 
                 aria-label={translations.socials.huggingface[lang]}
@@ -138,7 +134,6 @@ export default function Footer() {
               >
                 <HuggingFaceIcon className="h-5 w-5" />
               </a>
-              
               <a 
                 href="mailto:info@aiconvert.online" 
                 aria-label={translations.socials.email[lang]}
@@ -147,7 +142,6 @@ export default function Footer() {
                 <Mail className="h-5 w-5" />
               </a>
             </div>
-
           </div>
 
           {/* Footer Links */}
@@ -170,7 +164,6 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Newsletter Signup */}
         <div className="mt-16 pt-8 border-t border-gray-800">
           <div className={`lg:flex lg:items-center lg:justify-between ${isArabic ? 'lg:flex-row-reverse' : ''}`}>
             <div className={`mb-6 lg:mb-0 ${isArabic ? 'text-right' : 'text-left'}`}>
@@ -179,16 +172,30 @@ export default function Footer() {
                 {translations.newsletterText[lang]}
               </p>
             </div>
-            <div className={`flex flex-col sm:flex-row space-y-3 sm:space-y-0 ${isArabic ? 'sm:flex-row-reverse sm:space-x-reverse sm:space-x-3' : 'sm:space-x-3'}`}>
-              <input
-                type="email"
-                placeholder={translations.emailPlaceholder[lang]}
-                className={`w-full sm:w-auto px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400 ${isArabic ? 'text-right' : 'text-left'}`}
-              />
-              <button className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl">
-                {translations.subscribe[lang]}
-              </button>
-            </div>
+            
+            <form 
+              method="POST" 
+              action="https://29bd575d.sibforms.com/serve/MUIFAGmVZ_WK9i_7gek2AEwcoanp0Tjy3zZLWVhjRecctryIaHaHbK-nwziqsPUSCUlpSnMsbjCWuLhqh8S_gJDhPlf4HQpZ-RlSjFAx46gCQSlTfpxCMSNgvaMbz_CHOT5VUOXWjuyBoa8DBHsdw7-_yIviyKOsU4jTVG-3RA9YiNefWv8UC9KH-O1QA64UHCgqWv96of1k5EsA"
+              target="_blank"
+            >
+              <div className={`flex flex-col sm:flex-row space-y-3 sm:space-y-0 ${isArabic ? 'sm:flex-row-reverse sm:space-x-reverse sm:space-x-3' : 'sm:space-x-3'}`}>
+                <input
+                  type="email" 
+                  name="EMAIL" 
+                  placeholder={translations.emailPlaceholder[lang]}
+                  className={`w-full sm:w-auto px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400 ${isArabic ? 'text-right' : 'text-left'}`}
+                  required
+                />
+                <button 
+                  type="submit" 
+                  className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                >
+                  {translations.subscribe[lang]}
+                </button>
+              </div>
+              <input type="hidden" name="locale" value="en" />
+              <input type="hidden" name="html_type" value="simple" />
+            </form>
           </div>
         </div>
 
