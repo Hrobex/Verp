@@ -1,11 +1,9 @@
 // الملف: src/react-app/components/Footer.tsx
 
 import { useLanguage } from '@/react-app/hooks/useLanguage';
-// --- التغيير: تم استيراد أيقونة فيسبوك بدلاً من تويتر
 import { Facebook, Github, Mail, Heart } from 'lucide-react'; 
 import SmartLink from './SmartLink';
 
-// --- إضافة: تم إنشاء أيقونة مخصصة لـ Hugging Face لأنها غير موجودة في المكتبة
 const HuggingFaceIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
@@ -25,7 +23,6 @@ const HuggingFaceIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <path d="M17 18.5a2.5 2.5 0 0 0-5 0" />
   </svg>
 );
-
 
 const translations = {
     logoAlt: { en: 'AI Convert Logo', ar: 'شعار AI Convert' },
@@ -111,9 +108,7 @@ export default function Footer() {
               {translations.description[lang]}
             </p>
             
-            {/* ========= بداية منطقة التعديل ========= */}
             <div className={`flex ${isArabic ? 'space-x-reverse space-x-4' : 'space-x-4'}`}>
-              {/* --- فيسبوك بدلاً من تويتر + حل مشكلة الوصول --- */}
               <a 
                 href="https://www.facebook.com/aiconvert" 
                 aria-label={translations.socials.facebook[lang]}
@@ -124,7 +119,6 @@ export default function Footer() {
                 <Facebook className="h-5 w-5" />
               </a>
 
-              {/* --- تحديث رابط GitHub + حل مشكلة الوصول --- */}
               <a 
                 href="https://github.com/Aiconvert/aiconvert" 
                 aria-label={translations.socials.github[lang]}
@@ -134,8 +128,7 @@ export default function Footer() {
               >
                 <Github className="h-5 w-5" />
               </a>
-
-              {/* --- إضافة رابط Hugging Face + حل مشكلة الوصول --- */}
+              
               <a 
                 href="https://huggingface.co/Aiconvert" 
                 aria-label={translations.socials.huggingface[lang]}
@@ -146,7 +139,6 @@ export default function Footer() {
                 <HuggingFaceIcon className="h-5 w-5" />
               </a>
               
-              {/* --- حل مشكلة الوصول لرابط البريد الإلكتروني --- */}
               <a 
                 href="mailto:info@aiconvert.online" 
                 aria-label={translations.socials.email[lang]}
@@ -155,7 +147,6 @@ export default function Footer() {
                 <Mail className="h-5 w-5" />
               </a>
             </div>
-            {/* ========= نهاية منطقة التعديل ========= */}
 
           </div>
 
