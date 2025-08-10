@@ -5,8 +5,8 @@ import AITools from '@/react-app/components/AITools';
 import Features from '@/react-app/components/Features';
 
 export default function Home() {
-  const pageTitle = "AI Convert: AI Tools for Image Generation, Content Creation & More";
-  const pageDescription = "Unleash your creativity with AI Convert. Use our tools for AI image generation, photo to line art conversion, background removal, and more. Get started for free.";
+  const pageTitle = "AI Convert: Free AI Tools for Image Generation, Photo Editing & More";
+  const pageDescription = "Your all-in-one AI toolbox. Generate art, remove backgrounds, restore photos, create voiceovers, and more. 100% free - no sign-up required.";
   const pageUrl = "https://aiconvert.online/";
   // Using the same preview image, can be customized later
   const ogImageUrl = "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=630&fit=crop";
