@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-// --- Data Constants (Safe for frontend) ---
-
 const sizeOptions = [
   { label: 'Square (1024x1024)', value: '1024x1024' },
   { label: 'Portrait (576x1024)', value: '576x1024' },
@@ -54,7 +52,6 @@ function AnimeGeneratorPage() {
     setImageUrl('');
 
     try {
-        // استدعاء الواجهة الخلفية الجديدة
         const response = await fetch('/api/image-generators?tool=anime', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -72,8 +69,6 @@ function AnimeGeneratorPage() {
         }
 
         const generatedUrl = data.imageUrl;
-        
-        // التحقق من أن الصورة تم تحميلها في المتصفح قبل عرضها
         const img = new Image();
         img.src = generatedUrl;
         img.onload = () => {
@@ -128,11 +123,6 @@ function AnimeGeneratorPage() {
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
             "description": "A free text-to-anime art generator that creates original anime characters and illustrations in different styles like Modern, 90s Retro, and Chibi.",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "3120"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
