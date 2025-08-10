@@ -126,11 +126,6 @@ function ArtigenV2Page() {
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
             "description": "A free AI art generator specialized in producing unique and high-quality images with distinct artistic styles from text prompts.",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "ratingCount": "875"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
