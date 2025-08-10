@@ -21,7 +21,7 @@ const faqData = [
         question: 'متى أستخدم Artigen V2 ومتى أستخدم Artigen Pro؟',
         answer: (
             <>
-                الأمر يعتمد على هدفك. استخدم <strong className="text-yellow-400">Artigen V2</strong> عندما تبحث عن تفسير فني فريد وعالي الجودة لفكرتك. واستخدم <Link to="/ar/generate-image-pro" className="text-purple-400 underline">Artigen Pro</Link> عندما تحتاج إلى أنماط أكثر تحديدًا مثل "فوتوغرافي"، "أنمي"، أو "فن البكسل".
+                الأمر يعتمد على هدفك. استخدم <strong className="text-yellow-400">Artigen V2</strong> عندما تبحث عن تفسير فني فريد وعالي الجودة لفكرتك. واستخدم <Link to="/ar/artigen-pro-ai" className="text-purple-400 underline">Artigen Pro</Link> عندما تحتاج إلى أنماط أكثر تحديدًا مثل "فوتوغرافي"، "أنمي"، أو "فن البكسل".
             </>
         )
     },
