@@ -1,7 +1,6 @@
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 
-// --- Helper Function ---
 // Converts a File to a compressed JPEG File
 async function compressImage(file: File): Promise<File> {
     return new Promise((resolve, reject) => {
@@ -52,8 +51,6 @@ async function compressImage(file: File): Promise<File> {
     });
 }
 
-
-// --- Data Constants ---
 const faqData = [
     {
         question: 'How is this different from a simple cartoon filter?',
@@ -68,7 +65,7 @@ const faqData = [
         answer: (
             <>
                 They are two different artists for two different goals. <strong>DigiCartoony</strong> is a digital painter, creating a high-quality, detailed piece of art with a unique painterly depth. It's for creating a masterpiece.
-                <Link to="https://aiconvert.online/cartoonify/" className="text-rose-400 underline"> Cartoonify</Link> is a quick sketch artist, giving you a fun, 2D "toon" look instantly, perfect for social media posts.
+                <Link to="/cartoonify" className="text-rose-400 underline"> Cartoonify</Link> is a quick sketch artist, giving you a fun, 2D "toon" look instantly, perfect for social media posts.
             </>
         )
     },
@@ -115,7 +112,6 @@ function DigiCartoonyPage() {
       formData.append('file', compressedFile);
       formData.append('if_face', detectFace ? 'Yes' : 'No');
 
-      // تم تغيير الرابط فقط. كل المنطق الآخر يبقى كما هو
         const response = await fetch('/api/tools?tool=digicartoony', {
         method: 'POST',
         body: formData,
@@ -161,11 +157,6 @@ function DigiCartoonyPage() {
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
             "description": "An AI tool that transforms photos into high-quality digital paintings with an artistic style, with an option to focus on the face.",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "1950"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
