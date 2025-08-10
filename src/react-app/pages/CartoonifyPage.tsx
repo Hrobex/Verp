@@ -92,7 +92,7 @@ function CartoonifyPage() {
   return (
     <>
       <title>Cartoonify Yourself Free | AI Photo to Cartoon Generator</title>
-      <meta name="description" content="Turn your photo into a cartoon with our free AI cartoonizer. Instantly cartoonify yourself online without any sign-up. Upload your picture and get a toon version in seconds!" />
+      <meta name="description" content="Turn your photo into a cartoon with free AI cartoonizer. Instantly cartoonify yourself online. Upload your image and get a toon version in seconds!" />
       <link rel="canonical" href="https://aiconvert.online/cartoonify" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/cartoonify" />
       {/* <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/cartoonify" /> */}
