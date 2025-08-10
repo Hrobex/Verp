@@ -21,7 +21,7 @@ const faqData = [
         question: `Should I use Artigen V2 or Artigen Pro?`,
         answer: (
             <>
-                It depends on your goal. Use <strong className="text-yellow-400">Artigen V2</strong> when you want a unique, high-quality artistic interpretation of your idea. Use <Link to="/generate-image-pro" className="text-purple-400 underline">Artigen Pro</Link> when you need more specific, genre-based styles like "Photographic," "Anime," or "Pixel Art."
+                It depends on your goal. Use <strong className="text-yellow-400">Artigen V2</strong> when you want a unique, high-quality artistic interpretation of your idea. Use <Link to="/artigen-pro-ai" className="text-purple-400 underline">Artigen Pro</Link> when you need more specific, genre-based styles like "Photographic," "Anime," or "Pixel Art."
             </>
         )
     },
