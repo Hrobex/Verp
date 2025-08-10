@@ -41,9 +41,9 @@ const faqData = [
         question: `ما الفرق بين Artigen Pro و Artigen V2؟`,
         answer: (
             <>
-                يقدم كلا النموذجين نتائج إبداعية مذهلة، لكن لكل منهما نقطة قوة. يبرع <strong>Artigen Pro</strong> في توليد كافة الأنماط بدقة عالية، من الصور الواقعية إلى التصميمات الفنية المعقدة. 
-                بينما يتميز <Link to="https://aiconvert.online/ar/artigenv2/" className="text-purple-400 hover:underline">Artigen V2</Link> بشكل خاص في إنتاج صور ذات طابع فني فريد وجمالي، مما يجعله الخيار الأمثل للمستخدمين الذين يبحثون عن لمسة فنية مميزة.
-            </>
+        يقدم كلا النموذجين نتائج إبداعية مذهلة، لكن لكل منهما نقطة قوة. يبرع <strong>Artigen Pro</strong> في توليد كافة الأنماط بدقة عالية، من الصور الواقعية إلى التصميمات الفنية المعقدة. 
+        بينما يتميز <Link to="/ar/artigenv2" className="text-purple-400 hover:underline">Artigen V2</Link> بشكل خاص في إنتاج صور ذات طابع فني فريد وجمالي، مما يجعله الخيار الأمثل للمستخدمين الذين يبحثون عن لمسة فنية مميزة.
+    </>
         )
     }
 ];
@@ -129,10 +129,10 @@ function ImageGeneratorPageArabic() {
     <>
       <title>Artigen Pro: مولد صور عربي بالذكاء الاصطناعي مجانًا بلا حدود</title>
       <meta name="description" content="أنشئ صورًا مذهلة من أوصافك النصية مع Artigen Pro. استمتع بتصميم الصور بال AI بأنماط وأحجام متعددة مجانًا دون تسجيل دخول" />
-      <link rel="canonical" href="https://aiconvert.online/ar/artigen-pro-ai" />
-      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/artigen-pro-ai" />
-      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/artigen-pro-ai" />
-      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/artigen-pro-ai" />
+      <link rel="canonical" href="https://aiconvert.online/ar/generate-image-pro" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/generate-image-pro" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/generate-image-pro" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/generate-image-pro" />
       <script type="application/ld+json">
         {`
           {
