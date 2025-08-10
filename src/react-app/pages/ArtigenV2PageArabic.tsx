@@ -127,11 +127,6 @@ function ArtigenV2PageArabic() {
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
             "description": "مولد فنون مجاني بالذكاء الاصطناعي متخصص في إنتاج صور فريدة وعالية الجودة ذات جمالية فنية مميزة من الأوصاف النصية.",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "ratingCount": "910"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
