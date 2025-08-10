@@ -126,11 +126,11 @@ function ImageGeneratorPage() {
   return (
     <>
       <title>Artigen Pro: Free AI Image Generator From Text</title>
-      <meta name="description" content="Generate stunning, unique images from text prompts with Artigen Pro. Our free AI image generator brings your ideas to life instantly. No sign-up required." />
-      <link rel="canonical" href="https://aiconvert.online/generate-image-pro" />
-      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/generate-image-pro" />
-      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/generate-image-pro" />
-      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/generate-image-pro" />
+      <meta name="description" content="Generate stunning images in various styles & sizes. Get unlimited, free AI image generation from text—no sign-up required." />
+      <link rel="canonical" href="https://aiconvert.online/artigen-pro-ai" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/artigen-pro-ai" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/artigen-pro-ai" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/artigen-pro-ai" />
       <script type="application/ld+json">
         {`
           {
