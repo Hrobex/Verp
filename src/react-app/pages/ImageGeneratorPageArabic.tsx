@@ -129,10 +129,10 @@ function ImageGeneratorPageArabic() {
     <>
       <title>Artigen Pro: مولد صور عربي بالذكاء الاصطناعي مجانًا بلا حدود</title>
       <meta name="description" content="أنشئ صورًا مذهلة من أوصافك النصية مع Artigen Pro. استمتع بتصميم الصور بال AI بأنماط وأحجام متعددة مجانًا دون تسجيل دخول" />
-      <link rel="canonical" href="https://aiconvert.online/ar/generate-image-pro" />
-      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/generate-image-pro" />
-      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/generate-image-pro" />
-      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/generate-image-pro" />
+      <link rel="canonical" href="https://aiconvert.online/ar/artigen-pro-ai" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/artigen-pro-ai" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/artigen-pro-ai" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/artigen-pro-ai" />
       <script type="application/ld+json">
         {`
           {
