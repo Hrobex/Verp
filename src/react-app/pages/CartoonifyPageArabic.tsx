@@ -1,8 +1,6 @@
-// الملف: CartoonifyPageArabic.tsx (النسخة المحدثة بمنطق face-merge)
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 
-// --- ثوابت البيانات ---
 const faqData = [
     {
         question: 'كيف تقوم الأداة بتحويل صورتي إلى كرتون؟',
@@ -27,8 +25,6 @@ const faqData = [
     },
 ];
 
-// تم حذف دالة fileToBase64 من هنا لأننا لم نعد بحاجة إليها
-
 function CartoonifyPageArabic() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourcePreview, setSourcePreview] = useState<string | null>(null);
@@ -49,7 +45,6 @@ function CartoonifyPageArabic() {
     }
   };
 
-  // --- تم تعديل هذه الدالة بالكامل لتتبع منطق face-merge ---
   const handleCartoonifyClick = async () => {
     if (!sourceFile) {
       setError('يرجى رفع صورة لكرتنتها.');
@@ -60,11 +55,9 @@ function CartoonifyPageArabic() {
     setResultImageUrl(null);
 
     try {
-      // 1. إنشاء FormData مباشرة (أبسط وأسرع)
       const formData = new FormData();
       formData.append('file', sourceFile);
-
-      // 2. استدعاء الواجهة الخلفية الذكية مع الملصق الصحيح
+        
       const response = await fetch('/api/tools?tool=cartoonify', {
         method: 'POST',
         body: formData,
@@ -74,8 +67,7 @@ function CartoonifyPageArabic() {
         const errorText = await response.text();
         throw new Error(errorText || 'فشلت عملية تحويل الصورة. الرجاء المحاولة مرة أخرى.');
       }
-      
-      // 3. التعامل مع الرد كصورة مباشرة
+        
       const imageBlob = await response.blob();
       const imageUrl = URL.createObjectURL(imageBlob);
       setResultImageUrl(imageUrl);
@@ -99,7 +91,7 @@ function CartoonifyPageArabic() {
     
   return (
     <>
-      <title>تحويل الصور إلى كرتون مجانًا | فلتر كرتون بالذكاء الاصطناعي</title>
+      <title>تحويل الصور إلى كرتون مجانًا بالذكاء الاصطناعي</title>
       <meta name="description" content="حوّل صورتك إلى كرتون باستخدام أداة الذكاء الاصطناعي المجانية. قم بكرتنة صورك الشخصية أونلاين فورًا وبدون تسجيل. ارفع صورتك واحصل على نسختك الكرتونية في ثوانٍ!" />
       <link rel="canonical" href="https://aiconvert.online/ar/cartoonify" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/cartoonify" />
@@ -113,11 +105,6 @@ function CartoonifyPageArabic() {
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
             "description": "أداة مجانية أونلاين تستخدم الذكاء الاصطناعي لتحويل الصور فورًا إلى كرتون بأسلوب ثنائي الأبعاد.",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.7",
-              "ratingCount": "3850"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -167,8 +154,7 @@ function CartoonifyPageArabic() {
               </button>
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
-
-            {/* --- عمود النتائج --- */}
+              
             <div className="bg-gray-800 p-4 rounded-2xl shadow-lg flex flex-col justify-center items-center relative min-h-[28rem]">
               {isLoading && (
                   <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-2xl">
