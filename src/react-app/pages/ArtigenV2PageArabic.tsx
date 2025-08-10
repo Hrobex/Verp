@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-// --- ثوابت البيانات (آمنة للواجهة الأمامية) ---
-
 const sizeOptions = [
   { label: 'مربع (1024x1024)', value: '1024x1024' },
   { label: 'شاشة عريضة (1024x576)', value: '1024x576' },
   { label: 'صورة طولية (576x1024)', value: '576x1024' },
 ];
 
-// قائمة الأنماط أصبحت أبسط، بدون الـ prompt_suffix السري
 const artStyleOptions = [
     { id: 'artistic', name: 'النمط الفني' },
     { id: 'cinematic', name: 'الفن السينمائي' }
@@ -58,7 +55,6 @@ function ArtigenV2PageArabic() {
     setImageUrl('');
 
     try {
-        // استدعاء الواجهة الخلفية الموجودة
         const response = await fetch('/api/image-generators?tool=artigen-v2', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -77,7 +73,6 @@ function ArtigenV2PageArabic() {
 
         const generatedUrl = data.imageUrl;
         
-        // التحقق من أن الصورة تم تحميلها في المتصفح قبل عرضها
         const img = new Image();
         img.src = generatedUrl;
         img.onload = () => {
