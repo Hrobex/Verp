@@ -127,8 +127,8 @@ function ImageGeneratorPageArabic() {
   
   return (
     <>
-      <title>Artigen Pro: مولد الصور المجاني بالذكاء الاصطناعي من النص</title>
-      <meta name="description" content="أنشئ صورًا مذهلة وفريدة من الأوصاف النصية مع Artigen Pro. مولد الصور المجاني بالذكاء الاصطناعي يحول أفكارك إلى حقيقة فورًا. لا يتطلب تسجيل." />
+      <title>Artigen Pro: مولد صور عربي بالذكاء الاصطناعي مجانًا بلا حدود</title>
+      <meta name="description" content="أنشئ صورًا مذهلة من أوصافك النصية مع Artigen Pro. استمتع بتصميم الصور بال AI بأنماط وأحجام متعددة مجانًا دون تسجيل دخول" />
       <link rel="canonical" href="https://aiconvert.online/ar/generate-image-pro" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/generate-image-pro" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/generate-image-pro" />
@@ -140,11 +140,6 @@ function ImageGeneratorPageArabic() {
             "name": "Artigen Pro: مولد الصور بالذكاء الاصطناعي",
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "1840"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
