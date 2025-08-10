@@ -1,14 +1,11 @@
 import { useState } from 'react';
 
-// --- ثوابت البيانات (آمنة للواجهة الأمامية) ---
-
 const sizeOptions = [
   { label: 'مربع (1024x1024)', value: '1024x1024' },
   { label: 'صورة طولية (576x1024)', value: '576x1024' },
   { label: 'شاشة عريضة (1024x576)', value: '1024x576' },
 ];
 
-// قائمة الأنماط أصبحت أبسط، بدون الـ prompt_suffix السري
 const animeStyleOptions = [
     { id: 'modern', name: 'نمط حديث' },
     { id: 'retro', name: 'نمط التسعينات' },
@@ -55,7 +52,6 @@ function AnimeGeneratorPageArabic() {
     setImageUrl('');
 
     try {
-        // استدعاء الواجهة الخلفية الموجودة
         const response = await fetch('/api/image-generators?tool=anime', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -74,7 +70,6 @@ function AnimeGeneratorPageArabic() {
 
         const generatedUrl = data.imageUrl;
         
-        // التحقق من أن الصورة تم تحميلها في المتصفح قبل عرضها
         const img = new Image();
         img.src = generatedUrl;
         img.onload = () => {
@@ -128,11 +123,6 @@ function AnimeGeneratorPageArabic() {
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
             "description": "صانع صور أنمي مجاني يحول النص إلى شخصيات ورسومات أنمي أصلية بأنماط مختلفة مثل الحديث، التسعينات، وتشيبي.",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "2580"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
