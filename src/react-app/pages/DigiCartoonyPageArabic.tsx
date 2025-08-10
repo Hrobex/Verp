@@ -1,8 +1,6 @@
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 
-// --- دالة مساعدة ---
-// تقوم بضغط الصورة وتحويلها إلى ملف JPEG
 async function compressImage(file: File): Promise<File> {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -89,7 +87,6 @@ function DigiCartoonyPageArabic() {
       formData.append('file', compressedFile);
       formData.append('if_face', detectFace ? 'Yes' : 'No');
 
-      // تم تغيير الرابط فقط إلى الواجهة الخلفية الآمنة
       const response = await fetch('/api/tools?tool=digicartoony', {
         method: 'POST',
         body: formData,
@@ -119,7 +116,6 @@ function DigiCartoonyPageArabic() {
     document.body.removeChild(link);
   };
 
-// --- ثوابت البيانات ---
 const faqData = [
     {
         question: 'كيف تختلف هذه الأداة عن فلاتر الكرتون البسيطة؟',
@@ -134,7 +130,7 @@ const faqData = [
         answer: (
             <>
                 إنهما فنانان مختلفان لهدفين مختلفين. <strong>DigiCartoony</strong> هو رسام رقمي، ينشئ قطعة فنية مفصلة وعالية الجودة بعمق فريد، وهو مخصص لإنشاء تحفة فنية.
-                بينما أداة <Link to="/ar/cartoonify/" className="text-rose-400 underline">Cartoonify</Link> هي فنان اسكتشات سريع، يمنحك مظهر "كرتوني" ممتعًا وثنائي الأبعاد على الفور، وهو مثالي لمنشورات وسائل التواصل الاجتماعي.
+                بينما أداة <Link to="/ar/cartoonify" className="text-rose-400 underline">Cartoonify</Link> هي فنان اسكتشات سريع، يمنحك مظهر "كرتوني" ممتعًا وثنائي الأبعاد على الفور، وهو مثالي لمنشورات وسائل التواصل الاجتماعي.
             </>
         )
     },
@@ -147,8 +143,8 @@ const faqData = [
 
   return (
     <>
-      <title>تحويل الصور إلى رسم رقمي بالذكاء الاصطناعي | لوحة فنية</title>
-      <meta name="description" content="حوّل صورتك إلى لوحة فنية رقمية مذهلة باستخدام أداتنا المجانية بالذكاء الاصطناعي. أنشئ فنًا رقميًا عالي الجودة من صورك أونلاين، بدون تسجيل." />
+      <title>تحويل الصور إلى لوحات كرتونية فنية بالذكاء الاصطناعي مجانًا</title>
+      <meta name="description" content="حوّل صورتك إلى كرتون فني ثلاثي الأبعاد بأسلوب الرسم الرقمي بالذكاء الاصطناعي مجانًا. أنشئ لوحات فنية عالية الجودة من صورك أونلاين وبدون تسجيل." />
       <link rel="canonical" href="https://aiconvert.online/ar/cartoony-art" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/cartoony-art" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/cartoony-art" />
@@ -161,11 +157,6 @@ const faqData = [
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
             "description": "أداة ذكاء اصطناعي تحول الصور إلى لوحات رقمية عالية الجودة بأسلوب فني، مع خيار للتركيز على الوجه.",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "1720"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
