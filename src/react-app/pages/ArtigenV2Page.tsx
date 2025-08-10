@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-// --- Data Constants (Safe for frontend) ---
-
 const sizeOptions = [
   { label: 'Square (1024x1024)', value: '1024x1024' },
   { label: 'Widescreen (1024x576)', value: '1024x576' },
   { label: 'Portrait (576x1024)', value: '576x1024' },
 ];
 
-// قائمة الأنماط أصبحت أبسط، بدون الـ prompt_suffix السري
 const artStyleOptions = [
     { id: 'artistic', name: 'Artistic Style' },
     { id: 'cinematic', name: 'Cinematic Art' }
@@ -58,7 +55,6 @@ function ArtigenV2Page() {
     setImageUrl('');
 
     try {
-        // استدعاء الواجهة الخلفية الجديدة
         const response = await fetch('/api/image-generators?tool=artigen-v2', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -77,7 +73,6 @@ function ArtigenV2Page() {
 
         const generatedUrl = data.imageUrl;
         
-        // التحقق من أن الصورة تم تحميلها في المتصفح قبل عرضها
         const img = new Image();
         img.src = generatedUrl;
         img.onload = () => {
