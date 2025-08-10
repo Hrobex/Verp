@@ -72,7 +72,7 @@ createRoot(document.getElementById("root")!).render(
 
           {/* --- English Routes --- */}
           <Route path="/" element={<HomePage />} />
-          <Route path="artigen-pro-ai" element={<ImageGeneratorPage />} />
+          <Route path="generate-image-pro" element={<ImageGeneratorPage />} />
           <Route path="line-drawing" element={<LineArtifyPage />} />          
           <Route path="remove-background" element={<ImageBackgroundToolPage />} />
           <Route path="text-to-speech" element={<TextToSpeechPage />} />
@@ -102,7 +102,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="ar">
             <Route index element={<HomePageArabic />} />
             <Route path="line-drawing" element={<LineArtifyPageArabic />} />
-            <Route path="artigen-pro-ai" element={<ImageGeneratorPageArabic />} />
+            <Route path="generate-image-pro" element={<ImageGeneratorPageArabic />} />
             <Route path="remove-background" element={<ImageBackgroundToolPageArabic />} />
             <Route path="text-to-speech" element={<TextToSpeechPageArabic />} />
             <Route path="ai-image-enhancer" element={<ImageEnhancerPageArabic />} />
