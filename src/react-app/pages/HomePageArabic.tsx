@@ -5,8 +5,8 @@ import AIToolsArabic from '@/react-app/components/AIToolsArabic';
 import FeaturesArabic from '@/react-app/components/FeaturesArabic';
 
 export default function HomePageArabic() {
-  const pageTitle = "محول AI: أدوات ذكاء اصطناعي لتوليد الصور وتحويل المحتوى";
-  const pageDescription = "أطلق العنان لإبداعك مع محول AI. استخدم أدواتنا لتوليد الصور، تحويل الصور لفن خطي، إزالة الخلفيات، والمزيد. ابدأ مجانًا.";
+  const pageTitle = "AI Convert | أدوات ذكاء اصطناعي مجانية بالعربي: مولد صور، شات والمزيد";
+  const pageDescription = " مجموعة متكاملة من أدوات الذكاء الاصطناعي بين يديك. دردش وأنشئ وعدل الصور. حول صورك إلى رسومات وكارتون وقصص والمزيد. جرب الآن دون تسجيل دخول";
   const pageUrl = "https://aiconvert.online/ar";
   // Using the same preview image for now, this can be customized later
   const ogImageUrl = "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=630&fit=crop";
