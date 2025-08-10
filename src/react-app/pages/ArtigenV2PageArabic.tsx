@@ -113,7 +113,7 @@ function ArtigenV2PageArabic() {
   return (
     <>
       <title>Artigen V2: مولد الفن المجاني بالذكاء الاصطناعي | حوّل النص إلى صور فنية</title>
-      <meta name="description" content="حوّل نصك إلى فن فريد وعالي الجودة مع مولد الفنون "Artigen V2". أنشئ صورًا بجمالية فنية مميزة، مجانًا وبالعربية. لا يتطلب التسجيل." />
+      <meta name="description" content="حوّل نصك إلى فن فريد وعالي الجودة مع مولد الفنون 'Artigen V2'. أنشئ صورًا بجمالية فنية مميزة، مجانًا وبالعربية. لا يتطلب التسجيل." />
       <link rel="canonical" href="https://aiconvert.online/ar/artigenv2" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/artigenv2" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/artigenv2" />
@@ -136,7 +136,7 @@ function ArtigenV2PageArabic() {
         `}
       </script>
       
-      <div className="pt-24 bg-gray-900 text-white min-h-screen">
+      <div className="pt-24 bg-gray-900 text-white min-h-screen" dir="rtl">
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
 
           <div className="text-center mb-12">
@@ -158,7 +158,7 @@ function ArtigenV2PageArabic() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="مثال: أسد مهيب يرتدي تاجًا من النجوم، لوحة رقمية"
-                  className="w-full h-28 p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition"
+                  className="w-full h-28 p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition text-right"
                 />
               </div>
 
@@ -248,7 +248,7 @@ function ArtigenV2PageArabic() {
                   <h2 className="text-3xl font-bold text-center mb-10">أسئلة شائعة</h2>
                   <div className="space-y-6">
                       {faqData.map((faq, index) => (
-                          <div key={index} className="bg-gray-800 p-6 rounded-lg">
+                          <div key={index} className="bg-gray-800 p-6 rounded-lg text-right">
                               <h3 className="font-bold text-lg text-yellow-400 mb-2">{faq.question}</h3>
                               <div className="text-gray-300 leading-relaxed">{typeof faq.answer === 'string' ? <p>{faq.answer}</p> : faq.answer}</div>
                           </div>
