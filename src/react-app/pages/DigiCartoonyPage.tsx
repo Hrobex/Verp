@@ -143,8 +143,8 @@ function DigiCartoonyPage() {
 
   return (
     <>
-      <title>AI Digital Painting from Photo | Free Photo to Art Converter</title>
-      <meta name="description" content="Turn your photo into a stunning piece of digital painting with our free AI tool. Create high-quality digital art online from your pictures, no sign-up required." />
+      <title>3D AI Cartoon Maker from Photo | Free Digital Art Generator</title>
+      <meta name="description" content="Turn your photo into cartoon paintings with our AI digital art Converter. Create high-quality, painterly cartoon art for free, no sign-up required." />
       <link rel="canonical" href="https://aiconvert.online/cartoony-art" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/cartoony-art" />
       {/* <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/cartoony-art" /> */}
