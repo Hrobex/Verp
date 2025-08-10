@@ -1,4 +1,3 @@
-// الملف: CartoonifyPage.tsx (النسخة المحدثة بمنطق face-merge)
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -15,9 +14,9 @@ const faqData = [
         question: 'What is the difference between Cartoonify and DigiCartoony?',
         answer: (
             <>
-                Think of them as two different artists. <strong>Cartoonify</strong> is like a classic comic book artist, quickly turning your photo into a fun, 2D-style cartoon with bold lines—perfect for a "toon" version of yourself. 
-                <Link to="https://aiconvert.online/cartoony-art/" className="text-teal-400 underline">DigiCartoony</Link>, on the other hand, is like a 3D movie animator, transforming your photo into a detailed piece of digital art with depth and a "Pixar-style" aesthetic.
-            </>
+    Think of them as two different artists. <strong>Cartoonify</strong> is like a classic comic book artist, quickly turning your photo into a fun, 2D-style cartoon with bold lines—perfect for a "toon" version of yourself. 
+    <Link to="/cartoony-art" className="text-teal-400 underline">DigiCartoony</Link>, on the other hand, is like a 3D movie animator, transforming your photo into a detailed piece of digital art with depth and a "Pixar-style" aesthetic.
+</>
         )
     },
     {
@@ -25,8 +24,6 @@ const faqData = [
         answer: 'We prioritize your privacy. Your photos are uploaded securely to our servers for processing and are automatically deleted after a short period. We do not store, share, or use your images for any other purpose.'
     },
 ];
-
-// تم حذف دالة fileToBase64 من هنا لأننا لم نعد بحاجة إليها
 
 function CartoonifyPage() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
@@ -48,7 +45,6 @@ function CartoonifyPage() {
     }
   };
 
-  // --- تم تعديل هذه الدالة بالكامل لتتبع منطق face-merge ---
   const handleCartoonifyClick = async () => {
     if (!sourceFile) {
       setError('Please upload an image to cartoonify.');
@@ -59,11 +55,9 @@ function CartoonifyPage() {
     setResultImageUrl(null);
 
     try {
-      // 1. إنشاء FormData مباشرة (أبسط وأسرع)
       const formData = new FormData();
       formData.append('file', sourceFile);
 
-      // 2. استدعاء الواجهة الخلفية الذكية مع الملصق الصحيح
       const response = await fetch('/api/tools?tool=cartoonify', {
         method: 'POST',
         body: formData,
@@ -74,7 +68,6 @@ function CartoonifyPage() {
         throw new Error(errorText || 'Failed to cartoonify the image. Please try again.');
       }
       
-      // 3. التعامل مع الرد كصورة مباشرة
       const imageBlob = await response.blob();
       const imageUrl = URL.createObjectURL(imageBlob);
       setResultImageUrl(imageUrl);
@@ -112,11 +105,6 @@ function CartoonifyPage() {
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
             "description": "A free online tool that uses AI to instantly convert photos into 2D-style cartoons.",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.7",
-              "ratingCount": "4510"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
