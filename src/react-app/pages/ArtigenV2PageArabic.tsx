@@ -113,7 +113,7 @@ function ArtigenV2PageArabic() {
   return (
     <>
       <title>Artigen V2: مولد الفن المجاني بالذكاء الاصطناعي | حوّل النص إلى صور فنية</title>
-      <meta name="description" content="حوّل نصك إلى فن فريد وعالي الجودة مع Artigen V2. مولد الفنون المجاني بالذكاء الاصطناعي الخاص بنا مصمم لإنتاج صور ذات جمالية فنية مميزة. لا يتطلب تسجيل." />
+      <meta name="description" content="حوّل نصك إلى فن فريد وعالي الجودة مع مولد الفنون "Artigen V2". أنشئ صورًا بجمالية فنية مميزة، مجانًا وبالعربية. لا يتطلب التسجيل." />
       <link rel="canonical" href="https://aiconvert.online/ar/artigenv2" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/artigenv2" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/artigenv2" />
