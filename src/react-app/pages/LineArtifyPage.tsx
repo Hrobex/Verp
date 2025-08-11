@@ -42,7 +42,7 @@ const faqData = [
       question: 'How is LineArtify different from ArtifyPro?',
       answer: (
          <>
-        LineArtify focuses on creating clean, distinct lines, similar to an outline or contour drawing. <Link to="/easy-drawings" className="text-cyan-400 hover:underline">A sketch tool "ArtifyPro"</Link>, on the other hand, often reproduces shading, texture, and a more hand-drawn pencil effect. LineArtify is perfect for creating outlines, coloring pages, or minimalist art.
+        LineArtify focuses on creating clean, distinct lines, similar to an outline or contour drawing. <Link to="/image-to-sketch" className="text-cyan-400 hover:underline">A sketch tool "ArtifyPro"</Link>, on the other hand, often reproduces shading, texture, and a more hand-drawn pencil effect. LineArtify is perfect for creating outlines, coloring pages, or minimalist art.
          </>
            )
         },
