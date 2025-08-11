@@ -19,7 +19,7 @@ const faqData = [
     answer: (
       <>
         Both tools create amazing artistic effects, but for different purposes. This tool is designed to generate a rich, detailed <strong>artistic sketch</strong> with shading and texture, mimicking a hand-drawn piece. 
-        In contrast, our <Link to="/line-drawing" className="text-yellow-400 hover:underline">Photo to Line Drawing tool</Link> specializes in extracting clean, precise <strong>outlines</strong> from your image, perfect for coloring pages, stencils, or technical designs.
+        In contrast, our <Link to="/line-drawing" className="text-yellow-400 underline">Photo to Line Drawing tool</Link> specializes in extracting clean, precise <strong>outlines</strong> from your image, perfect for coloring pages, stencils, or technical designs.
       </>
     )
   },
