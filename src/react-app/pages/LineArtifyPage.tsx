@@ -1,5 +1,5 @@
 import { useState, useCallback, ChangeEvent } from 'react';
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 
 const ImageUploadBox = ({ title, imageSrc, onFileChange, onDrop, onDragOver }: {
   title: string;
@@ -23,10 +23,10 @@ const ImageUploadBox = ({ title, imageSrc, onFileChange, onDrop, onDragOver }: {
           {imageSrc ? (
             <img src={imageSrc} alt="Preview" className="max-w-full max-h-full object-contain rounded-md" />
           ) : (
-            <div className="text-center text-gray-500">
+            <div className="text-center text-gray-400">
               <p>Drag & Drop your image here</p>
               <p className="my-2">or</p>
-              <p className="bg-gray-700 px-4 py-2 rounded-md">Click to select a file</p>
+              <p className="bg-gray-700 text-gray-200 px-4 py-2 rounded-md">Click to select a file</p>
             </div>
           )}
           <input id={inputId} type="file" className="hidden" accept="image/*" onChange={onFileChange} />
@@ -36,7 +36,6 @@ const ImageUploadBox = ({ title, imageSrc, onFileChange, onDrop, onDragOver }: {
   );
 };
 
-// FAQ Data for LineArtify
 const faqData = [
     {
       question: 'How is LineArtify different from ArtifyPro?',
@@ -235,6 +234,7 @@ a.click();
             </p>
           </div>
           <div className="bg-gray-800/50 p-6 sm:p-8 rounded-2xl shadow-lg">
+            <h2 className="sr-only">Image to Line Art Conversion Tool</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <ImageUploadBox
                 title="Original Photo"
@@ -253,7 +253,7 @@ a.click();
                     </div>
                   )}
                   {!isLoading && !resultImage && (
-                    <p className="text-center text-gray-500">Your line drawing will appear here</p>
+                    <p className="text-center text-gray-400">Your line drawing will appear here</p>
                   )}
                   {resultImage && !isLoading && (
                     <img src={resultImage} alt="Result" className="max-w-full max-h-full object-contain rounded-md" />
