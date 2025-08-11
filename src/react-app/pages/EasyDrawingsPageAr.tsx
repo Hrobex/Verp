@@ -99,10 +99,10 @@ function EasyDrawingsPageAr() {
     <>
       <title>تحويل الصور إلى اسكتش ورسم فني بالذكاء الاصطناعي أونلاين مجانًا | ArtifyPro</title>
       <meta name="description" content="حوّل صورك إلى اسكتش فني احترافي بضغطة زر. أنشئ لوحات ورسومات فنية وتصميمات يدوية من الصور باستخدام الذكاء الاصطناعي مجانًا وبدون تسجيل دخول." />
-      <link rel="canonical" href="https://aiconvert.online/ar/easy-drawings" />
-      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/easy-drawings" />
-      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/easy-drawings" />
-      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/easy-drawings" />
+      <link rel="canonical" href="https://aiconvert.online/ar/image-to-sketch" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/image-to-sketch" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/image-to-sketch" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/image-to-sketch" />
       <script type="application/ld+json">
 {`
   {
