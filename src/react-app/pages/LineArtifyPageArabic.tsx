@@ -1,4 +1,3 @@
-// الملف: LineArtifyPageArabic.tsx (النسخة الجديدة والآمنة)
 import { useState, useCallback, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -169,7 +168,6 @@ function LineArtifyPageArabic() {
       formData.append('file', compressedFile, sourceFile.name);
       formData.append('version', version);
 
-      // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
       const response = await fetch('/api/tools?tool=lineartify', {
         method: 'POST',
         body: formData,
@@ -203,7 +201,7 @@ function LineArtifyPageArabic() {
 
   return (
     <>
-      <title>تحويل الصور إلى رسومات بالرصاص بالذكاء الاصطناعي في ثوان مجانًا</title>
+      <title>تحويل الصور إلى رسومات بالرصاص بالذكاء الاصطناعي في ثوان مجانًا | LineArtify</title>
       <meta name="description" content="حوّل صورك الشخصية وأنواع الصور المختلفة إلى رسومات مذهلة بالرصاص مجانًا في ثوانٍ بالذكاء الاصطناعي باستخدام أداتنا المتقدمة وبدون تسجيل دخول." />
       <link rel="canonical" href="https://aiconvert.online/ar/line-drawing" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/line-drawing" />
@@ -216,12 +214,7 @@ function LineArtifyPageArabic() {
             "name": "LineArtify: تحويل الصور الى رسومات رصاص",
             "description": "أداة مجانية لتحويل الصور إلى رسومات بالرصاص باستخدام الذكاء الاصطناعي بسرعة وسهولة.",
             "operatingSystem": "WEB",
-            "applicationCategory": "MultimediaApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "1520"
-            },
+            "applicationCategory": "ImageProcessingApplication",
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -235,7 +228,7 @@ function LineArtifyPageArabic() {
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">
-              LineArtify: تحويل الصور إلى رسم رصاص بالذكاء الاصطناعي
+              LineArtify: تحويل الصور إلى رسم رصاص بالذكاء الاصطناعي مجانًا
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
               ارفع صورتك وشاهد الذكاء الاصطناعي يحولها إلى رسم بالقلم الرصاص نقي ومذهل، فورًا ومجانًا.
