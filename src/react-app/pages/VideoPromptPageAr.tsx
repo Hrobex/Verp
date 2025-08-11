@@ -120,7 +120,7 @@ function VideoPromptPageAr() {
   return (
     <>
       <title>مولد وصف (Prompt) فيديو بالذكاء الاصطناعي مجانًا (Veo 3، Sora،..)</title>
-      <meta name="description" content="حوّل أي صورة  إلى وصف فيديو سينمائي احترافي. احصل على أوامر دقيقة مجانًا دون تسجيل لأشهر أدوات توليد الفيديو مثل Kling AI، Pixverse، والمزيد " />
+      <meta name="description" content="حوّل أي صورة إلى وصف فيديو سينمائي احترافي. احصل على أوامر دقيقة مجانًا دون تسجيل لأشهر أدوات توليد الفيديو مثل Kling AI، Pixverse، والمزيد " />
       <link rel="canonical" href="https://aiconvert.online/ar/ai-video-prompt-generator" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-video-prompt-generator" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/ai-video-prompt-generator" />
@@ -147,7 +147,7 @@ function VideoPromptPageAr() {
           
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-teal-500">
-              مولد وصف الفيديو بالذكاء الاصطناعي
+              مولد وصف الفيديو بالذكاء الاصطناعي من الصور مجانًا 
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
               حوّل صورك الثابتة إلى مشاهد سينمائية متحركة. أداتنا الذكية تكتب لك وصفًا (Prompt) احترافيًا جاهزًا للاستخدام في برامج تحويل النص إلى فيديو.
