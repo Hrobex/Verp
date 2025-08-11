@@ -1,5 +1,3 @@
-// src/react-app/components/AIToolsArabic.tsx
-
 import {
   Image, Scissors, Volume2, Sparkles, ArrowLeft, MessageSquare, Zap, Wand, Wand2,
   Pencil, Palette, SprayCan, Drama, Smile, Film, Paintbrush
@@ -44,9 +42,19 @@ const toolsArabic = [
     description: 'حوّل صورك إلى فن خطي أنيق ونظيف باستخدام محول الرسم المدعوم بالذكاء الاصطناعي.',
     icon: Pencil,
     color: 'from-cyan-500 to-blue-600',
-    features: ['تحويل فوري', 'رسم عالي الجودة', 'للفنانين والمبدعين'],
+    features: ['تحويل فوري', 'رسم عالي الجودة', 'أنماط بسيطة ومعقدة'],
     image: '/images/image-to-line-drawing-ai.webp',
     alt: 'صورة توضيحية لخدمة تحويل الصور إلى رسومات خطية، تعرض صورة قبل وبعد التحويل.'
+  },
+  {
+    id: 'image-to-sketch',
+    title: 'ArtifyPro: تحويل الصور إلى اسكتش فني',
+    description: 'حوّل صورك إلى اسكتشات فنية مفصلة، مع تظليل غني وملمس يحاكي الرسم اليدوي.',
+    icon: Paintbrush,
+    color: 'from-yellow-500 to-lime-600',
+    features: ['تظليل فني واقعي', 'تأثير الرسم اليدوي', 'للفنانين والمبدعين'],
+    image: '/images/artifypro-photo-to-sketch.webp',
+    alt: 'صورة قبل وبعد تعرض تحويل صورة شخصية إلى اسكتش فني مفصل باستخدام أداة ArtifyPro.'
   },
   {
     id: 'ai-video-prompt-generator',
