@@ -85,7 +85,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="prompt-generator" element={<PromptigenPage />} />
           <Route path="ai-story-generator" element={<StorygenPage />} />
           <Route path="ai-video-prompt-generator" element={<VideoPromptPage />} />
-          <Route path="easy-drawings" element={<EasyDrawingsPage />} /> 
+          <Route path="image-to-sketch" element={<EasyDrawingsPage />} /> 
           <Route path="restore-and-repair-old-photos" element={<PhotoRevivePage />} /> 
           <Route path="privacy-policy" element={<PrivacyPolicyPage />} /> 
           <Route path="terms-of-service" element={<TermsOfServicePage />} /> 
@@ -114,7 +114,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="prompt-generator" element={<PromptigenPageArabic />} />
             <Route path="ai-story-generator" element={<StorygenPageArabic />} />
             <Route path="ai-video-prompt-generator" element={<VideoPromptPageArabic />} />
-            <Route path="easy-drawings" element={<EasyDrawingsPageArabic />} /> 
+            <Route path="image-to-sketch" element={<EasyDrawingsPageArabic />} /> 
             <Route path="restore-and-repair-old-photos" element={<PhotoRevivePageArabic />} /> 
             <Route path="privacy-policy" element={<PrivacyPolicyPageAr />} />
             <Route path="terms-of-service" element={<TermsOfServicePageAr />} /> 
