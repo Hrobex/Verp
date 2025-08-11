@@ -105,10 +105,10 @@ function EasyDrawingsPage() {
     <>
       <title>Free Photo to Sketch Converter Online | AI Image to Sketch</title>
       <meta name="description" content="Instantly turn any photo into a beautiful sketch with 'ArtifyPro'. Our free AI tool converts your images to stunning drawings online." />
-      <link rel="canonical" href="https://aiconvert.online/easy-drawings" />
-      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/easy-drawings" />
-      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/easy-drawings" />
-      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/easy-drawings" />
+      <link rel="canonical" href="https://aiconvert.online/image-to-sketch" />
+      <link rel="alternate" hrefLang="en" href="https://aiconvert.online/image-to-sketch" />
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/image-to-sketch" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/image-to-sketch" />
       <script type="application/ld+json">
 {`
   {
