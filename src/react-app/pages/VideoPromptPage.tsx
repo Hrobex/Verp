@@ -97,7 +97,7 @@ function VideoPromptPage() {
                 imageData: imageData,
                 mimeType: selectedFile.type,
                 language: selectedLanguage,
-                withNegativePrompt: withNegative, // إرسال الخيار إلى الـ API
+                withNegativePrompt: withNegative, 
             }),
         });
         
