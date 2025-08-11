@@ -1,7 +1,6 @@
-// الملف: LineArtifyPage.tsx (النسخة الجديدة والآمنة)
 import { useState, useCallback, ChangeEvent } from 'react';
+import { Link } from 'react-router-dom'; 
 
-// This is a helper component for the drag-and-drop area.
 const ImageUploadBox = ({ title, imageSrc, onFileChange, onDrop, onDragOver }: {
   title: string;
   imageSrc: string | null;
@@ -41,7 +40,7 @@ const ImageUploadBox = ({ title, imageSrc, onFileChange, onDrop, onDragOver }: {
 const faqData = [
     {
       question: 'How is LineArtify different from ArtifyPro?',
-      answer: 'LineArtify focuses on creating clean, distinct lines, similar to an outline or contour drawing. A sketch tool (ArtifyPro), on the other hand, often reproduces shading, texture, and a more hand-drawn pencil effect. LineArtify is perfect for creating outlines, coloring pages, or minimalist art.'
+      answer: 'LineArtify focuses on creating clean, distinct lines, similar to an outline or contour drawing. <Link to="/easy-drawings" className="text-yellow-400 hover:underline">A sketch tool "ArtifyPro"</Link>, on the other hand, often reproduces shading, texture, and a more hand-drawn pencil effect. LineArtify is perfect for creating outlines, coloring pages, or minimalist art.'
     },
     {
       question: "What's the difference between the 'Simple' and 'Complex' styles?",
@@ -101,7 +100,6 @@ function LineArtifyPage() {
     e.currentTarget.classList.add('border-blue-500');
   };
   
-  // دالة ضغط الصورة تبقى هنا لتحسين الأداء قبل الرفع
   const compressImage = (file: File): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -148,7 +146,6 @@ function LineArtifyPage() {
     });
   };
 
-  // تم تعديل هذه الدالة لتصبح آمنة
   const handleConvertClick = async () => {
     if (!sourceFile) {
       setError('Please upload an image first.');
@@ -166,7 +163,6 @@ function LineArtifyPage() {
       formData.append('file', compressedFile, sourceFile.name);
       formData.append('version', version);
 
-      // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
       const response = await fetch('/api/tools?tool=lineartify', {
         method: 'POST',
         body: formData,
@@ -200,9 +196,8 @@ a.click();
 
   return (
     <>
-      {/* --- START: SEO CONTENT ADDED HERE --- */}
-      <title>LineArtify: Free AI Photo to Line Art Converter Online</title>
-      <meta name="description" content="Instantly convert your photos into clean, beautiful line drawings with LineArtify. Our free online AI tool makes it easy to create line art for any project. No sign-up required." />
+      <title>Free AI Photo to Line Art Converter Online | LineArtify</title>
+      <meta name="description" content="Instantly convert your photos into beautiful line drawings online using AI. Create line art for any project for free. No sign-up required." />
       <link rel="canonical" href="https://aiconvert.online/line-drawing" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/line-drawing" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/line-drawing" />
@@ -214,12 +209,8 @@ a.click();
             "@type": "SoftwareApplication",
             "name": "LineArtify: AI Photo to Line Art Converter",
             "operatingSystem": "WEB",
-            "applicationCategory": "MultimediaApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.7",
-              "ratingCount": "980"
-            },
+            "applicationCategory": "ImageProcessingApplication",
+            "description": "A free AI tool that converts photos into clean, precise line drawings and outlines, ideal for creating coloring pages and stencils.",
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -228,13 +219,12 @@ a.click();
           }
         `}
       </script>
-      {/* --- END: SEO CONTENT ADDED HERE --- */}
 
       <div className="pt-24 bg-gray-900 text-white min-h-screen">
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">
-              LineArtify: AI Photo to Line Art Converter
+              LineArtify: Free AI Photo to Line Art Converter
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
               Upload your photo and watch our AI transform it into a clean, beautiful line drawing instantly and for free.
