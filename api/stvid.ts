@@ -115,12 +115,14 @@ async function handleStoryGenerator(req: VercelRequest, res: VercelResponse) {
     }
 }
 
-
 // --- 3. منطق وثوابت أداة "مولد prompt الفيديو" ---
 
 const videoPromptModelChain = [
-  "gemini-1.5-pro-latest",
-  "gemini-pro-vision"
+"gemini-2.5-pro",
+"gemini-2.0-flash-lite",
+"gemini-2.5-flash-lite",
+"gemini-2.0-flash",
+"gemini-pro-vision"
 ];
 const videoPromptSafetySettings = [
     { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
