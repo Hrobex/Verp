@@ -1,8 +1,6 @@
-// الملف: EasyDrawingsPage.tsx
 import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
-// --- الثوابت العامة ---
 const faqData = [
   {
     question: 'How does this AI convert my photo to a sketch?',
@@ -106,17 +104,35 @@ function EasyDrawingsPage() {
   return (
     <>
       <title>Free Photo to Sketch Converter Online | AI Image to Sketch</title>
-      <meta name="description" content="Instantly turn any photo into a beautiful sketch. Our free AI tool converts your images to line art and pencil drawings online. No software or sign-up needed." />
+      <meta name="description" content="Instantly turn any photo into a beautiful sketch with 'ArtifyPro'. Our free AI tool converts your images to stunning drawings online." />
       <link rel="canonical" href="https://aiconvert.online/easy-drawings" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/easy-drawings" />
-      {/* Add hreflang for Arabic page once created */}
-      
+      <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/easy-drawings" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/easy-drawings" />
+      <script type="application/ld+json">
+{`
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ArtifyPro: AI Photo to Sketch Converter",
+    "applicationCategory": "ImageProcessingApplication",
+    "operatingSystem": "WEB",
+    "description": "A free online AI tool that converts photos into detailed artistic sketches with shading and texture.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+`}
+</script>
+        
       <div className="pt-24 bg-gray-900 text-white min-h-screen">
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
           
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-lime-500">
-              Photo to Sketch Converter
+              ArtifyPro: Free AI Photo to Sketch Converter
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
               Transform your pictures into pencil artistic sketches with a single click. Upload a photo and let our AI do the rest.
