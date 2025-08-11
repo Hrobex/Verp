@@ -139,7 +139,7 @@ function VideoPromptPage() {
           {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
-            "name": "AI Video Prompt Generator from Image",
+            "name": "AI Image to Video Prompt Generator",
             "operatingSystem": "WEB",
             "applicationCategory": "ProductivityApplication",
             "offers": {
