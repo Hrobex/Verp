@@ -1,8 +1,5 @@
-// الملف: FaceMergePage.tsx (النسخة الجديدة والآمنة)
 import { useState, useRef, ChangeEvent } from 'react';
 
-// --- Data Constants ---
-// تم حذف `apiEndpoint` السري من هنا.
 const creativeIdeas = [
   { title: 'Historical Mashups', description: 'Place your face onto a famous historical portrait or photograph.' },
   { title: 'Movie Star Fun', description: 'Swap faces with your favorite actor in an iconic movie scene.' },
@@ -116,11 +113,6 @@ function FaceMergePage() {
             "name": "Mergify AI Face Swap",
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.7",
-              "ratingCount": "2410"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
