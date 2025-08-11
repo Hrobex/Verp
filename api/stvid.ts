@@ -1,10 +1,7 @@
 // الملف: api/stvid.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-// --- 1. الثوابت والأدوات المساعدة المشتركة ---
-
-// TODO: قم بنقل مفتاح API إلى متغيرات البيئة (Environment Variables)
-// مثال: const API_KEY = process.env.GEMINI_API_KEY;
+// --- 1. الثوابت المشتركة بين الأداتين ---
 const API_KEY = "AIzaSyCq4_YpJKaGQ4vvYQyPey5-u2bHhgNe9Oc";
 
 const SHARED_SAFETY_SETTINGS = [
@@ -14,60 +11,7 @@ const SHARED_SAFETY_SETTINGS = [
 ];
 
 /**
- * دالة مساعدة لتنفيذ سلسلة من النماذج حتى ينجح أحدها.
- * @returns كائن يحتوي على النص الناتج أو رسالة الخطأ.
- */
-async function executeModelChain(
-    modelChain: string[],
-    apiKey: string,
-    imageData: string,
-    mimeType: string,
-    masterPrompt: string,
-    safetySettings: any[],
-    generationConfig?: object
-) {
-    let finalResultText: string | null = null;
-    let lastError: string | null = null;
-
-    for (const modelName of modelChain) {
-        try {
-            const body: any = {
-                contents: [{ role: "user", parts: [{ inline_data: { mime_type: mimeType, data: imageData } }, { text: masterPrompt }] }],
-                safetySettings: safetySettings,
-            };
-            if (generationConfig) {
-                body.generationConfig = generationConfig;
-            }
-
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-
-            const responseData = await response.json();
-            if (!response.ok) {
-                lastError = responseData.error?.message || `API Error with ${modelName}`;
-                throw new Error(lastError);
-            }
-
-            const generatedText = responseData.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (generatedText && generatedText.trim()) {
-                finalResultText = generatedText.trim();
-                break; // نجحنا، اخرج من الحلقة
-            } else {
-                lastError = `Empty response from ${modelName}. Finish Reason: ${responseData.candidates?.[0]?.finishReason}`;
-            }
-        } catch (error: any) {
-            console.error(`Execution Error with model ${modelName}:`, error.message);
-        }
-    }
-    return { result: finalResultText, error: lastError };
-}
-
-/**
  * دالة مساعدة للتحقق من اللغة بشكل دفاعي.
- * @returns كائن لغة صالح.
  */
 function getLanguageSafe(language: any, req: VercelRequest): { name: string, code: string } {
     if (!language || !language.code || !language.name) {
@@ -81,9 +25,13 @@ function getLanguageSafe(language: any, req: VercelRequest): { name: string, cod
 // --- 2. منطق وثوابت أداة "تحويل الصورة إلى قصة" ---
 
 const storyModelChain = [
+  "gemini-2.5-flash",
+  "gemini-2.0-flash-lite",
+  "gemini-2.5-flash-lite",
   "gemini-1.5-flash-latest",
   "gemini-pro-vision"
 ];
+
 const storySafetySettings = [
     { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
     ...SHARED_SAFETY_SETTINGS
@@ -102,33 +50,61 @@ async function handleStoryGenerator(req: VercelRequest, res: VercelResponse) {
     if (!imageData || !mimeType) {
         return res.status(400).json({ error: 'Missing imageData or mimeType.' });
     }
-    
+
     const currentLanguage = getLanguageSafe(language, req);
     const masterPrompt = getStoryMasterPrompt(currentLanguage.name, currentLanguage.code);
+    let finalResultText: string | null = null;
+    let lastError: string | null = null;
 
-    const { result, error } = await executeModelChain(storyModelChain, API_KEY, imageData, mimeType, masterPrompt, storySafetySettings);
+    for (const modelName of storyModelChain) {
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ role: "user", parts: [{ inline_data: { mime_type: mimeType, data: imageData } }, { text: masterPrompt }] }],
+                    safetySettings: storySafetySettings
+                })
+            });
+            const responseData = await response.json();
+            if (!response.ok) {
+                lastError = responseData.error?.message || `API Error with ${modelName}`;
+                throw new Error(lastError);
+            }
+            const generatedText = responseData.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (generatedText && generatedText.trim()) {
+                finalResultText = generatedText.trim();
+                break;
+            } else {
+                lastError = `Empty response from ${modelName}`;
+            }
+        } catch (error: any) {
+            console.error(`StoryGen Error with model ${modelName}:`, error.message);
+        }
+    }
 
-    if (result) {
-        return res.status(200).json({ story: result });
+    if (finalResultText) {
+        return res.status(200).json({ story: finalResultText });
     } else {
-        return res.status(502).json({ error: error || "The AI service failed to generate a story. Please try again." });
+        return res.status(502).json({ error: lastError || "The AI service failed to generate a story. Please try again." });
     }
 }
+
 
 // --- 3. منطق وثوابت أداة "مولد prompt الفيديو" ---
 
 const videoPromptModelChain = [
-"gemini-2.5-pro",
-"gemini-2.0-flash-lite",
-"gemini-2.5-flash-lite",
-"gemini-2.0-flash",
-"gemini-pro-vision"
+  "gemini-2.5-pro",
+  "gemini-2.0-flash-lite",
+  "gemini-2.5-flash-lite",
+  "gemini-2.0-flash",
+  "gemini-pro-vision"
 ];
+
 const videoPromptSafetySettings = [
     { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
     ...SHARED_SAFETY_SETTINGS
 ];
-const videoGenerationConfig = { "temperature": 0.8, "topP": 0.95 };
 
 // المطالبة الأساسية (بدون الموجه السلبي)
 function getStandardVideoPrompt(languageName: string, languageCode: string): string {
@@ -155,7 +131,7 @@ A. Scene Framing & Technicals: Specify the aspect ratio (e.g., 'A 16:9 aspect ra
 B. Core Subject & Detailed Action: Describe the main subject with rich adjectives. Detail their primary action and any subtle secondary movements.
 C. Environment & Background Dynamics: Describe the surrounding environment and background, infusing it with life by describing dynamic elements (e.g., 'wind rustling leaves').
 D. Cinematic Camera Work: Specify ONE clear camera movement (e.g., 'slow zoom in') and qualify it with its motion intensity (e.g., 'with low motion intensity').
-E. Lighting, Mood, & Color Palette: Detail the lighting conditions (e.g., 'lit by the warm glow of golden hour'), define the mood (e.g., 'evoking a sense of nostalgia'), and specify the dominant color palette.
+E. Lighting, Mood, & Color Palette: Detail the lighting conditions (e.g., 'lit by the warm, soft glow of golden hour'), define the mood (e.g., 'evoking a sense of nostalgia'), and specify the dominant color palette.
 F. Negative Prompt Clause: Conclude with 'Negative prompt:' followed by elements to avoid (e.g., 'Negative prompt: avoid blurry visuals, distorted anatomy.').
 The entire output must be a single, flowing paragraph. Do not use headings or bullet points in the final response.
 `;
@@ -170,20 +146,48 @@ async function handleVideoPromptGenerator(req: VercelRequest, res: VercelRespons
     if (!imageData || !mimeType) {
         return res.status(400).json({ error: 'Missing imageData or mimeType.' });
     }
-
+    
     const currentLanguage = getLanguageSafe(language, req);
     
-    // اختر المطالبة المناسبة بناءً على المعامل الجديد
     const masterPrompt = withNegativePrompt
         ? getExclusiveVideoPrompt(currentLanguage.name, currentLanguage.code)
         : getStandardVideoPrompt(currentLanguage.name, currentLanguage.code);
 
-    const { result, error } = await executeModelChain(videoPromptModelChain, API_KEY, imageData, mimeType, masterPrompt, videoPromptSafetySettings, videoGenerationConfig);
+    let finalResultText: string | null = null;
+    let lastErrorForDev: string | null = null;
 
-    if (result) {
-        return res.status(200).json({ videoPrompt: result });
+    for (const modelName of videoPromptModelChain) {
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ role: "user", parts: [{ inline_data: { mime_type: mimeType, data: imageData } }, { text: masterPrompt }] }],
+                    safetySettings: videoPromptSafetySettings,
+                    generationConfig: { "temperature": 0.8, "topP": 0.95 }
+                })
+            });
+            const responseData = await response.json();
+            if (!response.ok) {
+                lastErrorForDev = responseData.error?.message || `API Error with ${modelName}`;
+                throw new Error(lastErrorForDev);
+            }
+            const generatedText = responseData.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (generatedText && generatedText.trim()) {
+                finalResultText = generatedText.trim();
+                break;
+            } else {
+                lastErrorForDev = `Empty response from ${modelName}. Finish Reason: ${responseData.candidates?.[0]?.finishReason}`;
+            }
+        } catch (error: any) {
+            console.error(`VideoPrompt Error with model ${modelName}:`, error.message);
+        }
+    }
+
+    if (finalResultText) {
+        return res.status(200).json({ videoPrompt: finalResultText });
     } else {
-        console.error("All models failed for VideoPrompt. Last dev error:", error);
+        console.error("All models failed for VideoPrompt. Last dev error:", lastErrorForDev);
         return res.status(502).json({ error: "The AI is currently experiencing high demand. Please try again in a moment." });
     }
 }
@@ -212,4 +216,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.error(`Backend error for tool ${tool}:`, error);
         return res.status(500).json({ error: 'An internal server error occurred.' });
     }
-            }
+}
