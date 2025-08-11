@@ -142,11 +142,6 @@ function VideoPromptPage() {
             "name": "AI Video Prompt Generator from Image",
             "operatingSystem": "WEB",
             "applicationCategory": "ProductivityApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "ratingCount": "1872"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
