@@ -119,13 +119,29 @@ function VideoPromptPageAr() {
 
   return (
     <>
-      <title>مولد وصف (Prompt) فيديو بالذكاء الاصطناعي | مجاني وبدون تسجيل</title>
-      <meta name="description" content="حوّل أي صورة ثابتة إلى وصف فيديو سينمائي احترافي. أداتنا المجانية تكتب لك أوامر فيديو دقيقة لأشهر المنصات مثل Sora، Veo، وRunway. لا حاجة للتسجيل." />
+      <title>مولد وصف (Prompt) فيديو بالذكاء الاصطناعي مجانًا (Veo 3، Sora،..)</title>
+      <meta name="description" content="حوّل أي صورة  إلى وصف فيديو سينمائي احترافي. احصل على أوامر دقيقة مجانًا دون تسجيل لأشهر أدوات توليد الفيديو مثل Kling AI، Pixverse، والمزيد " />
       <link rel="canonical" href="https://aiconvert.online/ar/ai-video-prompt-generator" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-video-prompt-generator" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/ai-video-prompt-generator" />
       <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/ai-video-prompt-generator" />
-      
+      <script type="application/ld+json">
+{`
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "مولد وصف الفيديو بالذكاء الاصطناعي من الصور",
+    "operatingSystem": "WEB",
+    "applicationCategory": "ProductivityApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+`}
+</script>
+        
       <div className="pt-24 bg-gray-900 text-white min-h-screen font-sans">
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8" dir="rtl">
           
