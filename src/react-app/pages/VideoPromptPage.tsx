@@ -128,8 +128,8 @@ function VideoPromptPage() {
 
   return (
     <>
-      <title>Free AI Video Prompt Generator from Image (For Sora, Veo, Runway)</title>
-      <meta name="description" content="Turn any static image into a dynamic, cinematic video prompt. Our free AI writer creates professional prompts for tools like Sora, Veo, Runway, and Pika." />
+      <title>Free AI Image to Video Prompt Generator (For Sora, Veo, Runway)</title>
+      <meta name="description" content="Turn any image into a dynamic, cinematic video prompt. Get professional prompts for AI video tools like Kling, Pika & more. Free, no sign-up." />
       <link rel="canonical" href="https://aiconvert.online/ai-video-prompt-generator" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/ai-video-prompt-generator" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-video-prompt-generator" />
