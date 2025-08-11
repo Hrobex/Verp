@@ -76,7 +76,6 @@ function FaceMergePageArabic() {
     formData.append('destination_face_index', destinationPersonNumber);
     
     try {
-      // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
       const response = await fetch('/api/tools?tool=face-merge', {
         method: 'POST',
         body: formData,
@@ -101,7 +100,7 @@ function FaceMergePageArabic() {
   return (
     <>
       <title>دمج الصور | دمج صورتين مع بعض أون لاين باستخدام الذكاء الاصطناعي مجانًا</title>
-      <meta name="description" content="استمتع معنا مجانًا مع أحدث تقنيات الذكاء الاصطناعي في عملية تبديل ودمج الوجوه في جميع الصور بما فيها صور الذكاء الاصطناعي free ai face swap" />
+      <meta name="description" content="قم بتبديل ودمج الوجوه في صورك مع أحدث تقنيات الذكاء الاصطناعي. استمتع بتركيب الصور مجانًا دون قيود أو حاجة لتسجيل دخول 'free AI face swap'." />
       <link rel="canonical" href="https://aiconvert.online/ar/ai-face-merge" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-face-merge" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/ai-face-merge" />
@@ -111,14 +110,9 @@ function FaceMergePageArabic() {
           {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
-            "name": "Mergify أداة دمج وتبديل الوجوه",
+            "name": "Mergify: أداة دمج وتبديل الوجوه",
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.7",
-              "ratingCount": "2410"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
