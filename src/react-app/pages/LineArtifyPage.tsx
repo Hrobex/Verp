@@ -40,8 +40,12 @@ const ImageUploadBox = ({ title, imageSrc, onFileChange, onDrop, onDragOver }: {
 const faqData = [
     {
       question: 'How is LineArtify different from ArtifyPro?',
-      answer: 'LineArtify focuses on creating clean, distinct lines, similar to an outline or contour drawing. <Link to="/easy-drawings" className="text-yellow-400 hover:underline">A sketch tool "ArtifyPro"</Link>, on the other hand, often reproduces shading, texture, and a more hand-drawn pencil effect. LineArtify is perfect for creating outlines, coloring pages, or minimalist art.'
-    },
+      answer: (
+         <>
+        LineArtify focuses on creating clean, distinct lines, similar to an outline or contour drawing. <Link to="/easy-drawings" className="text-cyan-400 hover:underline">A sketch tool "ArtifyPro"</Link>, on the other hand, often reproduces shading, texture, and a more hand-drawn pencil effect. LineArtify is perfect for creating outlines, coloring pages, or minimalist art.
+         </>
+           )
+        },
     {
       question: "What's the difference between the 'Simple' and 'Complex' styles?",
       answer: "The 'Simple' style generates clean, minimalist outlines, perfect for a basic line art effect. The 'Complex' style captures more detail from your original photo, resulting in a more intricate and richer line drawing."
