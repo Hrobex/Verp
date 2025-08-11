@@ -1,7 +1,5 @@
-// الملف: VideoPromptPageAr.tsx
 import { useState, useRef, useEffect } from 'react';
 
-// --- الثوابت العامة (مترجمة للعربية) ---
 const languageOptions = [
     { code: 'ar', name: 'العربية' },
     { code: 'en', name: 'English' },
@@ -29,7 +27,6 @@ const faqData = [
   },
 ];
 
-// --- دالة مساعدة لتحويل الصورة إلى Base64 (تبقى كما هي) ---
 async function fileToBase64(file: File): Promise<string> {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -75,7 +72,7 @@ function VideoPromptPageAr() {
     }
   };
 
-  const handleGeneratePrompt = async () => {
+  const handleGeneratePrompt = async (withNegative: boolean) => {
     if (!selectedFile) {
       setError('يرجى رفع صورة أولاً.');
       return;
@@ -95,6 +92,7 @@ function VideoPromptPageAr() {
                 imageData: imageData,
                 mimeType: selectedFile.type,
                 language: selectedLanguage,
+                withNegativePrompt: withNegative,
             }),
         });
         
@@ -154,7 +152,7 @@ function VideoPromptPageAr() {
                     <img src={imagePreview} alt="معاينة الصورة لإنشاء وصف الفيديو" className="max-w-full max-h-full object-contain rounded-md" />
                   ) : (
                     <div className="text-center text-gray-400">
-                      <p>انقر هنا أو قم بسحب وإفلات الصورة</p>
+                      <p>انقر هنا لرفع الصورة</p>
                       <p className="text-sm">لتحرير حركتها الكامنة</p>
                     </div>
                   )}
@@ -175,13 +173,22 @@ function VideoPromptPageAr() {
                 </select>
               </div>
 
-              <button
-                onClick={handleGeneratePrompt}
-                disabled={isLoading || !selectedFile}
-                className="w-full mt-2 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-rose-500 to-teal-600 rounded-lg hover:from-rose-600 hover:to-teal-700 focus:outline-none focus:ring-4 focus:ring-rose-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-              >
-                {isLoading ? 'جاري إخراج المشهد...' : 'إنشاء وصف الفيديو'}
-              </button>
+              <div className="flex flex-col gap-4 mt-2">
+                <button
+                  onClick={() => handleGeneratePrompt(false)}
+                  disabled={isLoading || !selectedFile}
+                  className="w-full py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-rose-500 to-teal-600 rounded-lg hover:from-rose-600 hover:to-teal-700 focus:outline-none focus:ring-4 focus:ring-rose-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                >
+                  {isLoading ? 'جاري الإنشاء...' : 'إنشاء وصف احترافي'}
+                </button>
+                <button
+                  onClick={() => handleGeneratePrompt(true)}
+                  disabled={isLoading || !selectedFile}
+                  className="w-full py-3 px-4 text-lg font-bold text-white bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  {isLoading ? 'جاري الإنشاء...' : 'إنشاء مع موجه سلبي (لـ Veo, Sora)'}
+                </button>
+              </div>
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
             
@@ -204,6 +211,45 @@ function VideoPromptPageAr() {
               </div>
             </div>
           </div>
+
+          <div className="mt-24 text-center">
+            <h2 className="text-3xl font-bold mb-4">أي وصف يجب أن تختار؟</h2>
+            <p className="max-w-4xl mx-auto text-gray-400 mb-12">
+              لنمنحك أقصى قدر من القوة والمرونة، يمكن لأداتنا إنشاء نوعين من الأوصاف الاحترافية. إليك دليل سريع لمساعدتك في الاختيار.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto text-right">
+              {/* Card 1 */}
+              <div className="bg-gray-800 border border-gray-700 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-teal-400">الوصف العالمي</h3>
+                <p className="text-gray-300 mt-3">
+                  ينشئ وصفًا غنيًا ومفصلاً ومصممًا ليكون متوافقًا مع جميع المنصات.
+                </p>
+                <hr className="border-gray-700 my-4" />
+                <p className="font-semibold text-white">✅ يُنصح به لـ:</p>
+                <ul className="list-none pr-0 mt-2 space-y-1 text-gray-300">
+                  <li>Pika</li>
+                  <li>PixVerse</li>
+                  <li>Runway</li>
+                  <li>Stable Diffusion</li>
+                </ul>
+              </div>
+              {/* Card 2 */}
+              <div className="bg-gray-800 border border-gray-700 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-rose-400">الوصف المتقدم (مع موجه سلبي)</h3>
+                <p className="text-gray-300 mt-3">
+                  يتضمن عبارة "موجه سلبي" خاصة لمنع الأخطاء الشائعة، وهو مُحسَّن لأحدث النماذج.
+                </p>
+                <hr className="border-gray-700 my-4" />
+                <p className="font-semibold text-white">✅ مُحسَّن لـ:</p>
+                <ul className="list-none pr-0 mt-2 space-y-1 text-gray-300">
+                  <li>Google Veo</li>
+                  <li>OpenAI Sora</li>
+                  <li>Kling AI</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
 
           <div className="mt-24">
               <section className="text-center">
