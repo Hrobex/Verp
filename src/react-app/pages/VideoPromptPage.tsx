@@ -1,7 +1,5 @@
-// الملف: VideoPromptPage.tsx
 import { useState, useRef, useEffect } from 'react';
 
-// --- الثوابت العامة (آمنة) ---
 const languageOptions = [
     { code: 'en', name: 'English' },
     { code: 'ar', name: 'العربية' },
@@ -34,7 +32,6 @@ const faqData = [
   },
 ];
 
-// --- دالة مساعدة لتحويل الصورة إلى Base64 ---
 async function fileToBase64(file: File): Promise<string> {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -80,7 +77,7 @@ function VideoPromptPage() {
     }
   };
 
-  const handleGeneratePrompt = async () => {
+  const handleGeneratePrompt = async (withNegative: boolean) => {
     if (!selectedFile) {
       setError('Please upload an image first.');
       return;
@@ -100,6 +97,7 @@ function VideoPromptPage() {
                 imageData: imageData,
                 mimeType: selectedFile.type,
                 language: selectedLanguage,
+                withNegativePrompt: withNegative, // إرسال الخيار إلى الـ API
             }),
         });
         
@@ -185,7 +183,7 @@ function VideoPromptPage() {
                     <img src={imagePreview} alt="Image preview for video prompt generation" className="max-w-full max-h-full object-contain rounded-md" />
                   ) : (
                     <div className="text-center text-gray-400">
-                      <p>Click to browse or drag & drop</p>
+                      <p>Click to browse</p>
                       <p className="text-sm">Unleash its hidden motion</p>
                     </div>
                   )}
@@ -205,14 +203,23 @@ function VideoPromptPage() {
                     ))}
                 </select>
               </div>
-
-              <button
-                onClick={handleGeneratePrompt}
-                disabled={isLoading || !selectedFile}
-                className="w-full mt-2 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-rose-500 to-teal-600 rounded-lg hover:from-rose-600 hover:to-teal-700 focus:outline-none focus:ring-4 focus:ring-rose-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-              >
-                {isLoading ? 'Generating Scene...' : 'Create Video Prompt'}
-              </button>
+                
+              <div className="flex flex-col gap-4 mt-2">
+                <button
+                  onClick={() => handleGeneratePrompt(false)}
+                  disabled={isLoading || !selectedFile}
+                  className="w-full py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-rose-500 to-teal-600 rounded-lg hover:from-rose-600 hover:to-teal-700 focus:outline-none focus:ring-4 focus:ring-rose-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                >
+                  {isLoading ? 'Generating Scene...' : 'Create Professional Prompt'}
+                </button>
+                <button
+                  onClick={() => handleGeneratePrompt(true)}
+                  disabled={isLoading || !selectedFile}
+                  className="w-full py-3 px-4 text-lg font-bold text-white bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  {isLoading ? 'Generating...' : 'Create with -ve Prompt (for Veo, Sora)'}
+                </button>
+              </div>
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
             
@@ -235,8 +242,45 @@ function VideoPromptPage() {
               </div>
             </div>
           </div>
+            
+          <div className="mt-24 text-center">
+            <h2 className="text-3xl font-bold mb-4">Which Prompt Should You Choose?</h2>
+            <p className="max-w-4xl mx-auto text-gray-400 mb-12">
+              To give you maximum power and flexibility, we generate two types of professional prompts. Here’s a quick guide to help you choose.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {/* Card 1 */}
+              <div className="bg-gray-800 border border-gray-700 rounded-2xl p-6 text-left">
+                <h3 className="text-xl font-bold text-teal-400">Universal Prompt</h3>
+                <p className="text-gray-300 mt-3">
+                  Creates a rich, detailed prompt designed for the widest compatibility across all platforms.
+                </p>
+                <hr className="border-gray-700 my-4" />
+                <p className="font-semibold text-white">✅ Recommended For:</p>
+                <ul className="list-none pl-0 mt-2 space-y-1 text-gray-300">
+                  <li>Pika</li>
+                  <li>PixVerse</li>
+                  <li>Runway</li>
+                  <li>Stable Diffusion</li>
+                </ul>
+              </div>
+              {/* Card 2 */}
+              <div className="bg-gray-800 border border-gray-700 rounded-2xl p-6 text-left">
+                <h3 className="text-xl font-bold text-rose-400">Advanced Prompt (with -ve)</h3>
+                <p className="text-gray-300 mt-3">
+                  Includes a special "negative prompt" clause to prevent errors, optimized for the latest models.
+                </p>
+                <hr className="border-gray-700 my-4" />
+                <p className="font-semibold text-white">✅ Optimized For:</p>
+                <ul className="list-none pl-0 mt-2 space-y-1 text-gray-300">
+                  <li>Google Veo</li>
+                  <li>OpenAI Sora</li>
+                  <li>Kling AI</li>
+                </ul>
+              </div>
+            </div>
+          </div>
 
-          {/* Content Sections */}
           <div className="mt-24">
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">From Still Image to Cinematic Scene</h2>
