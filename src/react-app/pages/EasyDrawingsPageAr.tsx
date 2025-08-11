@@ -1,4 +1,3 @@
-// الملف: EasyDrawingsPageAr.tsx
 import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom'; 
 
@@ -98,18 +97,36 @@ function EasyDrawingsPageAr() {
 
   return (
     <>
-      <title>تحويل الصور إلى اسكتش ورسم فني (مجاني أونلاين)</title>
-      <meta name="description" content="حوّل صورك إلى اسكتش فني احترافي بضغطة زر. أداتنا المجانية تستخدم الذكاء الاصطناعي لإنشاء رسومات فنية ورسم يدوي من صورك أونلاين." />
+      <title>تحويل الصور إلى اسكتش ورسم فني بالذكاء الاصطناعي أونلاين مجانًا | ArtifyPro</title>
+      <meta name="description" content="حوّل صورك إلى اسكتش فني احترافي بضغطة زر. أنشئ لوحات ورسومات فنية وتصميمات يدوية من الصور باستخدام الذكاء الاصطناعي مجانًا وبدون تسجيل دخول." />
       <link rel="canonical" href="https://aiconvert.online/ar/easy-drawings" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/easy-drawings" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/easy-drawings" />
+      <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/easy-drawings" />
+      <script type="application/ld+json">
+{`
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ArtifyPro: تحويل الصور إلى اسكتش فني",
+    "applicationCategory": "ImageProcessingApplication",
+    "operatingSystem": "WEB",
+    "description": "أداة ذكاء اصطناعي مجانية أونلاين تقوم بتحويل الصور إلى اسكتشات فنية مفصلة مع تظليل وملمس يحاكي الرسم اليدوي.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+`}
+</script>
       
       <div className="pt-24 bg-gray-900 text-white min-h-screen font-sans">
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8" dir="rtl">
           
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-lime-500">
-              تحويل الصور إلى اسكتش فني
+              ArtifyPro | تحويل الصور إلى اسكتش فني بالذكاء الاصطناعي مجانًا 
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
               أضف لمسة فنية فريدة لصورك. ارفع أي صورة ودع الذكاء الاصطناعي يحولها إلى رسم فني يحاكي الرسم اليدوي.
