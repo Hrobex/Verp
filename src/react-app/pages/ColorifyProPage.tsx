@@ -1,7 +1,5 @@
-// الملف: ColorifyProPage.tsx
 import { useState, useRef, ChangeEvent } from 'react';
 
-// --- بيانات الأسئلة الشائعة (مُحسّنة للسيو) ---
 const faqData = [
     {
         question: 'How does the AI add color to black and white photos?',
@@ -21,7 +19,6 @@ const faqData = [
     },
 ];
 
-// --- وظيفة ضغط الصور (تُنفذ في المتصفح) ---
 const compressImage = (file: File): Promise<Blob> => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -59,7 +56,7 @@ const compressImage = (file: File): Promise<Blob> => {
                     } else {
                         reject(new Error('Image compression failed.'));
                     }
-                }, 'image/jpeg', 0.9); // ضغط بنسبة 90%
+                }, 'image/jpeg', 
             };
             img.onerror = (error) => reject(error);
         };
@@ -97,14 +94,11 @@ function ColorifyProPage() {
     setResultImageUrl(null);
 
     try {
-      // 1. ضغط الصورة قبل إرسالها
       const compressedBlob = await compressImage(sourceFile);
 
-      // 2. إنشاء FormData وإضافة الصورة المضغوطة
       const formData = new FormData();
       formData.append('file', compressedBlob, sourceFile.name);
 
-      // 3. استدعاء الواجهة الخلفية مع الوسم الصحيح
       const response = await fetch('/api/tools?tool=colorify-pro', {
         method: 'POST',
         body: formData,
@@ -115,7 +109,6 @@ function ColorifyProPage() {
         throw new Error(errorText || 'Failed to colorize the image. The server might be busy.');
       }
       
-      // 4. التعامل مع الرد كصورة
       const imageBlob = await response.blob();
       const imageUrl = URL.createObjectURL(imageBlob);
       setResultImageUrl(imageUrl);
@@ -140,7 +133,7 @@ function ColorifyProPage() {
   return (
     <>
       <title>AI Photo Colorizer | Free Tool to Colorize Black and White Photos</title>
-      <meta name="description" content="Bring your old black and white photos to life with our free AI photo colorizer. Automatically add realistic color to vintage, B&W, or sepia images online in seconds. No sign-up required." />
+      <meta name="description" content="Bring your old black and white photos to life with our free AI photo colorizer. Add realistic color to vintage or sepia images online." />
       <link rel="canonical" href="https://aiconvert.online/ai-photo-colorizer" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/ai-photo-colorizer" />
       {/* <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-photo-colorizer" /> */}
@@ -151,13 +144,8 @@ function ColorifyProPage() {
             "@context": "https://schema.org",
             "name": "AI Photo Colorizer",
             "operatingSystem": "WEB",
-            "applicationCategory": "MultimediaApplication",
+            "applicationCategory": "ImageProcessingApplication",
             "description": "A free online tool that uses artificial intelligence to automatically colorize black and white, sepia, and vintage photos.",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "7240"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
