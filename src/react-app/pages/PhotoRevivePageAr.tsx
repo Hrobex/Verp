@@ -1,7 +1,5 @@
-// الملف: PhotoRevivePageAr.tsx
 import { useState, useRef } from 'react';
 
-// --- الثوابت العامة (مترجمة للعربية) ---
 const faqData = [
   {
     question: 'كيف تعمل تقنية ترميم الصور بالذكاء الاصطناعي؟',
@@ -94,19 +92,36 @@ function PhotoRevivePageAr() {
 
   return (
     <>
-      <title>ترميم وإصلاح الصور القديمة بالذكاء الاصطناعي مجانًا</title>
-      <meta name="description" content="أعد الحياة لذكرياتك. أداتنا المجانية لترميم الصور تقوم بإصلاح الصور القديمة والتالفة والباهتة أونلاين. أزل الخدوش، حسّن الجودة، ووضح الصور القديمة." />
+      <title>ترميم الصور بالذكاء الاصطناعي | استعادة ومعالجة الصور القديمة مجانًا</title>
+      <meta name="description" content="استمتع بترميم، معالجة، وإصلاح الصور القديمة والتالفة بالذكاء الاصطناعي أونلاين مجانًا مع PhotoRevive AI. أزل الخدوش وحسّن الجودة الآن!" />
       <link rel="canonical" href="https://aiconvert.online/ar/restore-and-repair-old-photos" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/restore-and-repair-old-photos" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/restore-and-repair-old-photos" />
       <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/restore-and-repair-old-photos" />
+      <script type="application/ld+json">
+{`
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "PhotoRevive: ترميم الصور بالذكاء الاصطناعي",
+    "description": "أداة مجانية تعمل بالذكاء الاصطناعي لترميم الصور القديمة والتالفة. تقوم تلقائيًا بإزالة الخدوش، إصلاح التمزقات، تحسين الجودة، وإصلاح الألوان الباهتة.",
+    "operatingSystem": "WEB",
+    "applicationCategory": "ImageProcessingApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+`}
+</script>
       
       <div className="pt-24 bg-gray-900 text-white min-h-screen font-sans">
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8" dir="rtl">
           
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-cyan-500">
-              PhotoRevive: ترميم الصور بالذكاء الاصطناعي
+              PhotoRevive: ترميم الصور بالذكاء الاصطناعي مجانًا
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
               لا تدع الزمن يسرق ذكرياتك. ارفع صور عائلتك القديمة، المخدوشة أو التالفة، ودع الذكاء الاصطناعي يعيد لها مجدها الأصلي مجانًا.
@@ -130,14 +145,14 @@ function PhotoRevivePageAr() {
               <div className="w-full flex flex-col items-center">
                 <h3 className="text-xl font-semibold text-gray-300 mb-4">بعد</h3>
                 <div className="w-full h-80 bg-black/20 rounded-lg flex items-center justify-center p-2 border-2 border-dashed border-cyan-500/50 relative">
-                  {/* --- SPINNER مُحسَّن --- */}
+                  
                   {isLoading && (
                     <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-lg">
                       <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-amber-500"></div>
                       <p className="text-gray-300 mt-4">نعيد إحياء ذكرياتك...</p>
                     </div>
                   )}
-                  {/* --- المحتوى الأصلي --- */}
+               
                   {!isLoading && restoredImage && (
                     <img ref={resultImageRef} src={restoredImage} alt="صورة قديمة بعد ترميمها بالذكاء الاصطناعي" className="max-w-full max-h-full object-contain rounded-md" />
                   )}
@@ -176,7 +191,6 @@ function PhotoRevivePageAr() {
             </div>
           </div>
           
-          {/* --- قسم "كيفية الاستخدام" المضاف --- */}
           <section className="mt-20">
               <div className="text-center">
                   <h2 className="text-3xl font-bold mb-4">كيفية ترميم صورتك في 3 خطوات بسيطة</h2>
