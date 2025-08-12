@@ -2,12 +2,11 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import formidable from 'formidable';
 import fs from 'fs';
 
-// هذا الكائن الآن لا يربط فقط باسم الخدمة، بل أيضًا باسم الحقل المتوقع
 const TOOL_CONFIG: { [key: string]: { serviceName: string; fieldName: string } } = {
   'cartoonify': { serviceName: 'cartoonizer', fieldName: 'file' },
   'sketch':     { serviceName: 'sketcher',    fieldName: 'img'  },
-  'aniface':    { serviceName: 'aniface',     fieldName: 'file' }, // افتراضيًا file، يمكن تغييره لاحقًا
-  'enhancer':   { serviceName: 'enhancer',    fieldName: 'file' }  // افتراضيًا file، يمكن تغييره لاحقًا
+  'digicartoony': { serviceName: 'aniface',     fieldName: 'file' }, // تستخدم خدمة aniface
+  'enhancer':   { serviceName: 'enhancer',    fieldName: 'file' }
 };
 
 const ORCHESTRATOR_BASE_URL = 'https://pint.aiarabai.com/api';
@@ -41,22 +40,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             return res.status(400).json({ error: `Invalid or missing tool name: ${toolName}` });
         }
 
-        const { files } = await parseForm(req);
+        const { fields, files } = await parseForm(req);
         
-        // --- الجزء الذي تم إصلاحه ---
-        // ابحث عن الملف المرفق بغض النظر عن اسمه
         const uploadedFile = Object.values(files)[0]?.[0];
 
         if (!uploadedFile) {
             return res.status(400).json({ error: 'No file uploaded.' });
         }
-        // --- نهاية الإصلاح ---
 
         const formData = new FormData();
         const fileBlob = new Blob([fs.readFileSync(uploadedFile.filepath)], { type: uploadedFile.mimetype || 'application/octet-stream' });
         
-        // استخدم اسم الحقل الصحيح الذي يتوقعه الخادم
         formData.append(config.fieldName, fileBlob, uploadedFile.originalFilename || 'uploaded_file');
+
+        // --- الجزء الذي تم إصلاحه وتحديثه ---
+        // قم بإضافة جميع الحقول الأخرى (مثل Style و if_face) إلى FormData
+        for (const key in fields) {
+            const value = fields[key]?.[0];
+            if (value) {
+                formData.append(key, value);
+            }
+        }
+        // --- نهاية الإصلاح ---
 
         const orchestratorResponse = await fetch(`${ORCHESTRATOR_BASE_URL}/${config.serviceName}`, {
             method: 'POST',
