@@ -2,11 +2,14 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import formidable from 'formidable';
 import fs from 'fs';
 
-const TOOL_CONFIG: { [key: string]: { serviceName: string; fieldName: string } } = {
-  'cartoonify':   { serviceName: 'cartoonizer', fieldName: 'file' },
-  'sketch':       { serviceName: 'sketcher',    fieldName: 'img'  },
-  'digicartoony': { serviceName: 'aniface',     fieldName: 'file' },
-  'enhancer':     { serviceName: 'enhancer',    fieldName: 'img'  } // اسم الحقل هو img
+// --- الكائن المركزي لإعدادات الأدوات (النسخة النهائية) ---
+// الآن يحتوي على "endpoint" اختياري لتحديد الوظيفة المطلوبة داخل الخدمة
+const TOOL_CONFIG: { [key: string]: { serviceName: string; fieldName: string; endpoint?: string } } = {
+  'cartoonify':        { serviceName: 'cartoonizer', fieldName: 'file' },
+  'sketch':            { serviceName: 'sketcher',    fieldName: 'img'  },
+  'digicartoony':      { serviceName: 'aniface',     fieldName: 'file' },
+  'enhancer':          { serviceName: 'enhancer',    fieldName: 'img'  },
+  'photo-restoration': { serviceName: 'enhancer',    fieldName: 'img', endpoint: 'predict_with_scratch_removal' }
 };
 
 const ORCHESTRATOR_BASE_URL = 'https://pint.aiarabai.com/api';
@@ -41,7 +44,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         const { fields, files } = await parseForm(req);
-        
         const uploadedFile = Object.values(files)[0]?.[0];
 
         if (!uploadedFile) {
@@ -50,29 +52,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         const formData = new FormData();
         const fileBlob = new Blob([fs.readFileSync(uploadedFile.filepath)], { type: uploadedFile.mimetype || 'application/octet-stream' });
-        
         formData.append(config.fieldName, fileBlob, uploadedFile.originalFilename || 'uploaded_file');
 
-        // ---  المنطق السري الجديد الخاص بأداة التحسين ---
-        if (config.serviceName === 'enhancer') {
-            // القاعدة رقم 5: "ترجمة" إصدارات النموذج
-            const versionMap: { [key: string]: string } = {
-                'v1.4': 'v1.2',
-                'v2.1': 'v1.3',
-                'v3.0': 'v1.4',
-            };
+        // --- المنطق السري (تم تحسينه ليكون أكثر دقة) ---
+        if (toolName === 'enhancer') {
+            const versionMap: { [key: string]: string } = { 'v1.4': 'v1.2', 'v2.1': 'v1.3', 'v3.0': 'v1.4' };
             const userVersion = fields.version?.[0] || 'v3.0'; 
             const backendVersion = versionMap[userVersion] || 'v1.4'; 
             formData.append('version', backendVersion);
-
-            // القاعدة رقم 4: تثبيت معامل التحسين
             formData.append('scale', '2.0'); 
-
-            // حذف المعلمات الأصلية لمنع إرسالها
             delete fields.version;
             delete fields.scale;
         }
-        // --- نهاية المنطق السري ---
 
         for (const key in fields) {
             const value = fields[key]?.[0];
@@ -81,7 +72,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             }
         }
 
-        const orchestratorResponse = await fetch(`${ORCHESTRATOR_BASE_URL}/${config.serviceName}`, {
+        // --- بناء الرابط الديناميكي الجديد ---
+        let targetUrl = `${ORCHESTRATOR_BASE_URL}/${config.serviceName}`;
+        if (config.endpoint) {
+            targetUrl += `/${config.endpoint}`;
+        }
+        // --- نهاية بناء الرابط ---
+
+        const orchestratorResponse = await fetch(targetUrl, {
             method: 'POST',
             body: formData,
         });
