@@ -1,4 +1,4 @@
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 async function compressImage(file: File): Promise<File> {
@@ -12,11 +12,9 @@ async function compressImage(file: File): Promise<File> {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 if (!ctx) return reject(new Error('سياق الكانفاس غير متوفر.'));
-
                 const maxWidth = 1000;
                 const maxHeight = 1000;
                 let { width, height } = img;
-
                 if (width > height) {
                     if (width > maxWidth) {
                         height = Math.round(height * (maxWidth / width));
@@ -31,7 +29,6 @@ async function compressImage(file: File): Promise<File> {
                 canvas.width = width;
                 canvas.height = height;
                 ctx.drawImage(img, 0, 0, width, height);
-
                 canvas.toBlob(
                     (blob) => {
                         if (blob) {
@@ -41,7 +38,7 @@ async function compressImage(file: File): Promise<File> {
                         }
                     },
                     'image/jpeg',
-                    0.7 // جودة 70%
+                    0.7
                 );
             };
             img.onerror = reject;
@@ -49,72 +46,6 @@ async function compressImage(file: File): Promise<File> {
         reader.onerror = reject;
     });
 }
-
-function DigiCartoonyPageArabic() {
-  const [sourceFile, setSourceFile] = useState<File | null>(null);
-  const [sourcePreview, setSourcePreview] = useState<string | null>(null);
-  const [detectFace, setDetectFace] = useState(true);
-  const [resultImageUrl, setResultImageUrl] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const sourceFileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSourceFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => setSourcePreview(reader.result as string);
-      reader.readAsDataURL(file);
-      setResultImageUrl(null);
-      setError(null);
-    }
-  };
-
-  const handleGenerateClick = async () => {
-    if (!sourceFile) {
-      setError('يرجى رفع صورة للبدء.');
-      return;
-    }
-    setIsLoading(true);
-    setError(null);
-    setResultImageUrl(null);
-
-    try {
-      const compressedFile = await compressImage(sourceFile);
-      
-      const formData = new FormData();
-      formData.append('file', compressedFile);
-      formData.append('if_face', detectFace ? 'Yes' : 'No');
-
-      const response = await fetch('/api/tools?tool=digicartoony', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.ok) {
-        const imageBlob = await response.blob();
-        setResultImageUrl(URL.createObjectURL(imageBlob));
-      } else {
-        const errorText = await response.text();
-        setError(errorText || 'حدث خطأ أثناء المعالجة. يرجى المحاولة مرة أخرى.');
-      }
-    } catch (err) {
-      setError('حدث خطأ غير متوقع. يرجى التحقق من اتصالك.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDownloadClick = () => {
-    if (!resultImageUrl) return;
-    const link = document.createElement('a');
-    link.href = resultImageUrl;
-    link.download = 'digital-art.png';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
 const faqData = [
     {
@@ -140,6 +71,148 @@ const faqData = [
     },
 ];
 
+const checkStatus = async (taskId: string) => {
+  const response = await fetch(`/api/check-status?taskId=${taskId}`);
+  if (!response.ok) {
+    throw new Error('Failed to check job status.');
+  }
+  return response.json();
+};
+
+
+function DigiCartoonyPageArabic() {
+  const [sourceFile, setSourceFile] = useState<File | null>(null);
+  const [sourcePreview, setSourcePreview] = useState<string | null>(null);
+  const [detectFace, setDetectFace] = useState(true);
+  const [resultImageUrl, setResultImageUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const sourceFileInputRef = useRef<HTMLInputElement>(null);
+
+  const [taskId, setTaskId] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const pollingIntervalRef = useRef<number | null>(null);
+
+  const genericErrorMessage = "واجه طلبك خطأ غير متوقع. يرجى الانتظار بضع ثوانٍ والمحاولة مرة أخرى.";
+
+  const cleanupPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    setTaskId(null);
+  };
+  
+  useEffect(() => {
+    if (taskId) {
+      pollingIntervalRef.current = window.setInterval(async () => {
+        try {
+          const statusData = await checkStatus(taskId);
+
+          switch (statusData.status) {
+            case 'QUEUED':
+              setStatusMessage(`أنت في المرتبة #${statusData.queue_position} من ${statusData.queue_total} في قائمة الانتظار.`);
+              break;
+            case 'PROCESSING':
+              setStatusMessage('نرسم تحفتك الفنية...');
+              break;
+            case 'SUCCESS':
+              cleanupPolling();
+              const resultResponse = await fetch(`/api/get-result?taskId=${taskId}`);
+              if (!resultResponse.ok) {
+                  throw new Error('Failed to fetch the final image.');
+              }
+              const imageBlob = await resultResponse.blob();
+              const imageUrl = URL.createObjectURL(imageBlob);
+              setResultImageUrl(imageUrl);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+            case 'FAILURE':
+              cleanupPolling();
+              setError(statusData.error || genericErrorMessage);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+          }
+        } catch (err) {
+          cleanupPolling();
+          setError(genericErrorMessage);
+          setIsLoading(false);
+          setStatusMessage('');
+        }
+      }, 3000);
+    }
+
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [taskId]);
+
+  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSourceFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setSourcePreview(reader.result as string);
+      reader.readAsDataURL(file);
+      setResultImageUrl(null);
+      setError(null);
+      setStatusMessage('');
+      cleanupPolling();
+    }
+  };
+
+  const handleGenerateClick = async () => {
+    if (!sourceFile) {
+      setError('يرجى رفع صورة للبدء.');
+      return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+    setResultImageUrl(null);
+    cleanupPolling();
+    setStatusMessage('تم استلام طلبك...');
+
+    try {
+      const compressedFile = await compressImage(sourceFile);
+      
+      const formData = new FormData();
+      formData.append('file', compressedFile);
+      formData.append('if_face', detectFace ? 'Yes' : 'No');
+      formData.append('Style', 'AnimeGANv3_USA');
+
+      const response = await fetch('/api/submit-job?tool=digicartoony', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit the job.');
+      }
+        
+      const responseData = await response.json();
+      setTaskId(responseData.task_id);
+
+    } catch (err) {
+      setError(genericErrorMessage);
+      setIsLoading(false);
+      setStatusMessage('');
+    }
+  };
+
+  const handleDownloadClick = () => {
+    if (!resultImageUrl) return;
+    const link = document.createElement('a');
+    link.href = resultImageUrl;
+    link.download = 'digital-art.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <>
@@ -179,7 +252,6 @@ const faqData = [
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* --- عمود التحكم --- */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
               <div className="text-center">
                   <h2 className="text-2xl font-bold">١. ارفع صورتك</h2>
@@ -214,12 +286,11 @@ const faqData = [
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
 
-            {/* --- عمود النتائج --- */}
             <div className="bg-gray-800 p-4 rounded-2xl shadow-lg flex flex-col justify-center items-center relative min-h-[28rem]">
               {isLoading && (
                   <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-2xl">
                     <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-500"></div>
-                    <p className="text-gray-300 mt-4">نرسم تحفتك الفنية...</p>
+                    <p className="text-gray-300 mt-4">{statusMessage}</p>
                   </div>
               )}
               <div className="w-full h-full flex flex-col justify-center items-center">
@@ -231,7 +302,7 @@ const faqData = [
                     </button>
                   </>
                 ) : (
-                  <p className="text-gray-400 text-center">عملك الفني الرقمي سيظهر هنا</p>
+                  !isLoading && !error && <p className="text-gray-400 text-center">عملك الفني الرقمي سيظهر هنا</p>
                 )}
               </div>
             </div>
@@ -254,7 +325,7 @@ const faqData = [
                    <p className="max-w-3xl mx-auto text-gray-400 mb-12">عمليتنا تمنحك التحكم لإنشاء التحول الفني المثالي.</p>
                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-right">
                     <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-teal-400 font-bold text-lg mb-2">١. ارفع صورتك</p><p className="text-gray-300">اختر صورة عالية الجودة من جهازك. الصور الشخصية الواضحة تعمل بشكل أفضل لإنشاء البورتريه.</p></div>
-                    <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-teal-400 font-bold text-lg mb-2">٢. اضبط لمستك الفنية</p><p className="text-gray-300">اختياريًا، قم بتفعيل "التركيز على الوجه فقط" لتركيز قوة الذكاء الاصطناعي على إنشاء بورتريه مثالي.</p></div>
+                    <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-teal-400 font-bold text-lg mb-2">٢. اضبط لمستك الفنية</p><p className="text-gray-300">اختياريًا، قم بتفعيل "تحديد الوجه" لتركيز قوة الذكاء الاصطناعي على إنشاء بورتريه مثالي.</p></div>
                     <div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-teal-400 font-bold text-lg mb-2">٣. أنشئ وحمّل</p><p className="text-gray-300">اضغط على زر الإنشاء. سيقوم الذكاء الاصطناعي بإنشاء عملك الفني الجديد، ليكون جاهزًا للتحميل.</p></div>
                    </div>
               </section>
