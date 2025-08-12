@@ -1,19 +1,15 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import formidable from 'formidable';
 import fs from 'fs';
-import { PassThrough } from 'stream';
 
-// هذا الكائن يربط بين اسم الأداة في موقعك (مثل "cartoonify")
-// واسم الخدمة في الخادم الجديد (مثل "cartoonizer").
-// يمكنك إضافة باقي الأدوات هنا بنفس الطريقة في المستقبل.
-const TOOL_TO_SERVICE_MAP: { [key: string]: string } = {
-  'cartoonify': 'cartoonizer',
-  'aniface': 'aniface',
-  'sketch': 'sketcher',
-  'enhancer': 'enhancer'
+// هذا الكائن الآن لا يربط فقط باسم الخدمة، بل أيضًا باسم الحقل المتوقع
+const TOOL_CONFIG: { [key: string]: { serviceName: string; fieldName: string } } = {
+  'cartoonify': { serviceName: 'cartoonizer', fieldName: 'file' },
+  'sketch':     { serviceName: 'sketcher',    fieldName: 'img'  },
+  'aniface':    { serviceName: 'aniface',     fieldName: 'file' }, // افتراضيًا file، يمكن تغييره لاحقًا
+  'enhancer':   { serviceName: 'enhancer',    fieldName: 'file' }  // افتراضيًا file، يمكن تغييره لاحقًا
 };
 
-// رابط الخادم الجديد الذي يعمل عليه المنسق
 const ORCHESTRATOR_BASE_URL = 'https://pint.aiarabai.com/api';
 
 export const config = {
@@ -39,44 +35,44 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     try {
         const toolName = req.query.tool as string;
-        const serviceName = TOOL_TO_SERVICE_MAP[toolName];
+        const config = TOOL_CONFIG[toolName];
 
-        if (!serviceName) {
-            return res.status(400).json({ error: 'Invalid or missing tool name.' });
+        if (!config) {
+            return res.status(400).json({ error: `Invalid or missing tool name: ${toolName}` });
         }
 
         const { files } = await parseForm(req);
-        const file = files.file?.[0]; // الخادم يتوقع اسم الحقل "file"
+        
+        // --- الجزء الذي تم إصلاحه ---
+        // ابحث عن الملف المرفق بغض النظر عن اسمه
+        const uploadedFile = Object.values(files)[0]?.[0];
 
-        if (!file) {
+        if (!uploadedFile) {
             return res.status(400).json({ error: 'No file uploaded.' });
         }
+        // --- نهاية الإصلاح ---
 
         const formData = new FormData();
-        // قراءة الملف كـ Blob وإضافته إلى FormData
-        const fileBlob = new Blob([fs.readFileSync(file.filepath)], { type: file.mimetype || 'application/octet-stream' });
-        formData.append('file', fileBlob, file.originalFilename || 'uploaded_file');
+        const fileBlob = new Blob([fs.readFileSync(uploadedFile.filepath)], { type: uploadedFile.mimetype || 'application/octet-stream' });
+        
+        // استخدم اسم الحقل الصحيح الذي يتوقعه الخادم
+        formData.append(config.fieldName, fileBlob, uploadedFile.originalFilename || 'uploaded_file');
 
-        // إرسال الطلب إلى الخادم الجديد (المنسق)
-        const orchestratorResponse = await fetch(`${ORCHESTRATOR_BASE_URL}/${serviceName}`, {
+        const orchestratorResponse = await fetch(`${ORCHESTRATOR_BASE_URL}/${config.serviceName}`, {
             method: 'POST',
             body: formData,
         });
 
-        // إذا فشل الخادم الجديد في قبول المهمة، أبلغ المستخدم
         if (!orchestratorResponse.ok) {
             const errorText = await orchestratorResponse.text();
-            console.error(`Orchestrator error for ${serviceName}:`, errorText);
+            console.error(`Orchestrator error for ${config.serviceName}:`, errorText);
             return res.status(orchestratorResponse.status).json({ 
                 error: 'Failed to submit job to the processing server.',
                 details: errorText 
             });
         }
 
-        // استلام الرد من الخادم الجديد (يجب أن يحتوي على task_id)
         const responseData = await orchestratorResponse.json();
-
-        // إعادة الرد (الذي يحتوي على task_id) إلى واجهة موقعك
         return res.status(202).json(responseData);
 
     } catch (error: any) {
