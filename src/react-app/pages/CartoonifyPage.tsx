@@ -28,8 +28,7 @@ const faqData = [
 const checkStatus = async (taskId: string) => {
   const response = await fetch(`/api/check-status?taskId=${taskId}`);
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.details || 'Failed to check job status.');
+    throw new Error('Failed to check job status.');
   }
   return response.json();
 };
@@ -45,6 +44,8 @@ function CartoonifyPage() {
   const [taskId, setTaskId] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string>('');
   const pollingIntervalRef = useRef<number | null>(null);
+
+  const genericErrorMessage = "Your request encountered an unexpected error. Please wait a few seconds and try again.";
 
   const cleanupPolling = () => {
     if (pollingIntervalRef.current) {
@@ -81,14 +82,14 @@ function CartoonifyPage() {
               break;
             case 'FAILURE':
               cleanupPolling();
-              setError(statusData.error || 'An error occurred during processing.');
+              setError(statusData.error || genericErrorMessage);
               setIsLoading(false);
               setStatusMessage('');
               break;
           }
-        } catch (err: any) {
+        } catch (err) {
           cleanupPolling();
-          setError(err.message || 'An unknown error occurred.');
+          setError(genericErrorMessage);
           setIsLoading(false);
           setStatusMessage('');
         }
@@ -137,16 +138,15 @@ function CartoonifyPage() {
         body: formData,
       });
 
-      const responseData = await response.json();
-
       if (!response.ok) {
-        throw new Error(responseData.details || 'Failed to submit the job.');
+        throw new Error('Failed to submit the job.');
       }
       
+      const responseData = await response.json();
       setTaskId(responseData.task_id);
 
-    } catch (err: any) {
-      setError(err.message || 'An unknown error occurred. Please check your connection and try again.');
+    } catch (err) {
+      setError(genericErrorMessage);
       setIsLoading(false);
       setStatusMessage('');
     }
