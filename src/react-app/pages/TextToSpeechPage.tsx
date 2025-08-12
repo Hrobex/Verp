@@ -169,19 +169,26 @@ const faqData = [
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">2. Select a Voice</label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <select id="language" value={selectedLanguageCode} onChange={(e) => setSelectedLanguageCode(e.target.value)} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500">
-                        {voicesData.map(lang => <option key={lang.code} value={lang.code}>{lang.name}</option>)}
-                    </select>
-                    <select id="gender" value={selectedGender} onChange={handleGenderChange} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500" disabled={genders.length === 0}>
-                        {genders.map(gender => <option key={gender} value={gender}>{gender}</option>)}
-                    </select>
-                    <select id="voice" value={selectedVoice} onChange={(e) => setSelectedVoice(e.target.value)} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500" disabled={voices.length === 0}>
-                       {voices.map(voice => <option key={voice} value={voice}>{voice.split('-').slice(2).join('-').replace('Neural', '')}</option>)}
-                    </select>
-                </div>
-              </div>
+    <div className="block text-sm font-medium text-gray-300 mb-2">2. Select a Voice</div>
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        
+        <label htmlFor="language" className="sr-only">Select Language</label>
+        <select id="language" value={selectedLanguageCode} onChange={(e) => setSelectedLanguageCode(e.target.value)} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500">
+            {voicesData.map(lang => <option key={lang.code} value={lang.code}>{lang.name}</option>)}
+        </select>
+        
+        <label htmlFor="gender" className="sr-only">Select Gender</label>
+        <select id="gender" value={selectedGender} onChange={handleGenderChange} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500" disabled={genders.length === 0}>
+            {genders.map(gender => <option key={gender} value={gender}>{gender}</option>)}
+        </select>
+        
+        <label htmlFor="voice" className="sr-only">Select Voice Name</label>
+        <select id="voice" value={selectedVoice} onChange={(e) => setSelectedVoice(e.target.value)} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500" disabled={voices.length === 0}>
+            {voices.map(voice => <option key={voice} value={voice}>{voice.split('-').slice(2).join('-').replace('Neural', '')}</option>)}
+        </select>
+        
+    </div>
+</div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">3. Adjust Voice Settings</label>
@@ -217,7 +224,7 @@ const faqData = [
                 </div>
               )}
               {!isLoading && !audioURL && (
-                <div className="text-center text-gray-500 p-4">
+                <div className="text-center text-gray-300 p-4">
                   <p className="text-lg">Your generated audio will appear here</p>
                   <p className="text-sm mt-2">Ready to download as an MP3 file</p>
                 </div>
