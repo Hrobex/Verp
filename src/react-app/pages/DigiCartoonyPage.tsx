@@ -182,7 +182,7 @@ function DigiCartoonyPage() {
       const formData = new FormData();
       formData.append('file', compressedFile);
       formData.append('if_face', detectFace ? 'Yes' : 'No');
-      formData.append('Style', 'AnimeGANv3_Arcane'); // <-- يمكنك تغيير هذا النمط لاحقًا
+      formData.append('Style', 'AnimeGANv3_USA');
 
       const response = await fetch('/api/submit-job?tool=digicartoony', {
         method: 'POST',
