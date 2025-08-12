@@ -1,4 +1,26 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react';
+import imageCompression from 'browser-image-compression';
+
+async function processImageForRestoration(file: File): Promise<File> {
+  const MAX_ORIGINAL_SIZE_MB = 4;
+  if (file.size / 1024 / 1024 > MAX_ORIGINAL_SIZE_MB) {
+    throw new Error(`Image size exceeds ${MAX_ORIGINAL_SIZE_MB}MB. Please upload a smaller file.`);
+  }
+
+  const options = {
+    maxSizeMB: 1,
+    maxWidthOrHeight: 800,
+    useWebWorker: true,
+  };
+
+  try {
+    const processedFile = await imageCompression(file, options);
+    return processedFile;
+  } catch (error) {
+    console.error('Image processing failed:', error);
+    return file;
+  }
+}
 
 const faqData = [
   {
@@ -19,6 +41,14 @@ const faqData = [
   },
 ];
 
+const checkStatus = async (taskId: string) => {
+  const response = await fetch(`/api/check-status?taskId=${taskId}`);
+  if (!response.ok) {
+    throw new Error('Failed to check job status.');
+  }
+  return response.json();
+};
+
 function PhotoRevivePage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -27,7 +57,66 @@ function PhotoRevivePage() {
   const [error, setError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const resultImageRef = useRef<HTMLImageElement>(null);
+
+  const [taskId, setTaskId] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const pollingIntervalRef = useRef<number | null>(null);
+
+  const genericErrorMessage = "Your request encountered an unexpected error. Please wait a few seconds and try again.";
+
+  const cleanupPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    setTaskId(null);
+  };
+
+  useEffect(() => {
+    if (taskId) {
+      pollingIntervalRef.current = window.setInterval(async () => {
+        try {
+          const statusData = await checkStatus(taskId);
+          switch (statusData.status) {
+            case 'QUEUED':
+              setStatusMessage(`You are #${statusData.queue_position} of ${statusData.queue_total} in the queue.`);
+              break;
+            case 'PROCESSING':
+              setStatusMessage('Reviving your memory...');
+              break;
+            case 'SUCCESS':
+              cleanupPolling();
+              const resultResponse = await fetch(`/api/get-result?taskId=${taskId}`);
+              if (!resultResponse.ok) {
+                  throw new Error('Failed to fetch the final image.');
+              }
+              const imageBlob = await resultResponse.blob();
+              const imageUrl = URL.createObjectURL(imageBlob);
+              setRestoredImage(imageUrl);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+            case 'FAILURE':
+              cleanupPolling();
+              setError(statusData.error || genericErrorMessage);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+          }
+        } catch (err) {
+          cleanupPolling();
+          setError(genericErrorMessage);
+          setIsLoading(false);
+          setStatusMessage('');
+        }
+      }, 3000);
+    }
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [taskId]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -35,6 +124,8 @@ function PhotoRevivePage() {
       setSelectedFile(file);
       setError(null);
       setRestoredImage(null);
+      setStatusMessage('');
+      cleanupPolling();
       const reader = new FileReader();
       reader.onloadend = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
@@ -50,40 +141,42 @@ function PhotoRevivePage() {
     setIsLoading(true);
     setError(null);
     setRestoredImage(null);
-
-    const formData = new FormData();
-    formData.append('file', selectedFile);
+    cleanupPolling();
+    setStatusMessage('Processing your image...');
 
     try {
-        const response = await fetch('/api/tools?tool=photo-restoration', {
-            method: 'POST',
-            body: formData,
-        });
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || 'The server failed to process the image.');
-        }
+      const processedFile = await processImageForRestoration(selectedFile);
 
-        const result = await response.json();
-        
-        if (result.sketch_image_base64) {
-             setRestoredImage(result.sketch_image_base64);
-        } else {
-            throw new Error('The AI could not process the image. Please try a different photo.');
-        }
+      const formData = new FormData();
+      formData.append('img', processedFile);
+
+      const response = await fetch('/api/submit-job?tool=photo-restoration', {
+          method: 'POST',
+          body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to submit the job.');
+      }
+
+      const responseData = await response.json();
+      setTaskId(responseData.task_id);
 
     } catch (err: any) {
-      setError(err.message);
-    } finally {
+      if (err instanceof Error && err.message.includes('Image size exceeds')) {
+         setError('Image is too large. Please upload an image smaller than 4MB.');
+      } else {
+         setError(genericErrorMessage);
+      }
       setIsLoading(false);
+      setStatusMessage('');
     }
   };
   
   const handleDownload = () => {
-    if (!resultImageRef.current?.src) return;
+    if (!restoredImage) return;
     const link = document.createElement('a');
-    link.href = resultImageRef.current.src;
+    link.href = restoredImage;
     link.download = `restored_photo_from_aiconvert.png`;
     document.body.appendChild(link);
     link.click();
@@ -142,20 +235,19 @@ function PhotoRevivePage() {
                   )}
                 </div>
               </div>
-              <div className="w-full flex flex-col items-center relative"> {/* Added relative positioning */}
+              <div className="w-full flex flex-col items-center relative">
                 <h3 className="text-xl font-semibold text-gray-300 mb-4">After</h3>
                 <div className="w-full h-80 bg-black/20 rounded-lg flex items-center justify-center p-2 border-2 border-dashed border-cyan-500/50 relative">
                   {isLoading && (
                     <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-lg">
                       <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-amber-500"></div>
-                      <p className="text-gray-300 mt-4">Reviving your memory...</p>
+                      <p className="text-gray-300 mt-4">{statusMessage}</p>
                     </div>
                   )}
-                  {/* --- Content --- */}
                   {!isLoading && restoredImage && (
-                    <img ref={resultImageRef} src={restoredImage} alt="AI restored photo" className="max-w-full max-h-full object-contain rounded-md" />
+                    <img src={restoredImage} alt="AI restored photo" className="max-w-full max-h-full object-contain rounded-md" />
                   )}
-                   {!isLoading && !restoredImage && (
+                   {!isLoading && !restoredImage && !error && (
                    <div className="text-center text-gray-500">
                        <p>Your restored photo will appear here</p>
                    </div>
@@ -181,7 +273,7 @@ function PhotoRevivePage() {
                 </div>
                 {restoredImage && !isLoading && (
                  <button
-                    onClick={handleDownload}
+                    onClick={() => { if(restoredImage) { const link = document.createElement('a'); link.href = restoredImage; link.download = `restored_photo_from_aiconvert.png`; link.click(); } }}
                     className="w-full sm:w-auto py-3 px-8 text-lg font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all"
                   >
                     Download Restored Photo
@@ -190,7 +282,6 @@ function PhotoRevivePage() {
             </div>
           </div>
           
-          {/* --- "HOW TO USE" SECTION --- */}
           <section className="mt-20">
               <div className="text-center">
                   <h2 className="text-3xl font-bold mb-4">How to Restore Your Photo in 3 Simple Steps</h2>
@@ -219,22 +310,10 @@ function PhotoRevivePage() {
                     Our AI-powered photo repair tool is trained to understand and fix common issues in old pictures, from physical damage to the effects of time.
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-amber-400 mb-2">Remove Scratches & Tears</h3>
-                          <p className="text-gray-300">Intelligently erase cracks, scratches, and creases that mar your precious family pictures.</p>
-                      </div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-amber-400 mb-2">Enhance Quality</h3>
-                          <p className="text-gray-300">Improve sharpness and clarity in blurry or out-of-focus old photos, revealing details you thought were lost.</p>
-                      </div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-amber-400 mb-2">Fix Faded Colors</h3>
-                          <p className="text-gray-300">Bring back the vibrancy to faded photographs, correcting colors to make them look as good as new.</p>
-                      </div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-amber-400 mb-2">Free & Secure</h3>
-                          <p className="text-gray-300">Restore unlimited photos for free. Your images are processed securely and are never stored.</p>
-                      </div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-amber-400 mb-2">Remove Scratches & Tears</h3><p className="text-gray-300">Intelligently erase cracks, scratches, and creases that mar your precious family pictures.</p></div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-amber-400 mb-2">Enhance Quality</h3><p className="text-gray-300">Improve sharpness and clarity in blurry or out-of-focus old photos, revealing details you thought were lost.</p></div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-amber-400 mb-2">Fix Faded Colors</h3><p className="text-gray-300">Bring back the vibrancy to faded photographs, correcting colors to make them look as good as new.</p></div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-amber-400 mb-2">Free & Secure</h3><p className="text-gray-300">Restore unlimited photos for free. Your images are processed securely and are never stored.</p></div>
                   </div>
               </section>
 
