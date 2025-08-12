@@ -1,4 +1,3 @@
-// الملف: ImageBackgroundToolPage.tsx (النسخة الجديدة والآمنة)
 import { useState, useRef, useEffect, ChangeEvent } from 'react';
 
 const faqData = [
@@ -83,7 +82,6 @@ function ImageBackgroundToolPage() {
     formData.append('file', originalFile);
 
     try {
-      // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
       const response = await fetch('/api/tools?tool=background-remover', {
         method: 'POST',
         body: formData,
@@ -106,7 +104,6 @@ function ImageBackgroundToolPage() {
     }
   };
 
-  // هذا المنطق يعمل في المتصفح ويبقى كما هو
   const handleApplyBackground = () => {
     if (!processedImageUrl) {
       setError('Please process an image first to get the cutout.');
@@ -155,9 +152,8 @@ function ImageBackgroundToolPage() {
   
   return (
     <>
-      {/* SEO Section - Following React 19 Best Practices */}
-      <title>Free Online AI Background Remover - Remove & Change Backgrounds</title>
-      <meta name="description" content="Instantly remove the background from any image with our free AI tool. Create transparent backgrounds or change them to a solid color or custom image." />
+      <title>Free Online AI Background Remover & Converter</title>
+      <meta name="description" content="Instantly remove your image background for  free with AI. Create transparent backgrounds or change them to a solid color or custom photos." />
       <link rel="canonical" href="https://aiconvert.online/remove-background" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/remove-background" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/remove-background" />
@@ -167,14 +163,10 @@ function ImageBackgroundToolPage() {
           {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
-            "name": "AI Background Remover",
+            "name": "AI Background Remover & Converter",
+            "description": "A free AI tool to instantly remove the background from images. Create transparent backgrounds or change the background to a solid color or a custom photo.",
             "operatingSystem": "WEB",
-            "applicationCategory": "MultimediaApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.7",
-              "ratingCount": "1549"
-            },
+            "applicationCategory": "ImageProcessingApplication",
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -189,7 +181,7 @@ function ImageBackgroundToolPage() {
           
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-lime-500">
-              AI Background Remover & Converter
+              Free AI Background Remover & Converter
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
               Effortlessly remove & change image backgrounds in one click. Upload your photo to get a transparent background, or replace it with a new one.
@@ -216,7 +208,6 @@ function ImageBackgroundToolPage() {
                 {originalFile && <p className="text-sm text-gray-400 text-center truncate">Selected: {originalFile.name}</p>}
               </div>
 
-              {/* Step 2: Process */}
               <div className="space-y-2">
                 <h3 className="text-lg font-semibold text-gray-200">
                     <span className="text-lime-400 font-bold">Step 2:</span> Remove Background
@@ -229,8 +220,7 @@ function ImageBackgroundToolPage() {
                   {isLoading ? 'Processing...' : 'Remove Background'}
                 </button>
               </div>
-
-              {/* Step 3: Customize (Appears after processing) */}
+              
 {processedImageUrl && (
     <div className="space-y-4 border-t border-gray-700 pt-4">
         <h3 className="text-lg font-semibold text-gray-200">
@@ -309,7 +299,6 @@ function ImageBackgroundToolPage() {
 </div>
             </div>
           
-          {/* Content Sections */}
           <div className="mt-24">
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">Why Our AI Background Remover Stands Out?</h2>
@@ -333,7 +322,6 @@ function ImageBackgroundToolPage() {
                   </div>
               </section>
 
-            {/* How to Use Section */}
 <section className="mt-20">
     <div className="text-center">
         <h2 className="text-3xl font-bold mb-4">Your Quick Guide to a Perfect Image Cutout</h2>
