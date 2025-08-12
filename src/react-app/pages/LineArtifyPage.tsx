@@ -290,7 +290,7 @@ a.click();
           <div className="mt-24">
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">The Smartest Way to Create Line Drawings</h2>
-                  <p className="max-w-3xl mx-auto text-gray-400 mb-12">LineArtify offers an unmatched free online tool for artists, designers, and enthusiasts to convert any picture into clean line art.</p>
+                  <p className="max-w-3xl mx-auto text-gray-400 mb-12">LineArtify offers a professional free online tool for artists, designers, and enthusiasts to convert any picture into clean line art.</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                       <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-cyan-400 mb-2">Instant & Free</h3><p className="text-gray-300">Convert unlimited images to line drawings online. No fees, no sign-up, just pure creative power.</p></div>
                       <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-cyan-400 mb-2">AI-Powered Precision</h3><p className="text-gray-300">Our advanced AI intelligently identifies and extracts the key lines from your photo for a crisp, clean result.</p></div>
