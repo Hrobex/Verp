@@ -1,14 +1,11 @@
-  // الملف: TextToSpeechPageArabic.tsx (النسخة الجديدة والآمنة)
 import { useState, useEffect, ChangeEvent } from 'react';
 
-// --- Type Definitions (تبقى كما هي) ---
 type Genders = { Male?: string[]; Female?: string[]; };
 type LanguageData = { code: string; name: string; genders: Genders; };
 type GenderKey = 'Male' | 'Female';
 
 // --- React Component ---
 function TextToSpeechPageArabic() {
-  // --- States ---
   const [text, setText] = useState('');
   const [selectedLanguageCode, setSelectedLanguageCode] = useState('ar-BH'); // Default to Bahrain
   const [selectedGender, setSelectedGender] = useState<GenderKey>('Female');
@@ -25,8 +22,6 @@ function TextToSpeechPageArabic() {
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   
-  // --- Effects ---
-  // جلب بيانات الأصوات والترجمة من الواجهة الخلفية
   useEffect(() => {
     const fetchVoicesData = async () => {
       try {
@@ -101,7 +96,6 @@ function TextToSpeechPageArabic() {
     formData.append('pitch', pitch.toString());
 
     try {
-      // استدعاء الواجهة الخلفية الآمنة لتوليد الصوت
       const response = await fetch('/api/tts-generate', { method: 'POST', body: formData });
       if (!response.ok) throw new Error('فشل توليد الصوت. قد تكون الخدمة مشغولة. الرجاء المحاولة مرة أخرى.');
       const audioBlob = await response.blob();
@@ -114,7 +108,6 @@ function TextToSpeechPageArabic() {
     }
   };
   
-  // --- FAQ and Utility Calculations (Can be dynamic) ---
   const totalVoices = voicesData.reduce((acc, lang) => acc + (lang.genders.Male?.length || 0) + (lang.genders.Female?.length || 0), 0);
   const totalLanguages = voicesData.length;
   
@@ -139,13 +132,9 @@ function TextToSpeechPageArabic() {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
             "name": "مولد الأصوات المجاني بالذكاء الاصطناعي",
+            "description": "أداة مجانية لتحويل النص إلى صوت بالذكاء الاصطناعي. تدعم أكثر من 100 لغة و 700 صوت طبيعي، مع إمكانية التحكم في سرعة الكلام ودرجة حدة الصوت.",
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "2150"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -160,7 +149,7 @@ function TextToSpeechPageArabic() {
           
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-400">
-              مولد الأصوات بالذكاء الاصطناعي
+              مولد الأصوات بالذكاء الاصطناعي مجانًا
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
               امنح نصوصك الحياة. حوّل أي كتابة إلى صوت طبيعي ومسموع باستخدام أداتنا المجانية التي تدعم مئات الأصوات واللغات واللهجات.
@@ -246,8 +235,7 @@ function TextToSpeechPageArabic() {
               )}
             </div>
           </div>
-
-          {/* Content Sections */}
+          
           <div className="mt-24">
               <section className="text-center">
     <h2 className="text-3xl font-bold mb-4">لماذا تختار مولد الأصوات الخاص بنا؟</h2>
