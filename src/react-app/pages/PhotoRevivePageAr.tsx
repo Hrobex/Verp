@@ -1,4 +1,26 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react';
+import imageCompression from 'browser-image-compression';
+
+async function processImageForRestoration(file: File): Promise<File> {
+  const MAX_ORIGINAL_SIZE_MB = 4;
+  if (file.size / 1024 / 1024 > MAX_ORIGINAL_SIZE_MB) {
+    throw new Error(`حجم الصورة يتجاوز ${MAX_ORIGINAL_SIZE_MB} ميجابايت.`);
+  }
+
+  const options = {
+    maxSizeMB: 1,
+    maxWidthOrHeight: 800,
+    useWebWorker: true,
+  };
+
+  try {
+    const processedFile = await imageCompression(file, options);
+    return processedFile;
+  } catch (error) {
+    console.error('Image processing failed:', error);
+    return file;
+  }
+}
 
 const faqData = [
   {
@@ -19,6 +41,14 @@ const faqData = [
   },
 ];
 
+const checkStatus = async (taskId: string) => {
+  const response = await fetch(`/api/check-status?taskId=${taskId}`);
+  if (!response.ok) {
+    throw new Error('Failed to check job status.');
+  }
+  return response.json();
+};
+
 function PhotoRevivePageAr() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -27,7 +57,66 @@ function PhotoRevivePageAr() {
   const [error, setError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const resultImageRef = useRef<HTMLImageElement>(null);
+
+  const [taskId, setTaskId] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const pollingIntervalRef = useRef<number | null>(null);
+
+  const genericErrorMessage = "واجه طلبك خطأ غير متوقع. يرجى الانتظار بضع ثوانٍ والمحاولة مرة أخرى.";
+
+  const cleanupPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    setTaskId(null);
+  };
+
+  useEffect(() => {
+    if (taskId) {
+      pollingIntervalRef.current = window.setInterval(async () => {
+        try {
+          const statusData = await checkStatus(taskId);
+          switch (statusData.status) {
+            case 'QUEUED':
+              setStatusMessage(`أنت في المرتبة #${statusData.queue_position} من ${statusData.queue_total} في قائمة الانتظار.`);
+              break;
+            case 'PROCESSING':
+              setStatusMessage('نعيد إحياء ذكرياتك...');
+              break;
+            case 'SUCCESS':
+              cleanupPolling();
+              const resultResponse = await fetch(`/api/get-result?taskId=${taskId}`);
+              if (!resultResponse.ok) {
+                  throw new Error('Failed to fetch the final image.');
+              }
+              const imageBlob = await resultResponse.blob();
+              const imageUrl = URL.createObjectURL(imageBlob);
+              setRestoredImage(imageUrl);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+            case 'FAILURE':
+              cleanupPolling();
+              setError(statusData.error || genericErrorMessage);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+          }
+        } catch (err) {
+          cleanupPolling();
+          setError(genericErrorMessage);
+          setIsLoading(false);
+          setStatusMessage('');
+        }
+      }, 3000);
+    }
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [taskId]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -35,6 +124,8 @@ function PhotoRevivePageAr() {
       setSelectedFile(file);
       setError(null);
       setRestoredImage(null);
+      setStatusMessage('');
+      cleanupPolling();
       const reader = new FileReader();
       reader.onloadend = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
@@ -50,40 +141,41 @@ function PhotoRevivePageAr() {
     setIsLoading(true);
     setError(null);
     setRestoredImage(null);
-
-    const formData = new FormData();
-    formData.append('file', selectedFile);
+    cleanupPolling();
+    setStatusMessage('جاري معالجة صورتك...');
 
     try {
-        const response = await fetch('/api/tools?tool=photo-restoration', {
-            method: 'POST',
-            body: formData,
-        });
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || 'فشل الخادم في معالجة الصورة.');
-        }
+      const processedFile = await processImageForRestoration(selectedFile);
+      const formData = new FormData();
+      formData.append('img', processedFile);
 
-        const result = await response.json();
-        
-        if (result.sketch_image_base64) {
-             setRestoredImage(result.sketch_image_base64);
-        } else {
-            throw new Error('لم يتمكن الذكاء الاصطناعي من معالجة الصورة. يرجى تجربة صورة مختلفة.');
-        }
+      const response = await fetch('/api/submit-job?tool=photo-restoration', {
+          method: 'POST',
+          body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to submit the job.');
+      }
+
+      const responseData = await response.json();
+      setTaskId(responseData.task_id);
 
     } catch (err: any) {
-      setError(err.message);
-    } finally {
+      if (err instanceof Error && err.message.includes('حجم الصورة يتجاوز')) {
+         setError('حجم الصورة كبير جدًا. يرجى رفع صورة أصغر من 4 ميجابايت.');
+      } else {
+         setError(genericErrorMessage);
+      }
       setIsLoading(false);
+      setStatusMessage('');
     }
   };
   
   const handleDownload = () => {
-    if (!resultImageRef.current?.src) return;
+    if (!restoredImage) return;
     const link = document.createElement('a');
-    link.href = resultImageRef.current.src;
+    link.href = restoredImage;
     link.download = `restored_photo_from_aiconvert.png`;
     document.body.appendChild(link);
     link.click();
@@ -149,14 +241,14 @@ function PhotoRevivePageAr() {
                   {isLoading && (
                     <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-lg">
                       <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-amber-500"></div>
-                      <p className="text-gray-300 mt-4">نعيد إحياء ذكرياتك...</p>
+                      <p className="text-gray-300 mt-4">{statusMessage}</p>
                     </div>
                   )}
                
                   {!isLoading && restoredImage && (
-                    <img ref={resultImageRef} src={restoredImage} alt="صورة قديمة بعد ترميمها بالذكاء الاصطناعي" className="max-w-full max-h-full object-contain rounded-md" />
+                    <img src={restoredImage} alt="صورة قديمة بعد ترميمها بالذكاء الاصطناعي" className="max-w-full max-h-full object-contain rounded-md" />
                   )}
-                   {!isLoading && !restoredImage && (
+                   {!isLoading && !restoredImage && !error && (
                    <div className="text-center text-gray-500">
                        <p>ستظهر هنا صورتك المرممة</p>
                    </div>
@@ -219,22 +311,10 @@ function PhotoRevivePageAr() {
                     أداة إصلاح الصور الخاصة بنا مدربة على فهم وإصلاح المشاكل الشائعة في الصور القديمة، من التلف المادي إلى تأثيرات الزمن.
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-amber-400 mb-2">إزالة الخدوش والتمزقات</h3>
-                          <p className="text-gray-300">قم بمحو الشقوق والخدوش والتجاعيد التي تشوه صور عائلتك الثمينة بذكاء وفعالية.</p>
-                      </div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-amber-400 mb-2">تحسين الجودة</h3>
-                          <p className="text-gray-300">حسّن الحدة والوضوح في الصور القديمة المشوشة أو الباهتة، لتكشف عن تفاصيل ظننت أنها فُقدت.</p>
-                      </div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-amber-400 mb-2">إصلاح الألوان الباهتة</h3>
-                          <p className="text-gray-300">أعد الحيوية للصور الفوتوغرافية الباهتة، وقم بتصحيح الألوان لتبدو جديدة ومشرقة كما كانت.</p>
-                      </div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-amber-400 mb-2">مجانًا وآمن</h3>
-                          <p className="text-gray-300">قم بترميم عدد غير محدود من الصور مجانًا. تتم معالجة صورك بأمان ولا يتم تخزينها أبدًا.</p>
-                      </div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-amber-400 mb-2">إزالة الخدوش والتمزقات</h3><p className="text-gray-300">قم بمحو الشقوق والخدوش والتجاعيد التي تشوه صور عائلتك الثمينة بذكاء وفعالية.</p></div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-amber-400 mb-2">تحسين الجودة</h3><p className="text-gray-300">حسّن الحدة والوضوح في الصور القديمة المشوشة أو الباهتة، لتكشف عن تفاصيل ظننت أنها فُقدت.</p></div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-amber-400 mb-2">إصلاح الألوان الباهتة</h3><p className="text-gray-300">أعد الحيوية للصور الفوتوغرافية الباهتة، وقم بتصحيح الألوان لتبدو جديدة ومشرقة كما كانت.</p></div>
+                      <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-amber-400 mb-2">مجانًا وآمن</h3><p className="text-gray-300">قم بترميم عدد غير محدود من الصور مجانًا. تتم معالجة صورك بأمان ولا يتم تخزينها أبدًا.</p></div>
                   </div>
               </section>
 
