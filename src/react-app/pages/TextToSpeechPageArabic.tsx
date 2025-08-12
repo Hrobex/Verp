@@ -157,34 +157,40 @@ function TextToSpeechPageArabic() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* Controls Column */}
-            <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-5">
-              
-              <div>
-                <label htmlFor="text-input" className="block text-sm font-medium text-gray-300 mb-2">1. أدخل النص هنا</label>
-                <div className="relative">
-                  <textarea
+    <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-5">
+        
+        <div>
+            <label htmlFor="text-input" className="block text-sm font-medium text-gray-300 mb-2">1. أدخل النص هنا</label>
+            <div className="relative">
+                <textarea
                     id="text-input" value={text} onChange={handleTextChange} placeholder="اكتب أو الصق النص الذي تريد تحويله..."
                     className="w-full h-40 p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
-                  />
-                  <p className="absolute bottom-2 left-3 text-xs text-gray-400">متبقي {1500 - text.length} حرف</p>
-                </div>
-              </div>
+                />
+                <p className="absolute bottom-2 left-3 text-xs text-gray-400">متبقي {1500 - text.length} حرف</p>
+            </div>
+        </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">2. اختر الصوت المفضل</label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <select id="language" value={selectedLanguageCode} onChange={(e) => setSelectedLanguageCode(e.target.value)} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500">
-                        {voicesData.map(lang => <option key={lang.code} value={lang.code}>{languageNamesArabic[lang.code] || lang.name}</option>)}
-                    </select>
-                    <select id="gender" value={selectedGender} onChange={handleGenderChange} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500" disabled={genders.length === 0}>
-                        {genders.map(gender => <option key={gender} value={gender}>{gender === 'Male' ? 'ذكر' : 'أنثى'}</option>)}
-                    </select>
-                    <select id="voice" value={selectedVoice} onChange={(e) => setSelectedVoice(e.target.value)} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500" disabled={voices.length === 0}>
-                       {voices.map(voice => <option key={voice} value={voice}>{voice.split('-').slice(2).join('-').replace('Neural', '')}</option>)}
-                    </select>
-                </div>
-              </div>
+        <div>
+            <div className="block text-sm font-medium text-gray-300 mb-2">2. اختر الصوت المفضل</div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                
+                <label htmlFor="language" className="sr-only">اختر اللغة</label>
+                <select id="language" value={selectedLanguageCode} onChange={(e) => setSelectedLanguageCode(e.target.value)} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500">
+                    {voicesData.map(lang => <option key={lang.code} value={lang.code}>{languageNamesArabic[lang.code] || lang.name}</option>)}
+                </select>
+                
+                <label htmlFor="gender" className="sr-only">اختر الجنس</label>
+                <select id="gender" value={selectedGender} onChange={handleGenderChange} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500" disabled={genders.length === 0}>
+                    {genders.map(gender => <option key={gender} value={gender}>{gender === 'Male' ? 'ذكر' : 'أنثى'}</option>)}
+                </select>
+                
+                <label htmlFor="voice" className="sr-only">اختر اسم الصوت</label>
+                <select id="voice" value={selectedVoice} onChange={(e) => setSelectedVoice(e.target.value)} className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500" disabled={voices.length === 0}>
+                    {voices.map(voice => <option key={voice} value={voice}>{voice.split('-').slice(2).join('-').replace('Neural', '')}</option>)}
+                </select>
+
+            </div>
+        </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">3. اضبط إعدادات الصوت</label>
