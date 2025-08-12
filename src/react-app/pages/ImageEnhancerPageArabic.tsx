@@ -1,6 +1,27 @@
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react';
+import imageCompression from 'browser-image-compression';
 
-// --- Data Constants ---
+async function processImageForEnhancement(file: File): Promise<File> {
+  const MAX_ORIGINAL_SIZE_MB = 2;
+  if (file.size / 1024 / 1024 > MAX_ORIGINAL_SIZE_MB) {
+    throw new Error(`حجم الصورة يتجاوز ${MAX_ORIGINAL_SIZE_MB} ميجابايت. يرجى رفع ملف أصغر.`);
+  }
+
+  const options = {
+    maxSizeMB: 1,
+    maxWidthOrHeight: 800,
+    useWebWorker: true,
+  };
+
+  try {
+    const processedFile = await imageCompression(file, options);
+    return processedFile;
+  } catch (error) {
+    console.error('Image processing failed:', error);
+    return file;
+  }
+}
+
 const versions = ['v1.4', 'v2.1', 'v3.0'];
 const scales = [2, 4];
 
@@ -23,11 +44,18 @@ const faqData = [
   },
 ];
 
-// --- React Component ---
+const checkStatus = async (taskId: string) => {
+  const response = await fetch(`/api/check-status?taskId=${taskId}`);
+  if (!response.ok) {
+    throw new Error('Failed to check job status.');
+  }
+  return response.json();
+};
+
 function ImageEnhancerPageArabic() {
-  const [originalFile, setOriginalFile] = useState<File | null>(null);
-  const [originalPreviewUrl, setOriginalPreviewUrl] = useState<string | null>(null);
-  const [enhancedImageUrl, setEnhancedImageUrl] = useState<string | null>(null);
+  const [originalFile, setOriginalFile] useState<File | null>(null);
+  const [originalPreviewUrl, setOriginalPreviewUrl] useState<string | null>(null);
+  const [enhancedImageUrl, setEnhancedImageUrl] useState<string | null>(null);
 
   const [selectedVersion, setSelectedVersion] = useState(versions[0]);
   const [selectedScale, setSelectedScale] = useState(scales[0]);
@@ -37,13 +65,74 @@ function ImageEnhancerPageArabic() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [taskId, setTaskId] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const pollingIntervalRef = useRef<number | null>(null);
+
+  const genericErrorMessage = "واجه طلبك خطأ غير متوقع. يرجى الانتظار بضع ثوانٍ والمحاولة مرة أخرى.";
+
+  const cleanupPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    setTaskId(null);
+  };
+
+  useEffect(() => {
+    if (taskId) {
+      pollingIntervalRef.current = window.setInterval(async () => {
+        try {
+          const statusData = await checkStatus(taskId);
+          switch (statusData.status) {
+            case 'QUEUED':
+              setStatusMessage(`أنت في المرتبة #${statusData.queue_position} من ${statusData.queue_total} في قائمة الانتظار.`);
+              break;
+            case 'PROCESSING':
+              setStatusMessage('الذكاء الاصطناعي يقوم بزيادة حدة التفاصيل...');
+              break;
+            case 'SUCCESS':
+              cleanupPolling();
+              const resultResponse = await fetch(`/api/get-result?taskId=${taskId}`);
+              if (!resultResponse.ok) {
+                  throw new Error('Failed to fetch the final image.');
+              }
+              const imageBlob = await resultResponse.blob();
+              const imageUrl = URL.createObjectURL(imageBlob);
+              setEnhancedImageUrl(imageUrl);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+            case 'FAILURE':
+              cleanupPolling();
+              setError(statusData.error || genericErrorMessage);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+          }
+        } catch (err) {
+          cleanupPolling();
+          setError(genericErrorMessage);
+          setIsLoading(false);
+          setStatusMessage('');
+        }
+      }, 3000);
+    }
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [taskId]);
+  
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setOriginalFile(file);
       setEnhancedImageUrl(null);
       setError(null);
-      
+      setStatusMessage('');
+      cleanupPolling();
       const reader = new FileReader();
       reader.onloadend = () => {
         setOriginalPreviewUrl(reader.result as string);
@@ -57,36 +146,40 @@ function ImageEnhancerPageArabic() {
       setError('الرجاء رفع صورة أولاً.');
       return;
     }
+    
     setIsLoading(true);
     setError(null);
     setEnhancedImageUrl(null);
-
-    const formData = new FormData();
-    formData.append('file', originalFile);
-    formData.append('version', selectedVersion);
-    formData.append('scale', selectedScale.toString());
+    cleanupPolling();
+    setStatusMessage('جاري معالجة صورتك...');
 
     try {
-      const response = await fetch('/api/tools?tool=image-enhancer', {
+      const processedFile = await processImageForEnhancement(originalFile);
+
+      const formData = new FormData();
+      formData.append('img', processedFile);
+      formData.append('version', selectedVersion);
+
+      const response = await fetch('/api/submit-job?tool=enhancer', {
         method: 'POST',
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error('فشل تحسين الصورة. قد يكون الخادم مشغولاً. الرجاء المحاولة مرة أخرى لاحقًا.');
+        throw new Error('Failed to submit the job.');
       }
-      
-      const data = await response.json();
-      if (data.sketch_image_base64) {
-        setEnhancedImageUrl(data.sketch_image_base64);
-      } else {
-        throw new Error('لم يقم الخادم بإرجاع صورة محسنة.');
-      }
+        
+      const responseData = await response.json();
+      setTaskId(responseData.task_id);
 
     } catch (err: any) {
-      setError(err.message || 'حدث خطأ غير معروف.');
-    } finally {
+      if (err instanceof Error && err.message.includes('حجم الصورة يتجاوز')) {
+         setError('حجم الصورة كبير جدًا. يرجى رفع صورة أصغر من 2 ميجابايت.');
+      } else {
+         setError(genericErrorMessage);
+      }
       setIsLoading(false);
+      setStatusMessage('');
     }
   };
 
@@ -102,7 +195,6 @@ function ImageEnhancerPageArabic() {
         {`
           {
             "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
             "name": "EnhanceX AI محسن الصور",
             "description": "أداة مجانية تعمل بالذكاء الاصطناعي لتحسين جودة الصور، ورفع دقتها حتى 4x، وزيادة حدة التفاصيل، وتقليل التشويش باستخدام نماذج متقدمة.",
             "operatingSystem": "WEB",
@@ -129,7 +221,6 @@ function ImageEnhancerPageArabic() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* Controls Column */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
               <h2 className="sr-only">أداة تحسين جودة الصور</h2>
               
@@ -175,12 +266,11 @@ function ImageEnhancerPageArabic() {
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
 
-            {/* Output Column with Before/After */}
             <div className="bg-gray-800 p-4 rounded-2xl shadow-lg flex flex-col justify-center items-center relative">
               {isLoading && (
                   <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-2xl">
                     <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-500"></div>
-                    <p className="text-gray-300 mt-4">الذكاء الاصطناعي يقوم بزيادة حدة التفاصيل...</p>
+                    <p className="text-gray-300 mt-4">{statusMessage}</p>
                   </div>
               )}
               
@@ -207,102 +297,14 @@ function ImageEnhancerPageArabic() {
             </div>
           </div>
 
-          {/* Content Sections */}
           <div className="mt-24">
-              <section className="text-center">
-                  <h2 className="text-3xl font-bold mb-4">ارفع دقة صورك وأزل التشويش بالذكاء الاصطناعي</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-cyan-400 mb-2">زيادة دقة الصور</h3>
-                          <p className="text-gray-300">انقل صورك من الدقة المنخفضة إلى العالية. قم بزيادة دقة الصور بمعامل 2x أو 4x، مما يجعلها مثالية للطباعة أو الويب.</p>
-                      </div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-cyan-400 mb-2">زيادة حدة التفاصيل</h3>
-                          <p className="text-gray-300">يعمل الذكاء الاصطناعي بذكاء على تحسين التفاصيل، مما يضفي وضوحًا على الوجوه غير الواضحة، والأنسجة، والخطوط الدقيقة في أي صورة.</p>
-                      </div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-cyan-400 mb-2">تقليل التشويش والضبابية</h3>
-                          <p className="text-gray-300">قم بتنظيف عيوب ضغط الصور والتشويش الرقمي تلقائيًا لإنتاج صورة أكثر نعومة ونقاء.</p>
-                      </div>
-                      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold text-cyan-400 mb-2">مجاني وأونلاين</h3>
-                          <p className="text-gray-300">يمكنك تحسين جودة صورتك مباشرة في متصفحك. لا حاجة لتثبيت برامج، ولا يلزم التسجيل، ومجاني تمامًا.</p>
-                      </div>
-                  </div>
-              </section>
+              <section className="text-center"><h2 className="text-3xl font-bold mb-4">ارفع دقة صورك وأزل التشويش بالذكاء الاصطناعي</h2><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12"><div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-cyan-400 mb-2">زيادة دقة الصور</h3><p className="text-gray-300">انقل صورك من الدقة المنخفضة إلى العالية. قم بزيادة دقة الصور بمعامل 2x أو 4x، مما يجعلها مثالية للطباعة أو الويب.</p></div><div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-cyan-400 mb-2">زيادة حدة التفاصيل</h3><p className="text-gray-300">يعمل الذكاء الاصطناعي بذكاء على تحسين التفاصيل، مما يضفي وضوحًا على الوجوه غير الواضحة، والأنسجة، والخطوط الدقيقة في أي صورة.</p></div><div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-cyan-400 mb-2">تقليل التشويش والضبابية</h3><p className="text-gray-300">قم بتنظيف عيوب ضغط الصور والتشويش الرقمي تلقائيًا لإنتاج صورة أكثر نعومة ونقاء.</p></div><div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-cyan-400 mb-2">مجاني وأونلاين</h3><p className="text-gray-300">يمكنك تحسين جودة صورتك مباشرة في متصفحك. لا حاجة لتثبيت برامج، ولا يلزم التسجيل، ومجاني تمامًا.</p></div></div></section>
 
-            <section className="mt-20">
-                <div className="text-center">
-                    <h2 className="text-3xl font-bold mb-4">كيف تعمل أداة تحسين جودة الصور</h2>
-                    <p className="max-w-3xl mx-auto text-gray-400 mb-12">
-                        لم يكن تحسين صورك أسهل من أي وقت مضى. تعمل أداتنا على تبسيط العملية إلى ثلاث خطوات مباشرة للحصول على نتيجة احترافية في كل مرة.
-                    </p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-right">
-                    <div className="bg-gray-800/50 p-6 rounded-lg">
-                        <p className="text-cyan-400 font-bold text-lg mb-2">1. ارفع صورتك</p>
-                        <p className="text-gray-300">
-                           انقر على منطقة الرفع واختر الصورة التي ترغب في تحسينها. يمكن أن تكون صورة ضبابية، أو أيقونة صغيرة، أو أي صورة تحتاج إلى رفع جودتها.
-                        </p>
-                    </div>
-                    <div className="bg-gray-800/50 p-6 rounded-lg">
-                        <p className="text-cyan-400 font-bold text-lg mb-2">2. اختر خياراتك</p>
-                        <p className="text-gray-300">
-                            اختر إصدار نموذج الذكاء الاصطناعي وحدد معامل التكبير المطلوب (2x أو 4x) لتحديد الدقة النهائية لصورتك.
-                        </p>
-                    </div>
-                    <div className="bg-gray-800/50 p-6 rounded-lg">
-                        <p className="text-cyan-400 font-bold text-lg mb-2">3. حسّن وحمّل</p>
-                        <p className="text-gray-300">
-                           اضغط على زر "تحسين الصورة" ودع الذكاء الاصطناعي يقوم بسحره. قارن النتيجة وقم بتنزيل صورتك الجديدة عالية الجودة.
-                        </p>
-                    </div>
-                </div>
-            </section>
+            <section className="mt-20"><div className="text-center"><h2 className="text-3xl font-bold mb-4">كيف تعمل أداة تحسين جودة الصور</h2><p className="max-w-3xl mx-auto text-gray-400 mb-12">لم يكن تحسين صورك أسهل من أي وقت مضى. تعمل أداتنا على تبسيط العملية إلى ثلاث خطوات مباشرة للحصول على نتيجة احترافية في كل مرة.</p></div><div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-right"><div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-cyan-400 font-bold text-lg mb-2">1. ارفع صورتك</p><p className="text-gray-300">انقر على منطقة الرفع واختر الصورة التي ترغب في تحسينها. يمكن أن تكون صورة ضبابية، أو أيقونة صغيرة، أو أي صورة تحتاج إلى رفع جودتها.</p></div><div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-cyan-400 font-bold text-lg mb-2">2. اختر خياراتك</p><p className="text-gray-300">اختر إصدار نموذج الذكاء الاصطناعي وحدد معامل التكبير المطلوب (2x أو 4x) لتحديد الدقة النهائية لصورتك.</p></div><div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-cyan-400 font-bold text-lg mb-2">3. حسّن وحمّل</p><p className="text-gray-300">اضغط على زر "تحسين الصورة" ودع الذكاء الاصطناعي يقوم بسحره. قارن النتيجة وقم بتنزيل صورتك الجديدة عالية الجودة.</p></div></div></section>
 
-            <section className="mt-20">
-                <div className="text-center">
-                    <h2 className="text-3xl font-bold mb-4">اختر نموذج الذكاء الاصطناعي المناسب لصورتك</h2>
-                    <p className="max-w-3xl mx-auto text-gray-400 mb-12">
-                        أداتنا مدعومة بإصدارات من نموذج <strong>GFPGAN</strong> المشهور، وهو ذكاء اصطناعي مصمم خصيصًا لترميم الصور وتحسينها بشكل مذهل. يقدم كل إصدار مستوى مختلفًا من التحسين لمنحك أفضل نتيجة لاحتياجاتك الخاصة. إليك دليل سريع:
-                    </p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-right">
-                    <div className="bg-gray-800/50 p-6 rounded-lg">
-                        <p className="text-cyan-400 font-bold text-lg mb-2">نموذج v1.4 (الوضوح والوجوه)</p>
-                        <p className="text-gray-300">
-                            هذا الإصدار ممتاز للتحسين العام. يركز على زيادة وضوح الصورة بشكل كبير وهو فعال بشكل خاص في استعادة تفاصيل ملامح الوجه، مما يجعله نقطة انطلاق رائعة للصور الشخصية وصور وسائل التواصل الاجتماعي.
-                        </p>
-                    </div>
-                    <div className="bg-gray-800/50 p-6 rounded-lg">
-                        <p className="text-cyan-400 font-bold text-lg mb-2">نموذج v2.1 (تحسين التفاصيل)</p>
-                        <p className="text-gray-300">
-                            بناءً على الإصدار السابق، يدمج هذا النموذج تقنيات أكثر تقدمًا لزيادة التفاصيل الدقيقة والأنسجة في الصورة بأكملها. اختر هذا الخيار لتحسين أكثر شمولاً يعالج العنصر الرئيسي ومحيطه.
-                        </p>
-                    </div>
-                    <div className="bg-gray-800/50 p-6 rounded-lg">
-                        <p className="text-cyan-400 font-bold text-lg mb-2">نموذج v3.0 (الجودة القصوى والدقة)</p>
-                        <p className="text-gray-300">
-                            هذا هو أحدث وأقوى نماذجنا. يستخدم أحدث التحسينات في تقنيات المعالجة، مما يوفر جودة صورة فائقة، وصقلًا دقيقًا للتفاصيل، وأفضل تقليل للتشويش. إنه الخيار الأمثل للأعمال الاحترافية أو الطباعة.
-                        </p>
-                    </div>
-                </div>
-                <p className="text-center text-gray-400 mt-8">
-                    <strong>توصيتنا:</strong> ابدأ بنموذج <strong>v2.1</strong> لتحقيق توازن رائع بين التفاصيل والأداء. للحصول على نتائج احترافية أو استعادة الصور القديمة الثمينة، سيوفر نموذج <strong>v3.0</strong> أعلى جودة.
-                </p>
-            </section>
+            <section className="mt-20"><div className="text-center"><h2 className="text-3xl font-bold mb-4">اختر نموذج الذكاء الاصطناعي المناسب لصورتك</h2><p className="max-w-3xl mx-auto text-gray-400 mb-12">أداتنا مدعومة بإصدارات من نموذج <strong>GFPGAN</strong> المشهور، وهو ذكاء اصطناعي مصمم خصيصًا لترميم الصور وتحسينها بشكل مذهل. يقدم كل إصدار مستوى مختلفًا من التحسين لمنحك أفضل نتيجة لاحتياجاتك الخاصة. إليك دليل سريع:</p></div><div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-right"><div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-cyan-400 font-bold text-lg mb-2">نموذج v1.4 (الوضوح والوجوه)</p><p className="text-gray-300">هذا الإصدار ممتاز للتحسين العام. يركز على زيادة وضوح الصورة بشكل كبير وهو فعال بشكل خاص في استعادة تفاصيل ملامح الوجه، مما يجعله نقطة انطلاق رائعة للصور الشخصية وصور وسائل التواصل الاجتماعي.</p></div><div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-cyan-400 font-bold text-lg mb-2">نموذج v2.1 (تحسين التفاصيل)</p><p className="text-gray-300">بناءً على الإصدار السابق، يدمج هذا النموذج تقنيات أكثر تقدمًا لزيادة التفاصيل الدقيقة والأنسجة في الصورة بأكملها. اختر هذا الخيار لتحسين أكثر شمولاً يعالج العنصر الرئيسي ومحيطه.</p></div><div className="bg-gray-800/50 p-6 rounded-lg"><p className="text-cyan-400 font-bold text-lg mb-2">نموذج v3.0 (الجودة القصوى والدقة)</p><p className="text-gray-300">هذا هو أحدث وأقوى نماذجنا. يستخدم أحدث التحسينات في تقنيات المعالجة، مما يوفر جودة صورة فائقة، وصقلًا دقيقًا للتفاصيل، وأفضل تقليل للتشويش. إنه الخيار الأمثل للأعمال الاحترافية أو الطباعة.</p></div></div><p className="text-center text-gray-400 mt-8"><strong>توصيتنا:</strong> ابدأ بنموذج <strong>v2.1</strong> لتحقيق توازن رائع بين التفاصيل والأداء. للحصول على نتائج احترافية أو استعادة الصور القديمة الثمينة، سيوفر نموذج <strong>v3.0</strong> أعلى جودة.</p></section>
             
-              <section className="mt-20 max-w-4xl mx-auto">
-                  <h2 className="text-3xl font-bold text-center mb-10">الأسئلة الشائعة</h2>
-                  <div className="space-y-6">
-                      {faqData.map((faq, index) => (
-                          <div key={index} className="bg-gray-800 p-6 rounded-lg">
-                              <h3 className="font-bold text-lg text-cyan-400 mb-2">{faq.question}</h3>
-                              <div className="text-gray-300 leading-relaxed">{faq.answer}</div>
-                          </div>
-                      ))}
-                  </div>
-              </section>
+              <section className="mt-20 max-w-4xl mx-auto"><h2 className="text-3xl font-bold text-center mb-10">الأسئلة الشائعة</h2><div className="space-y-6">{faqData.map((faq, index) => (<div key={index} className="bg-gray-800 p-6 rounded-lg"><h3 className="font-bold text-lg text-cyan-400 mb-2">{faq.question}</h3><div className="text-gray-300 leading-relaxed">{faq.answer}</div></div>))}</div></section>
           </div>
         </main>
       </div>
