@@ -1,7 +1,5 @@
-// الملف: ColorifyProPageArabic.tsx
 import { useState, useRef, ChangeEvent } from 'react';
 
-// --- بيانات الأسئلة الشائعة (مُحسّنة للسيو باللغة العربية) ---
 const faqData = [
     {
         question: 'كيف يضيف الذكاء الاصطناعي الألوان للصور الأبيض والأسود؟',
@@ -21,7 +19,6 @@ const faqData = [
     },
 ];
 
-// --- وظيفة ضغط الصور (تُنفذ في المتصفح) ---
 const compressImage = (file: File): Promise<Blob> => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -134,8 +131,8 @@ function ColorifyProPageArabic() {
 
   return (
     <>
-      <title>تلوين الصور بالذكاء الاصطناعي | أداة مجانية لتلوين الصور القديمة</title>
-      <meta name="description" content="أعد الحياة إلى صورك القديمة بالأبيض والأسود مع أداة تلوين الصور المجانية بالذكاء الاصطناعي. أضف ألوانًا واقعية تلقائيًا للصور القديمة والتاريخية أونلاين في ثوانٍ. لا يتطلب التسجيل." />
+      <title>تلوين الصور بالذكاء الاصطناعي أونلاين مجانًا</title>
+      <meta name="description" content="أعد الحياة إلى صورك القديمة بالأبيض والأسود مع أداة تلوين الصور بالذكاء الاصطناعي. أضف ألوانًا واقعية تلقائيًا أونلاين مجانًا في ثوانٍ." />
       <link rel="canonical" href="https://aiconvert.online/ar/ai-photo-colorizer" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/ai-photo-colorizer" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-photo-colorizer" />
@@ -146,13 +143,8 @@ function ColorifyProPageArabic() {
             "@context": "https://schema.org",
             "name": "تلوين الصور بالذكاء الاصطناعي",
             "operatingSystem": "WEB",
-            "applicationCategory": "MultimediaApplication",
+            "applicationCategory": "ImageProcessingApplication",
             "description": "أداة مجانية عبر الإنترنت تستخدم الذكاء الاصطناعي لتلوين الصور الفوتوغرافية بالأبيض والأسود، السيبيا، والقديمة تلقائيًا.",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "6550"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -167,7 +159,7 @@ function ColorifyProPageArabic() {
 
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-green-500">
-              أعد الحياة إلى ذكرياتك بالألوان
+              تلوين الصور بالذكاء الاصطناعي | أعد الحياة إلى ذكرياتك بالألوان
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
               أضف فورًا ألوانًا واقعية ونابضة بالحياة إلى صورك القديمة بالأبيض والأسود. أداتنا المجانية بالذكاء الاصطناعي تلون الصور تلقائيًا بنقرة واحدة فقط.
