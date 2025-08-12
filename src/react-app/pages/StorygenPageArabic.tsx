@@ -1,7 +1,5 @@
-// الملف: StorygenPageArabic.tsx (النسخة الجديدة والآمنة)
 import { useState, useRef, useEffect } from 'react';
 
-// --- الثوابت العامة (آمنة) ---
 const languageOptions = [
     { code: 'ar', name: 'العربية' },
     { code: 'en', name: 'English' },
@@ -34,7 +32,6 @@ const faqDataArabic = [
   },
 ];
 
-// --- دالة مساعدة لتحويل الصورة إلى Base64 ---
 async function fileToBase64(file: File): Promise<string> {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -131,7 +128,7 @@ function StorygenPageArabic() {
   return (
     <>
       <title>مولد قصص بالذكاء الاصطناعي من الصور | تحويل الصورة إلى قصة</title>
-      <meta name="description" content="حوّل أي صورة إلى قصة آسرة! أداة Storygen المجانية، صانع القصص بالذكاء الاصطناعي، تحلل صورتك وتكتب لك حكاية فريدة ومبتكرة في ثوانٍ." />
+      <meta name="description" content="حوّل أي صورة إلى قصة عربية آسرة! أداة Storygen المجانية، صانع القصص بالذكاء الاصطناعي، تحلل صورتك وتكتب لك حكاية فريدة ومبتكرة في ثوانٍ." />
       <link rel="canonical" href="https://aiconvert.online/ar/ai-story-generator" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-story-generator" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/ai-story-generator" />
@@ -142,13 +139,9 @@ function StorygenPageArabic() {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
             "name": "Storygen: مولد قصص بالذكاء الاصطناعي",
+            "description": "أداة مجانية تعمل بالذكاء الاصطناعي تقوم بتحليل الصور لنسج قصص وحكايات فريدة ومبتكرة.",
             "operatingSystem": "WEB",
             "applicationCategory": "ProductivityApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "ratingCount": "2158"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -164,7 +157,7 @@ function StorygenPageArabic() {
           
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-500">
-              Storygen: مولد القصص بالذكاء الاصطناعي
+               Storygen: مولد القصص بالذكاء الاصطناعي مجانًا
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
               كل صورة تخفي وراءها حكاية. ارفع أي لقطة ودع كاتبنا الذكي ينسج لك قصة فريدة من وحي صورتك.
@@ -236,7 +229,6 @@ function StorygenPageArabic() {
             </div>
           </div>
 
-          {/* أقسام المحتوى */}
           <div className="mt-24">
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">حوّل أي مشهد إلى سرد قصصي حي</h2>
