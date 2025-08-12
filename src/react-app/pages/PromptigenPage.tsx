@@ -1,8 +1,4 @@
-// الملف: PromptigenPage.tsx (النسخة الجديدة والآمنة)
-
 import { useState, useRef, useEffect } from 'react';
-
-// تم حذف كل الثوابت الحساسة (API_KEY, MODEL_FALLBACK_CHAIN, SCRIPT_URL)
 
 const faqData = [
   {
@@ -23,13 +19,11 @@ const faqData = [
   },
 ];
 
-// دالة مساعدة جديدة لتحويل الصورة إلى صيغة Base64 لإرسالها للواجهة الخلفية
 async function convertFileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      // نزيل الجزء الأول من النص "data:image/png;base64," لنرسل البيانات الخام فقط
       const base64String = (reader.result as string).split(',')[1];
       resolve(base64String);
     };
@@ -37,10 +31,7 @@ async function convertFileToBase64(file: File): Promise<string> {
   });
 }
 
-
 function PromptigenPage() {
-  // --- حالات الواجهة الرسومية والبيانات (معظمها يبقى كما هو) ---
-  // تم حذف `isAiReady` لأن تهيئة الذكاء الاصطناعي لم تعد تتم هنا
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
@@ -49,12 +40,7 @@ function PromptigenPage() {
   const [loadingText, setLoadingText] = useState('The AI is analyzing the image...');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  // تم حذف المراجع الخاصة بالذكاء الاصطناعي (genAiInstanceRef, aiModuleRef)
 
-  // --- التأثير الجانبي لتهيئة الذكاء الاصطناعي ---
-  // تم حذف هذا التأثير الجانبي بالكامل، لم يعد ضرورياً
-  
-  // --- التأثير الجانبي لنص التحميل الديناميكي (يبقى كما هو) ---
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isLoading) {
@@ -69,7 +55,6 @@ function PromptigenPage() {
     return () => clearInterval(interval);
   }, [isLoading]);
 
-  // دالة التعامل مع تغيير الملف (تبقى كما هي)
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -78,7 +63,7 @@ function PromptigenPage() {
         return;
       }
       setSelectedFile(file);
-      setGeneratedPrompt(''); // إفراغ النتيجة القديمة عند اختيار صورة جديدة
+      setGeneratedPrompt(''); 
       setError(null);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -87,8 +72,7 @@ function PromptigenPage() {
       reader.readAsDataURL(file);
     }
   };
-
-  // --- منطق توليد الوصف الجديد والمبسط ---
+  
   const handleGeneratePrompt = async () => {
     if (!selectedFile) {
       setError('Please upload an image first.');
@@ -100,16 +84,14 @@ function PromptigenPage() {
     setGeneratedPrompt('');
 
     try {
-      // 1. تحويل الصورة إلى نص Base64
       const imageData = await convertFileToBase64(selectedFile);
 
-      // 2. إرسال الطلب إلى الواجهة الخلفية الآمنة
       const response = await fetch('/api/generate-prompt', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        // نرسل بيانات الصورة ونوعها فقط
+
         body: JSON.stringify({ 
           imageData: imageData, 
           mimeType: selectedFile.type 
@@ -119,44 +101,37 @@ function PromptigenPage() {
       const result = await response.json();
 
       if (!response.ok) {
-        // عرض رسالة الخطأ القادمة من الواجهة الخلفية
         throw new Error(result.error || 'An unknown error occurred.');
       }
 
-      // 3. عرض النتيجة للمستخدم
       setGeneratedPrompt(result.generatedPrompt);
 
     } catch (err: any) {
       setError(err.message);
       console.error("Frontend Error:", err);
     } finally {
-      // 4. إيقاف التحميل دائماً
       setIsLoading(false);
     }
   };
 
-  // دالة نسخ الوصف (تبقى كما هي)
   const handleCopyPrompt = () => {
     if (!generatedPrompt) return;
     navigator.clipboard.writeText(generatedPrompt).then(() => {
-        // يمكنك إضافة رسالة نجاح هنا إذا أردت
     }).catch(err => {
       console.error('Failed to copy prompt:', err);
       setError('Failed to copy prompt to clipboard.');
     });
   };
 
-  // دالة نص الزر (تم تبسيطها)
   const getButtonText = () => {
     if (isLoading) return 'Analyzing Image...';
     return 'Generate Prompt';
   };
 
   return (
-    // واجهة المستخدم بالكامل تبقى كما هي بدون أي تغيير في الشكل أو التصميم
     <>
-      <title>Free AI Image to Prompt Generator | Reverse Prompt Finder - Promptigen</title>
-      <meta name="description" content="Turn any image into a masterpiece prompt! Promptigen is a free AI tool that analyzes your picture and generates detailed, creative text prompts for Midjourney, Stable Diffusion, and more." />
+      <title>Free AI Image to Prompt Generator | Promptigen</title>
+      <meta name="description" content="Turn any image into a detailed text prompt for Midjourney, Stable Diffusion & more. Our free AI reverse prompt finder analyzes pictures instantly." />
       <link rel="canonical" href="https://aiconvert.online/prompt-generator" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/prompt-generator" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/prompt-generator" />
@@ -167,13 +142,9 @@ function PromptigenPage() {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
             "name": "Promptigen AI Image to Prompt Generator",
+            "description": "A free AI tool that reverse-engineers images into detailed text prompts for AI art generators like Midjourney and Stable Diffusion.",
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "954"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -188,7 +159,7 @@ function PromptigenPage() {
           
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-violet-500">
-              Promptigen: AI Image to Prompt Generator
+              Promptigen: Free AI Image to Prompt Generator
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
               Unlock the perfect words. Upload any image and our AI will reverse-engineer a detailed, creative prompt for generators like Midjourney & Stable Diffusion.
