@@ -1,4 +1,4 @@
-import { useState, useRef, ChangeEvent, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import imageCompression from 'browser-image-compression';
 
 async function processImageForRestoration(file: File): Promise<File> {
@@ -273,7 +273,7 @@ function PhotoRevivePage() {
                 </div>
                 {restoredImage && !isLoading && (
                  <button
-                    onClick={() => { if(restoredImage) { const link = document.createElement('a'); link.href = restoredImage; link.download = `restored_photo_from_aiconvert.png`; link.click(); } }}
+                    onClick={handleDownload}
                     className="w-full sm:w-auto py-3 px-8 text-lg font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all"
                   >
                     Download Restored Photo
