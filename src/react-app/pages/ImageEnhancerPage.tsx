@@ -1,7 +1,5 @@
-// الملف: ImageEnhancerPage.tsx (النسخة الجديدة والآمنة)
 import { useState, useRef, ChangeEvent } from 'react';
 
-// --- Data Constants ---
 const versions = ['v1.4', 'v2.1', 'v3.0'];
 const scales = [2, 4];
 
@@ -68,7 +66,6 @@ function ImageEnhancerPage() {
     formData.append('scale', selectedScale.toString());
 
     try {
-      // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
       const response = await fetch('/api/tools?tool=image-enhancer', {
         method: 'POST',
         body: formData,
@@ -95,7 +92,7 @@ function ImageEnhancerPage() {
   return (
     <>
       <title>Free AI Image Enhancer & Photo Upscaler | Improve Quality Online</title>
-      <meta name="description" content="Instantly improve image quality with EnhanceX AI. Our free online photo enhancer and upscaler sharpens details, removes noise, and increases resolution up to 4x." />
+      <meta name="description" content="Instantly improve image quality with EnhanceX AI. Our free online photo enhancer and upscaler sharpens details, removes noise. No sign-up required." />
       <link rel="canonical" href="https://aiconvert.online/ai-image-enhancer" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/ai-image-enhancer" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-image-enhancer" />
@@ -106,13 +103,9 @@ function ImageEnhancerPage() {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
             "name": "EnhanceX AI Image Enhancer",
+            "description": "A free AI-powered tool to enhance image quality, increase resolution up to 4x, sharpen details, and reduce noise using advanced models.",
             "operatingSystem": "WEB",
-            "applicationCategory": "MultimediaApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "ratingCount": "1890"
-            },
+            "applicationCategory": "ImageProcessingApplication",
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -127,7 +120,7 @@ function ImageEnhancerPage() {
           
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">
-              EnhanceX AI: Free Image Enhancer
+              EnhanceX AI: Free Online Image Enhancer
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
               Turn your blurry, low-resolution photos into sharp, high-quality images. Upscale and enhance your pictures with the power of AI in a single click.
