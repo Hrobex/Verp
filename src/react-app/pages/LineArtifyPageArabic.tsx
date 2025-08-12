@@ -23,10 +23,10 @@ const ImageUploadBox = ({ title, imageSrc, onFileChange, onDrop, onDragOver }: {
           {imageSrc ? (
             <img src={imageSrc} alt="معاينة الصورة المرفوعة" className="max-w-full max-h-full object-contain rounded-md" />
           ) : (
-            <div className="text-center text-gray-500">
+            <div className="text-center text-gray-400">
               <p>اسحب وأفلت صورتك هنا</p>
               <p className="my-2">أو</p>
-              <p className="bg-gray-700 px-4 py-2 rounded-md">انقر لاختيار ملف</p>
+              <p className="bg-gray-700 text-gray-200 px-4 py-2 rounded-md">انقر لاختيار ملف</p>
             </div>
           )}
           <input id={inputId} type="file" className="hidden" accept="image/*" onChange={onFileChange} />
@@ -45,7 +45,7 @@ const faqData = [
         question: 'ما الفرق بين LineArtify و ArtifyPro؟',
         answer: (
             <>
-                كلا الأداتين تقدمان نتائج فنية مذهلة، لكنهما تخدمان أغراضًا مختلفة. 
+                كلا الأداتين تقدمان نتائج فنية مذهلة، لكنهما تخدمان أغراضًا مختلفة.
                 أداة <strong>LineArtify</strong> تتخصص في استخراج الخطوط الأساسية من صورتك لإنتاج <strong>رسم رصاص</strong> واضح ونقي، وهو مثالي لتصميمات الشعارات، صفحات التلوين، أو أي مشروع يتطلب خطوطًا محددة.
                 بينما أداة <Link to="/ar/image-to-sketch" className="text-cyan-400 underline">ArtifyPro</Link> مصممة لإنشاء <strong>اسكتش فني</strong> متكامل يحاكي الرسم اليدوي، مع تظليل غني وتفاصيل دقيقة لإعطاء انطباع فني أعمق وأكثر واقعية.
             </>
@@ -235,6 +235,7 @@ function LineArtifyPageArabic() {
             </p>
           </div>
           <div className="bg-gray-800/50 p-6 sm:p-8 rounded-2xl shadow-lg">
+            <h2 className="sr-only">أداة تحويل الصور إلى رسم رصاص</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <ImageUploadBox
                 title="الصورة الأصلية"
@@ -253,7 +254,7 @@ function LineArtifyPageArabic() {
                     </div>
                   )}
                   {!isLoading && !resultImage && (
-                    <p className="text-center text-gray-500">سيظهر رسم الرصاص الخاص بك هنا</p>
+                    <p className="text-center text-gray-400">سيظهر رسم الرصاص الخاص بك هنا</p>
                   )}
                   {resultImage && !isLoading && (
                     <img src={resultImage} alt="صورة تم تحويلها الى رسم بالرصاص" className="max-w-full max-h-full object-contain rounded-md" />
@@ -290,7 +291,7 @@ function LineArtifyPageArabic() {
           <div className="mt-24">
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">الطريقة الأذكى لإنشاء رسومات بالرصاص</h2>
-                  <p className="max-w-3xl mx-auto text-gray-400 mb-12">تقدم LineArtify أداة مجانية لا مثيل لها عبر الإنترنت للفنانين والمصممين والهواة لتحويل أي صورة إلى رسم رصاص احترافي.</p>
+                  <p className="max-w-3xl mx-auto text-gray-400 mb-12">تقدم LineArtify أداة مجانية احترافية عبر الإنترنت للفنانين والمصممين والهواة لتحويل أي صورة إلى رسم رصاص احترافي.</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                       <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-cyan-400 mb-2">فوري ومجاني</h3><p className="text-gray-300">حوّل صورًا غير محدودة إلى رسومات رصاص عبر الإنترنت. بدون رسوم، بدون تسجيل، فقط قوة إبداعية خالصة.</p></div>
                       <div className="bg-gray-800 p-6 rounded-lg shadow-md"><h3 className="text-xl font-bold text-cyan-400 mb-2">دقة فائقة بالذكاء الاصطناعي</h3><p className="text-gray-300">يحدد الذكاء الاصطناعي المتقدم لدينا الخطوط الرئيسية في صورتك بذكاء ويستخرجها للحصول على نتيجة واضحة ونقية.</p></div>
