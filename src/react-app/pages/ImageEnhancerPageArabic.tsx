@@ -1,10 +1,8 @@
-// الملف: ImageEnhancerPageArabic.tsx (النسخة النهائية والآمنة)
 import { useState, useRef, ChangeEvent } from 'react';
 
 // --- Data Constants ---
 const versions = ['v1.4', 'v2.1', 'v3.0'];
 const scales = [2, 4];
-// تم حذف `apiEndpoint` السري من هنا.
 
 const faqData = [
   {
@@ -69,7 +67,6 @@ function ImageEnhancerPageArabic() {
     formData.append('scale', selectedScale.toString());
 
     try {
-      // سطر الـ fetch هذا صحيح ويستدعي الواجهة الخلفية الموحدة
       const response = await fetch('/api/tools?tool=image-enhancer', {
         method: 'POST',
         body: formData,
@@ -95,7 +92,7 @@ function ImageEnhancerPageArabic() {
 
   return (
     <>
-      <title>EnhanceX AI: تحسين جودة الصور ورفع دقتها بالذكاء الاصطناعي مجاناً</title>
+      <title>تحسين جودة الصور ورفع دقتها بالذكاء الاصطناعي مجانًا | Enhancex AI</title>
       <meta name="description" content="قم بتحسين جودة الصور فورًا مع EnhanceX AI. أداتنا المجانية لرفع دقة الصور تزيد من حدة التفاصيل، تزيل التشويش، وترفع الدقة حتى 4x أونلاين." />
       <link rel="canonical" href="https://aiconvert.online/ar/ai-image-enhancer" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-image-enhancer" />
@@ -107,13 +104,9 @@ function ImageEnhancerPageArabic() {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
             "name": "EnhanceX AI محسن الصور",
+            "description": "أداة مجانية تعمل بالذكاء الاصطناعي لتحسين جودة الصور، ورفع دقتها حتى 4x، وزيادة حدة التفاصيل، وتقليل التشويش باستخدام نماذج متقدمة.",
             "operatingSystem": "WEB",
-            "applicationCategory": "MultimediaApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "ratingCount": "1890"
-            },
+            "applicationCategory": "ImageProcessingApplication",
             "offers": {
               "@type": "Offer",
               "price": "0",
