@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { Link } from 'react-router-dom'; 
+import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const faqData = [
   {
@@ -24,6 +24,14 @@ const faqData = [
   },
 ];
 
+const checkStatus = async (taskId: string) => {
+  const response = await fetch(`/api/check-status?taskId=${taskId}`);
+  if (!response.ok) {
+    throw new Error('Failed to check job status.');
+  }
+  return response.json();
+};
+
 function EasyDrawingsPageAr() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -32,7 +40,68 @@ function EasyDrawingsPageAr() {
   const [error, setError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const resultImageRef = useRef<HTMLImageElement>(null);
+  
+  const [taskId, setTaskId] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const pollingIntervalRef = useRef<number | null>(null);
+  
+  const genericErrorMessage = "واجه طلبك خطأ غير متوقع. يرجى الانتظار بضع ثوانٍ والمحاولة مرة أخرى.";
+
+  const cleanupPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    setTaskId(null);
+  };
+  
+  useEffect(() => {
+    if (taskId) {
+      pollingIntervalRef.current = window.setInterval(async () => {
+        try {
+          const statusData = await checkStatus(taskId);
+
+          switch (statusData.status) {
+            case 'QUEUED':
+              setStatusMessage(`أنت في المرتبة #${statusData.queue_position} من ${statusData.queue_total} في قائمة الانتظار.`);
+              break;
+            case 'PROCESSING':
+              setStatusMessage('الذكاء الاصطناعي يرسم...');
+              break;
+            case 'SUCCESS':
+              cleanupPolling();
+              const resultResponse = await fetch(`/api/get-result?taskId=${taskId}`);
+              if (!resultResponse.ok) {
+                  throw new Error('Failed to fetch the final image.');
+              }
+              const imageBlob = await resultResponse.blob();
+              const imageUrl = URL.createObjectURL(imageBlob);
+              setGeneratedImage(imageUrl);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+            case 'FAILURE':
+              cleanupPolling();
+              setError(statusData.error || genericErrorMessage);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+          }
+        } catch (err) {
+          cleanupPolling();
+          setError(genericErrorMessage);
+          setIsLoading(false);
+          setStatusMessage('');
+        }
+      }, 3000);
+    }
+
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [taskId]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -40,6 +109,8 @@ function EasyDrawingsPageAr() {
       setSelectedFile(file);
       setError(null);
       setGeneratedImage(null);
+      setStatusMessage('');
+      cleanupPolling();
       const reader = new FileReader();
       reader.onloadend = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
@@ -55,40 +126,36 @@ function EasyDrawingsPageAr() {
     setIsLoading(true);
     setError(null);
     setGeneratedImage(null);
-
-    const formData = new FormData();
-    formData.append('file', selectedFile);
+    cleanupPolling();
+    setStatusMessage('تم استلام طلبك...');
 
     try {
-        const response = await fetch('/api/tools?tool=image-to-sketch', {
-            method: 'POST',
-            body: formData,
-        });
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || 'استجاب الخادم بخطأ.');
-        }
+      const formData = new FormData();
+      formData.append('img', selectedFile);
 
-        const result = await response.json();
+      const response = await fetch('/api/submit-job?tool=sketch', {
+          method: 'POST',
+          body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to submit the job.');
+      }
 
-        if (result.sketch_image_base64) {
-             setGeneratedImage(result.sketch_image_base64);
-        } else {
-            throw new Error('فشل الذكاء الاصطناعي في معالجة الصورة. يرجى تجربة صورة مختلفة.');
-        }
+      const responseData = await response.json();
+      setTaskId(responseData.task_id);
 
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
+    } catch (err) {
+      setError(genericErrorMessage);
       setIsLoading(false);
+      setStatusMessage('');
     }
   };
   
   const handleDownload = () => {
-    if (!resultImageRef.current?.src) return;
+    if (!generatedImage) return;
     const link = document.createElement('a');
-    link.href = resultImageRef.current.src;
+    link.href = generatedImage;
     link.download = `sketch_from_aiconvert.png`;
     document.body.appendChild(link);
     link.click();
@@ -161,17 +228,17 @@ function EasyDrawingsPageAr() {
             
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6 items-center">
               <h2 className="text-2xl font-bold text-gray-200">2. استلم الاسكتش الفني</h2>
-              <div className="w-full h-80 border-2 border-gray-700 bg-gray-900/50 rounded-lg flex justify-center items-center">
+              <div className="w-full h-80 border-2 border-gray-700 bg-gray-900/50 rounded-lg flex justify-center items-center relative">
                 {isLoading && (
-                   <div className="text-center">
-                       <p className="text-lg text-gray-300">الذكاء الاصطناعي يرسم...</p>
-                       <p className="text-sm text-gray-400">قد يستغرق هذا الأمر لحظات.</p>
+                   <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-lg">
+                       <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-yellow-400"></div>
+                       <p className="text-lg text-gray-300 mt-4">{statusMessage}</p>
                    </div>
                 )}
                 {!isLoading && generatedImage && (
-                  <img ref={resultImageRef} src={generatedImage} alt="اسكتش فني تم إنشاؤه بالذكاء الاصطناعي" className="max-w-full max-h-full object-contain rounded-md" />
+                  <img src={generatedImage} alt="اسكتش فني تم إنشاؤه بالذكاء الاصطناعي" className="max-w-full max-h-full object-contain rounded-md" />
                 )}
-                {!isLoading && !generatedImage && (
+                {!isLoading && !generatedImage && !error && (
                    <div className="text-center text-gray-500">
                        <p>سيظهر هنا الاسكتش الفني الخاص بك</p>
                    </div>
