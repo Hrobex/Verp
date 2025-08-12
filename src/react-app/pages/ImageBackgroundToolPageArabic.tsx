@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, ChangeEvent } from 'react';
 
-// FAQ Data - Translated to Arabic
 const faqData = [
   {
     question: 'هل أداة إزالة الخلفية هذه مجانية بالكامل؟',
@@ -27,20 +26,16 @@ function ImageBackgroundToolPageArabic() {
   const [processedImageUrl, setProcessedImageUrl] = useState<string>(''); // URL from API
   const [finalImageUrl, setFinalImageUrl] = useState<string>(''); // URL from canvas after bg apply
   
-  // State for UI control
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // State for background customization
   const [backgroundOption, setBackgroundOption] = useState<'transparent' | 'color' | 'custom'>('transparent');
   const [backgroundColor, setBackgroundColor] = useState<string>('#ffffff');
   const [customBgFile, setCustomBgFile] = useState<File | null>(null);
 
-  // Refs for file inputs
   const mainFileInputRef = useRef<HTMLInputElement>(null);
   const bgFileInputRef = useRef<HTMLInputElement>(null);
 
-  // Effect to clean up object URLs to prevent memory leaks
   useEffect(() => {
     return () => {
       if (originalPreviewUrl) URL.revokeObjectURL(originalPreviewUrl);
@@ -83,7 +78,6 @@ function ImageBackgroundToolPageArabic() {
     formData.append('file', originalFile);
 
     try {
-      // تم تغيير هذا السطر فقط للاتصال بالـ API الداخلي الآمن
         const response = await fetch('/api/tools?tool=background-remover', {
         method: 'POST',
         body: formData,
@@ -146,7 +140,7 @@ function ImageBackgroundToolPageArabic() {
     if (!finalImageUrl) return;
     const link = document.createElement('a');
     link.href = finalImageUrl;
-    link.download = 'صورة-معالجة.png'; // تم تعديل اسم الملف
+    link.download = 'صورة-معالجة.png'; 
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -154,9 +148,8 @@ function ImageBackgroundToolPageArabic() {
 
   return (
     <>
-      {/* SEO Section - Arabic */}
       <title>إزالة خلفية الصورة بالذكاء الاصطناعي مجاناً | تغيير خلفية الصور اون لاين</title>
-      <meta name="description" content="أزل خلفية أي صورة فورًا باستخدام أداتنا المجانية لإزالة الخلفية بالذكاء الاصطناعي. احصل على خلفية شفافة (PNG) أو قم بتغييرها إلى لون ثابت أو صورة من اختيارك بسهولة." />
+      <meta name="description" content="أزل خلفية أي صورة فورًا بالذكاء الاصطناعي مجانًا. احصل على خلفية شفافة أو قم بتغييرها إلى لون ثابت أو صورة من اختيارك بسهولة وبدون تسجيل دخول." />
       <link rel="canonical" href="https://aiconvert.online/ar/remove-background" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/remove-background" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/remove-background" />
@@ -166,14 +159,9 @@ function ImageBackgroundToolPageArabic() {
           {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
-            "name": "أداة إزالة الخلفية بالذكاء الاصطناعي",
+            "name": "أداة إزالة وتغيير الخلفية بالذكاء الاصطناعي",
             "operatingSystem": "WEB",
-            "applicationCategory": "MultimediaApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.7",
-              "ratingCount": "1549"
-            },
+            "applicationCategory": "ImageProcessingApplication",
             "offers": {
               "@type": "Offer",
               "price": "0",
