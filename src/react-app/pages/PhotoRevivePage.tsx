@@ -1,7 +1,5 @@
-// الملف: PhotoRevivePage.tsx
 import { useState, useRef } from 'react';
 
-// --- الثوابت العامة ---
 const faqData = [
   {
     question: 'How does AI photo restoration work?',
@@ -95,18 +93,35 @@ function PhotoRevivePage() {
   return (
     <>
       <title>Free AI Photo Restoration Online | Restore & Repair Old Photos</title>
-      <meta name="description" content="Breathe new life into your memories. Our free AI photo restoration tool automatically repairs old, damaged, and faded photos. Fix scratches, enhance quality, and restore old photos online." />
+      <meta name="description" content="Repair your old, damaged, and faded photos for free with PhotoRevive AI. Fix scratches, enhance quality, and restore old photos." />
       <link rel="canonical" href="https://aiconvert.online/restore-and-repair-old-photos" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/restore-and-repair-old-photos" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/restore-and-repair-old-photos" />
       <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/restore-and-repair-old-photos" />
+      <script type="application/ld+json">
+{`
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "PhotoRevive: AI Photo Restoration",
+    "description": "A free AI-powered tool to restore old and damaged photos. It automatically removes scratches, repairs tears, enhances quality, and fixes faded colors.",
+    "operatingSystem": "WEB",
+    "applicationCategory": "ImageProcessingApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+`}
+</script>
       
       <div className="pt-24 bg-gray-900 text-white min-h-screen">
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
           
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-cyan-500">
-              PhotoRevive: AI Photo Restoration
+              PhotoRevive: Free AI Photo Restoration
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
               Don't let your memories fade away. Upload scratched, damaged, or old family pictures and let our AI restore their original glory for free.
@@ -130,14 +145,13 @@ function PhotoRevivePage() {
               <div className="w-full flex flex-col items-center relative"> {/* Added relative positioning */}
                 <h3 className="text-xl font-semibold text-gray-300 mb-4">After</h3>
                 <div className="w-full h-80 bg-black/20 rounded-lg flex items-center justify-center p-2 border-2 border-dashed border-cyan-500/50 relative">
-                  {/* --- IMPROVED SPINNER --- */}
                   {isLoading && (
                     <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-lg">
                       <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-amber-500"></div>
                       <p className="text-gray-300 mt-4">Reviving your memory...</p>
                     </div>
                   )}
-                  {/* --- Original Content --- */}
+                  {/* --- Content --- */}
                   {!isLoading && restoredImage && (
                     <img ref={resultImageRef} src={restoredImage} alt="AI restored photo" className="max-w-full max-h-full object-contain rounded-md" />
                   )}
@@ -176,7 +190,7 @@ function PhotoRevivePage() {
             </div>
           </div>
           
-          {/* --- ADDED "HOW TO USE" SECTION --- */}
+          {/* --- "HOW TO USE" SECTION --- */}
           <section className="mt-20">
               <div className="text-center">
                   <h2 className="text-3xl font-bold mb-4">How to Restore Your Photo in 3 Simple Steps</h2>
