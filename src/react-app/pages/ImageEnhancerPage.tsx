@@ -57,7 +57,7 @@ function ImageEnhancerPage() {
   const [originalPreviewUrl, setOriginalPreviewUrl] = useState<string | null>(null);
   const [enhancedImageUrl, setEnhancedImageUrl] = useState<string | null>(null);
 
-  const [selectedVersion, setSelectedVersion] = useState(versions[2]); 
+  const [selectedVersion, setSelectedVersion] = useState(versions[0]); 
   const [selectedScale, setSelectedScale] = useState(scales[0]);
   
   const [isLoading, setIsLoading] = useState(false);
