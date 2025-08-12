@@ -1,7 +1,5 @@
-// الملف: StorygenPage.tsx (النسخة المصححة)
-import { useState, useRef, useEffect } from 'react'; // تم حذف ChangeEvent من هنا
+import { useState, useRef, useEffect } from 'react'; 
 
-// --- الثوابت العامة (آمنة) ---
 const languageOptions = [
     { code: 'en', name: 'English' },
     { code: 'ar', name: 'العربية' },
@@ -33,8 +31,7 @@ const faqData = [
     answer: 'Images with clear subjects, characters, or interesting environments tend to produce the most detailed stories. However, our AI is creative and can find inspiration in almost any picture, from portraits and landscapes to abstract art.'
   },
 ];
-
-// --- دالة مساعدة لتحويل الصورة إلى Base64 ---
+ 
 async function fileToBase64(file: File): Promise<string> {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -68,7 +65,6 @@ function StorygenPage() {
     return () => clearInterval(interval);
   }, [isLoading]);
 
-  // تم تغيير نوع المعامل هنا
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -125,17 +121,15 @@ function StorygenPage() {
     navigator.clipboard.writeText(generatedStory).catch(() => setError('Failed to copy the story.'));
   };
 
-// --- تأكد من أن هذه الدالة مطابقة ---
 const getButtonText = () => {
     if (isLoading) return 'Writing Your Story...';
-    // السطر الذي كان يسبب المشكلة تم حذفه
     return 'Generate Story from Image';
 };
   
   return (
     <>
-      <title>Free AI Story Generator from Image | Turn Picture to Story - Storygen</title>
-      <meta name="description" content="Turn any image into a captivating story! Our free AI Story Generator analyzes your photo and writes a unique, creative narrative for you in seconds." />
+      <title>Free AI Story Generator from Image | Storygen</title>
+      <meta name="description" content="Turn any image into a captivating story! Our free AI Story Generator analyzes your photo and writes a unique, creative narrative in seconds" />
       <link rel="canonical" href="https://aiconvert.online/ai-story-generator" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/ai-story-generator" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/ai-story-generator" />
@@ -145,14 +139,10 @@ const getButtonText = () => {
           {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
-            "name": "Storygen: AI Story Generator from Image",
+            "name": "Storygen: AI Image to Story Generator",
+            "description": "A free AI tool that analyzes images and writes unique, creative stories and narratives in multiple languages, perfect for overcoming writer's block.",
             "operatingSystem": "WEB",
             "applicationCategory": "ProductivityApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "ratingCount": "2158"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -167,7 +157,7 @@ const getButtonText = () => {
           
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-500">
-              Storygen: AI Story Generator from Image
+              Storygen: Free AI Image to Story Generator
             </h1>
             <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
               Every picture has a story. Upload any photo and let our AI writer craft a unique narrative based on your visual prompt.
@@ -239,7 +229,6 @@ const getButtonText = () => {
             </div>
           </div>
 
-          {/* Content Sections */}
           <div className="mt-24">
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">Turn Any Visual into a Vivid Narrative</h2>
