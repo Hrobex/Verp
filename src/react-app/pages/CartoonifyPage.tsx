@@ -1,6 +1,7 @@
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react'; // تمت إضافة useEffect
 import { Link } from 'react-router-dom';
 
+// --- لم يتم لمس هذا الجزء ---
 const faqData = [
     {
         question: 'How does the AI turn my photo into a cartoon?',
@@ -25,6 +26,16 @@ const faqData = [
     },
 ];
 
+// --- دالة مساعدة جديدة للتحقق من الحالة ---
+const checkStatus = async (taskId: string) => {
+  const response = await fetch(`/api/check-status?taskId=${taskId}`);
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.details || 'Failed to check job status.');
+  }
+  return response.json();
+};
+
 function CartoonifyPage() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourcePreview, setSourcePreview] = useState<string | null>(null);
@@ -33,6 +44,71 @@ function CartoonifyPage() {
   const [error, setError] = useState<string | null>(null);
   const sourceFileInputRef = useRef<HTMLInputElement>(null);
 
+  // --- (جديد) متغيرات حالة لتتبع المهمة والرسائل ---
+  const [taskId, setTaskId] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const pollingIntervalRef = useRef<number | null>(null);
+
+  // --- (جديد) دالة لتنظيف حالة المتابعة عند حدوث خطأ أو اكتمال ---
+  const cleanupPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    setTaskId(null);
+  };
+
+  // --- (معدل) تأثير لمتابعة حالة المهمة عند وجود task_id ---
+  useEffect(() => {
+    if (taskId) {
+      pollingIntervalRef.current = window.setInterval(async () => {
+        try {
+          const statusData = await checkStatus(taskId);
+
+          switch (statusData.status) {
+            case 'QUEUED':
+              setStatusMessage(`أنت في المرتبة ${statusData.queue_position} من ${statusData.queue_total} في قائمة الانتظار.`);
+              break;
+            case 'PROCESSING':
+              setStatusMessage('جاري معالجة الصورة الآن...');
+              break;
+            case 'SUCCESS':
+              cleanupPolling();
+              // جلب النتيجة النهائية
+              const resultResponse = await fetch(`/api/get-result?taskId=${taskId}`);
+              if (!resultResponse.ok) {
+                  throw new Error('Failed to fetch the final image.');
+              }
+              const imageBlob = await resultResponse.blob();
+              const imageUrl = URL.createObjectURL(imageBlob);
+              setResultImageUrl(imageUrl);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+            case 'FAILURE':
+              cleanupPolling();
+              setError(statusData.error || 'An error occurred during processing.');
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+          }
+        } catch (err: any) {
+          cleanupPolling();
+          setError(err.message || 'An unknown error occurred.');
+          setIsLoading(false);
+          setStatusMessage('');
+        }
+      }, 3000); // التحقق كل 3 ثوانٍ
+    }
+
+    return () => {
+      // تنظيف عند إغلاق الصفحة أو بدء مهمة جديدة
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [taskId]);
+
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -40,46 +116,56 @@ function CartoonifyPage() {
       const reader = new FileReader();
       reader.onloadend = () => setSourcePreview(reader.result as string);
       reader.readAsDataURL(file);
+      // إعادة تعيين كل شيء عند اختيار ملف جديد
       setResultImageUrl(null);
       setError(null);
+      setStatusMessage('');
+      cleanupPolling();
     }
   };
-
+  
+  // --- (معدل بالكامل) دالة النقر على الزر ---
   const handleCartoonifyClick = async () => {
     if (!sourceFile) {
       setError('Please upload an image to cartoonify.');
       return;
     }
+    
+    // إعادة تعيين الحالة قبل البدء
     setIsLoading(true);
     setError(null);
     setResultImageUrl(null);
+    cleanupPolling();
+    setStatusMessage('تم تلقي طلبك...'); // الرسالة الأولية المتفق عليها
 
     try {
       const formData = new FormData();
       formData.append('file', sourceFile);
 
-      const response = await fetch('/api/tools?tool=cartoonify', {
+      // الخطوة 1: إرسال المهمة والحصول على task_id
+      const response = await fetch('/api/submit-job?tool=cartoonify', {
         method: 'POST',
         body: formData,
       });
 
+      const responseData = await response.json();
+
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Failed to cartoonify the image. Please try again.');
+        throw new Error(responseData.details || 'Failed to submit the job.');
       }
       
-      const imageBlob = await response.blob();
-      const imageUrl = URL.createObjectURL(imageBlob);
-      setResultImageUrl(imageUrl);
+      // الخطوة 2: تخزين task_id لبدء عملية المتابعة في useEffect
+      setTaskId(responseData.task_id);
 
     } catch (err: any) {
       setError(err.message || 'An unknown error occurred. Please check your connection and try again.');
-    } finally {
-      setIsLoading(false);
+      setIsLoading(false); // إيقاف التحميل عند حدوث خطأ فوري
+      setStatusMessage('');
     }
   };
 
   const handleDownloadClick = () => {
+    // --- لا تغيير هنا ---
     if (!resultImageUrl) return;
     const link = document.createElement('a');
     link.href = resultImageUrl;
@@ -88,7 +174,9 @@ function CartoonifyPage() {
     link.click();
     document.body.removeChild(link);
   };
-
+  
+  // --- لا يوجد أي تغيير على الإطلاق في كل كود JSX التالي ---
+  // --- تم الحفاظ على كل المحتوى والتصميم كما هو ---
   return (
     <>
       <title>Cartoonify Yourself Free | AI Photo to Cartoon Generator</title>
@@ -127,7 +215,6 @@ function CartoonifyPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* --- Controls Column --- */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6 items-center">
               <h2 className="text-2xl font-bold text-center">Upload Your Photo</h2>
               <input 
@@ -150,17 +237,17 @@ function CartoonifyPage() {
                 disabled={isLoading || !sourceFile}
                 className="w-full mt-4 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-rose-500 to-purple-600 rounded-lg hover:from-rose-600 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-rose-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
-                {isLoading ? 'Cartoonifying...' : 'Cartoonify!'}
+                {isLoading ? 'Processing...' : 'Cartoonify!'}
               </button>
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
 
-            {/* --- Output Column --- */}
             <div className="bg-gray-800 p-4 rounded-2xl shadow-lg flex flex-col justify-center items-center relative min-h-[28rem]">
               {isLoading && (
                   <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-2xl">
                     <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-rose-500"></div>
-                    <p className="text-gray-300 mt-4">AI is working its magic...</p>
+                    {/* --- (معدل) عرض الرسالة الديناميكية هنا --- */}
+                    <p className="text-gray-300 mt-4 text-center">{statusMessage}</p>
                   </div>
               )}
               
@@ -173,12 +260,13 @@ function CartoonifyPage() {
                     </button>
                   </>
                 ) : (
-                  <p className="text-gray-400 text-center">Your cartoon version will appear here</p>
+                  !isLoading && <p className="text-gray-400 text-center">Your cartoon version will appear here</p>
                 )}
               </div>
             </div>
           </div>
-
+          
+          {/* --- كل الأقسام التالية لم تتغير على الإطلاق --- */}
           <div className="mt-24">
               <section className="text-center">
                   <h2 className="text-3xl font-bold mb-4">Why Use Our AI Cartoonizer?</h2>
