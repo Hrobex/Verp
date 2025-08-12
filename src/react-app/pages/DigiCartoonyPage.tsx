@@ -1,7 +1,6 @@
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-// Converts a File to a compressed JPEG File
 async function compressImage(file: File): Promise<File> {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -13,11 +12,9 @@ async function compressImage(file: File): Promise<File> {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 if (!ctx) return reject(new Error('Canvas context is not available.'));
-
                 const maxWidth = 1000;
                 const maxHeight = 1000;
                 let { width, height } = img;
-
                 if (width > height) {
                     if (width > maxWidth) {
                         height = Math.round(height * (maxWidth / width));
@@ -32,7 +29,6 @@ async function compressImage(file: File): Promise<File> {
                 canvas.width = width;
                 canvas.height = height;
                 ctx.drawImage(img, 0, 0, width, height);
-
                 canvas.toBlob(
                     (blob) => {
                         if (blob) {
@@ -42,7 +38,7 @@ async function compressImage(file: File): Promise<File> {
                         }
                     },
                     'image/jpeg',
-                    0.7 // 70% quality
+                    0.7
                 );
             };
             img.onerror = reject;
@@ -75,6 +71,14 @@ const faqData = [
     },
 ];
 
+const checkStatus = async (taskId: string) => {
+  const response = await fetch(`/api/check-status?taskId=${taskId}`);
+  if (!response.ok) {
+    throw new Error('Failed to check job status.');
+  }
+  return response.json();
+};
+
 function DigiCartoonyPage() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourcePreview, setSourcePreview] = useState<string | null>(null);
@@ -83,6 +87,68 @@ function DigiCartoonyPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const sourceFileInputRef = useRef<HTMLInputElement>(null);
+
+  const [taskId, setTaskId] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const pollingIntervalRef = useRef<number | null>(null);
+
+  const genericErrorMessage = "Your request encountered an unexpected error. Please wait a few seconds and try again.";
+
+  const cleanupPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    setTaskId(null);
+  };
+  
+  useEffect(() => {
+    if (taskId) {
+      pollingIntervalRef.current = window.setInterval(async () => {
+        try {
+          const statusData = await checkStatus(taskId);
+
+          switch (statusData.status) {
+            case 'QUEUED':
+              setStatusMessage(`You are #${statusData.queue_position} of ${statusData.queue_total} in the queue.`);
+              break;
+            case 'PROCESSING':
+              setStatusMessage('Rendering your masterpiece...');
+              break;
+            case 'SUCCESS':
+              cleanupPolling();
+              const resultResponse = await fetch(`/api/get-result?taskId=${taskId}`);
+              if (!resultResponse.ok) {
+                  throw new Error('Failed to fetch the final image.');
+              }
+              const imageBlob = await resultResponse.blob();
+              const imageUrl = URL.createObjectURL(imageBlob);
+              setResultImageUrl(imageUrl);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+            case 'FAILURE':
+              cleanupPolling();
+              setError(statusData.error || genericErrorMessage);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+          }
+        } catch (err) {
+          cleanupPolling();
+          setError(genericErrorMessage);
+          setIsLoading(false);
+          setStatusMessage('');
+        }
+      }, 3000);
+    }
+
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [taskId]);
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -93,6 +159,8 @@ function DigiCartoonyPage() {
       reader.readAsDataURL(file);
       setResultImageUrl(null);
       setError(null);
+      setStatusMessage('');
+      cleanupPolling();
     }
   };
 
@@ -101,9 +169,12 @@ function DigiCartoonyPage() {
       setError('Please upload a photo to get started.');
       return;
     }
+    
     setIsLoading(true);
     setError(null);
     setResultImageUrl(null);
+    cleanupPolling();
+    setStatusMessage('Request received...');
 
     try {
       const compressedFile = await compressImage(sourceFile);
@@ -111,23 +182,24 @@ function DigiCartoonyPage() {
       const formData = new FormData();
       formData.append('file', compressedFile);
       formData.append('if_face', detectFace ? 'Yes' : 'No');
+      formData.append('Style', 'AnimeGANv3_Arcane'); // <-- يمكنك تغيير هذا النمط لاحقًا
 
-        const response = await fetch('/api/tools?tool=digicartoony', {
+      const response = await fetch('/api/submit-job?tool=digicartoony', {
         method: 'POST',
         body: formData,
       });
 
-      if (response.ok) {
-        const imageBlob = await response.blob();
-        setResultImageUrl(URL.createObjectURL(imageBlob));
-      } else {
-        const errorText = await response.text();
-        setError(errorText || 'An error occurred during processing. Please try again.');
+      if (!response.ok) {
+        throw new Error('Failed to submit the job.');
       }
+        
+      const responseData = await response.json();
+      setTaskId(responseData.task_id);
+
     } catch (err) {
-      setError('An unknown error occurred. Please check your connection.');
-    } finally {
+      setError(genericErrorMessage);
       setIsLoading(false);
+      setStatusMessage('');
     }
   };
 
@@ -139,7 +211,7 @@ function DigiCartoonyPage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-};
+  };
 
   return (
     <>
@@ -147,7 +219,6 @@ function DigiCartoonyPage() {
       <meta name="description" content="Turn your photo into cartoon paintings with our AI digital art Converter. Create high-quality, painterly cartoon art for free, no sign-up required." />
       <link rel="canonical" href="https://aiconvert.online/cartoony-art" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/cartoony-art" />
-      {/* <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/cartoony-art" /> */}
       <link rel="alternate" hrefLang="x-default" href="https://aiconvert.online/cartoony-art" />
       <script type="application/ld+json">
         {`
@@ -179,7 +250,6 @@ function DigiCartoonyPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* --- Controls Column --- */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6">
               <div className="text-center">
                   <h2 className="text-2xl font-bold">1. Upload Your Photo</h2>
@@ -214,12 +284,11 @@ function DigiCartoonyPage() {
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
 
-            {/* --- Output Column --- */}
             <div className="bg-gray-800 p-4 rounded-2xl shadow-lg flex flex-col justify-center items-center relative min-h-[28rem]">
               {isLoading && (
                   <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-2xl">
                     <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-500"></div>
-                    <p className="text-gray-300 mt-4">Rendering your masterpiece...</p>
+                    <p className="text-gray-300 mt-4">{statusMessage}</p>
                   </div>
               )}
               <div className="w-full h-full flex flex-col justify-center items-center">
@@ -231,7 +300,7 @@ function DigiCartoonyPage() {
                     </button>
                   </>
                 ) : (
-                  <p className="text-gray-400 text-center">Your digital artwork will appear here</p>
+                  !isLoading && !error && <p className="text-gray-400 text-center">Your digital artwork will appear here</p>
                 )}
               </div>
             </div>
