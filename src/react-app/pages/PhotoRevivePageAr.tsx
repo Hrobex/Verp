@@ -1,4 +1,4 @@
-import { useState, useRef, ChangeEvent, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import imageCompression from 'browser-image-compression';
 
 async function processImageForRestoration(file: File): Promise<File> {
