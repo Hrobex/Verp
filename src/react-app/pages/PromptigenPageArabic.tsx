@@ -19,7 +19,6 @@ const faqDataArabic = [
   },
 ];
 
-// دالة مساعدة جديدة لتحويل الصورة إلى صيغة Base64
 async function convertFileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -115,14 +114,13 @@ function PromptigenPageArabic() {
 
   const getButtonText = () => {
     if (isLoading) return 'جاري تحليل الصورة...';
-    // لم نعد نحتاج للتحقق من isAiReady
     return 'توليد الوصف النصي';
   };
 
   return (
     <>
       <title>مولد الأوصاف النصية (Prompt) من الصور - أداة مجانية بالذكاء الاصطناعي</title>
-      <meta name="description" content="حوّل أي صورة إلى وصف نصي (Prompt) احترافي ومفصل. أداة Promptigen المجانية تحلل صورتك وتنشئ أمر نصي مثالي لمولدات الصور مثل ميدجورني وStable Diffusion." />
+      <meta name="description" content="حوّل أي صورة إلى وصف نصي (Prompt) احترافي ومفصل. أداة Promptigen تحلل صورتك وتنشئ أمر نصي مثالي لمولدات الصور مجانًا وبدون تسجيل دخول." />
       <link rel="canonical" href="https://aiconvert.online/ar/prompt-generator" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/prompt-generator" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/prompt-generator" />
@@ -132,14 +130,10 @@ function PromptigenPageArabic() {
           {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
-            "name": "Promptigen - مولد الأوصاف النصية من الصور",
+            "name": "Promptigen: مولد الأوصاف النصية من الصور",
+            "description": "أداة مجانية تعمل بالذكاء الاصطناعي تقوم بتحليل الصور لإنشاء أوصاف نصية احترافية (Prompts)، مصممة للاستخدام في مولدات الفن مثل Midjourney و Stable Diffusion.",
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "954"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -178,7 +172,7 @@ function PromptigenPageArabic() {
                   ) : (
                     <div className="text-center text-gray-400">
                       <p>انقر هنا أو اسحب الصورة وأفلتها</p>
-                      <p className="text-sm text-gray-500">يدعم PNG, JPG, WEBP</p>
+                      <p className="text-sm text-gray-300">يدعم PNG, JPG, WEBP</p>
                     </div>
                   )}
                 </div>
@@ -187,7 +181,7 @@ function PromptigenPageArabic() {
               <div>
                 <p className="block text-lg font-semibold text-gray-200 mb-2">٢. اختر لغة الوصف</p>
                 <div className="flex gap-4 rounded-lg bg-gray-700 p-2">
-                    <button onClick={() => setLanguage('ar')} className={`flex-1 p-2 rounded-md font-semibold transition ${language === 'ar' ? 'bg-sky-500 text-white' : 'bg-transparent text-gray-300 hover:bg-gray-600'}`}>
+                    <button onClick={() => setLanguage('ar')} className={`flex-1 p-2 rounded-md font-semibold transition ${language === 'ar' ? 'bg-sky-700 text-white' : 'bg-transparent text-gray-300 hover:bg-gray-600'}`}>
                         العربية
                     </button>
                     <button onClick={() => setLanguage('en')} className={`flex-1 p-2 rounded-md font-semibold transition ${language === 'en' ? 'bg-sky-500 text-white' : 'bg-transparent text-gray-300 hover:bg-gray-600'}`}>
