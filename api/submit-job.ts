@@ -9,7 +9,7 @@ const TOOL_CONFIG: { [key: string]: { serviceName: string; fieldName: string; en
   'sketch':            { serviceName: 'sketcher',    fieldName: 'img'  },
   'digicartoony':      { serviceName: 'aniface',     fieldName: 'file' },
   'enhancer':          { serviceName: 'enhancer',    fieldName: 'img'  },
-  'photo-restoration': { serviceName: 'enhancer',    fieldName: 'img', endpoint: 'predict_with_scratch_removal' }
+  'photo-restoration': { serviceName: 'scratch_remover', fieldName: 'img' }
 };
 
 const ORCHESTRATOR_BASE_URL = 'https://pint.aiarabai.com/api';
