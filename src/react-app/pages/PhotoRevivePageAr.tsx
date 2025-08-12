@@ -299,7 +299,7 @@ function PhotoRevivePageAr() {
                   </div>
                   <div className="bg-gray-800/50 p-6 rounded-lg">
                       <p className="text-amber-400 font-bold text-lg mb-2">3. حمّل وشارك</p>
-                      <p className="text-gray-300">ستظهر ذكرىك التي تم إحياؤها. قم بتنزيل الصورة المرممة عالية الجودة وشاركها مع أحبائك.</p>
+                      <p className="text-gray-300">ستظهر ذكرياتك التي تم إحياؤها. قم بتنزيل الصورة المرممة عالية الجودة وشاركها مع أحبائك.</p>
                   </div>
               </div>
           </section>
