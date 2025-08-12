@@ -1,4 +1,4 @@
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const faqData = [
@@ -25,6 +25,14 @@ const faqData = [
     },
 ];
 
+const checkStatus = async (taskId: string) => {
+  const response = await fetch(`/api/check-status?taskId=${taskId}`);
+  if (!response.ok) {
+    throw new Error('Failed to check job status.');
+  }
+  return response.json();
+};
+
 function CartoonifyPageArabic() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourcePreview, setSourcePreview] = useState<string | null>(null);
@@ -32,6 +40,68 @@ function CartoonifyPageArabic() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const sourceFileInputRef = useRef<HTMLInputElement>(null);
+
+  const [taskId, setTaskId] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const pollingIntervalRef = useRef<number | null>(null);
+
+  const genericErrorMessage = "واجه طلبك خطأ غير متوقع. يرجى الانتظار بضع ثوانٍ والمحاولة مرة أخرى.";
+
+  const cleanupPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    setTaskId(null);
+  };
+
+  useEffect(() => {
+    if (taskId) {
+      pollingIntervalRef.current = window.setInterval(async () => {
+        try {
+          const statusData = await checkStatus(taskId);
+
+          switch (statusData.status) {
+            case 'QUEUED':
+              setStatusMessage(`أنت في المرتبة #${statusData.queue_position} من ${statusData.queue_total} في قائمة الانتظار.`);
+              break;
+            case 'PROCESSING':
+              setStatusMessage('الذكاء الاصطناعي يعمل بسحره...');
+              break;
+            case 'SUCCESS':
+              cleanupPolling();
+              const resultResponse = await fetch(`/api/get-result?taskId=${taskId}`);
+              if (!resultResponse.ok) {
+                  throw new Error('Failed to fetch the final image.');
+              }
+              const imageBlob = await resultResponse.blob();
+              const imageUrl = URL.createObjectURL(imageBlob);
+              setResultImageUrl(imageUrl);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+            case 'FAILURE':
+              cleanupPolling();
+              setError(statusData.error || genericErrorMessage);
+              setIsLoading(false);
+              setStatusMessage('');
+              break;
+          }
+        } catch (err) {
+          cleanupPolling();
+          setError(genericErrorMessage);
+          setIsLoading(false);
+          setStatusMessage('');
+        }
+      }, 3000);
+    }
+
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [taskId]);
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -42,40 +112,43 @@ function CartoonifyPageArabic() {
       reader.readAsDataURL(file);
       setResultImageUrl(null);
       setError(null);
+      setStatusMessage('');
+      cleanupPolling();
     }
   };
-
+  
   const handleCartoonifyClick = async () => {
     if (!sourceFile) {
       setError('يرجى رفع صورة لكرتنتها.');
       return;
     }
+    
     setIsLoading(true);
     setError(null);
     setResultImageUrl(null);
+    cleanupPolling();
+    setStatusMessage('تم استلام طلبك...');
 
     try {
       const formData = new FormData();
       formData.append('file', sourceFile);
         
-      const response = await fetch('/api/tools?tool=cartoonify', {
+      const response = await fetch('/api/submit-job?tool=cartoonify', {
         method: 'POST',
         body: formData,
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'فشلت عملية تحويل الصورة. الرجاء المحاولة مرة أخرى.');
+        throw new Error('Failed to submit the job.');
       }
         
-      const imageBlob = await response.blob();
-      const imageUrl = URL.createObjectURL(imageBlob);
-      setResultImageUrl(imageUrl);
+      const responseData = await response.json();
+      setTaskId(responseData.task_id);
 
     } catch (err: any) {
-      setError(err.message || 'حدث خطأ غير متوقع. يرجى التحقق من اتصالك والمحاولة مرة أخرى.');
-    } finally {
+      setError(genericErrorMessage);
       setIsLoading(false);
+      setStatusMessage('');
     }
   };
 
@@ -127,7 +200,6 @@ function CartoonifyPageArabic() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* --- عمود التحكم --- */}
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col gap-6 items-center">
               <h2 className="text-2xl font-bold text-center">ارفع صورتك</h2>
               <input 
@@ -150,7 +222,7 @@ function CartoonifyPageArabic() {
                 disabled={isLoading || !sourceFile}
                 className="w-full mt-4 py-3 px-4 text-lg font-bold text-white bg-gradient-to-r from-rose-500 to-purple-600 rounded-lg hover:from-rose-600 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-rose-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
-                {isLoading ? 'جاري الكرتنة...' : 'حوّل إلى كرتون!'}
+                {isLoading ? 'جاري المعالجة...' : 'حوّل إلى كرتون!'}
               </button>
               {error && <p className="text-red-400 text-center mt-2">{error}</p>}
             </div>
@@ -159,7 +231,7 @@ function CartoonifyPageArabic() {
               {isLoading && (
                   <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-2xl">
                     <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-rose-500"></div>
-                    <p className="text-gray-300 mt-4">الذكاء الاصطناعي يعمل بسحره...</p>
+                    <p className="text-gray-300 mt-4">{statusMessage}</p>
                   </div>
               )}
               
@@ -172,7 +244,7 @@ function CartoonifyPageArabic() {
                     </button>
                   </>
                 ) : (
-                  <p className="text-gray-400 text-center">صورتك الكرتونية ستظهر هنا</p>
+                  !isLoading && <p className="text-gray-400 text-center">صورتك الكرتونية ستظهر هنا</p>
                 )}
               </div>
             </div>
