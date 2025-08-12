@@ -3,10 +3,10 @@ import formidable from 'formidable';
 import fs from 'fs';
 
 const TOOL_CONFIG: { [key: string]: { serviceName: string; fieldName: string } } = {
-  'cartoonify': { serviceName: 'cartoonizer', fieldName: 'file' },
-  'sketch':     { serviceName: 'sketcher',    fieldName: 'img'  },
-  'digicartoony': { serviceName: 'aniface',     fieldName: 'file' }, // تستخدم خدمة aniface
-  'enhancer':   { serviceName: 'enhancer',    fieldName: 'file' }
+  'cartoonify':   { serviceName: 'cartoonizer', fieldName: 'file' },
+  'sketch':       { serviceName: 'sketcher',    fieldName: 'img'  },
+  'digicartoony': { serviceName: 'aniface',     fieldName: 'file' },
+  'enhancer':     { serviceName: 'enhancer',    fieldName: 'img'  } // اسم الحقل هو img
 };
 
 const ORCHESTRATOR_BASE_URL = 'https://pint.aiarabai.com/api';
@@ -53,15 +53,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         
         formData.append(config.fieldName, fileBlob, uploadedFile.originalFilename || 'uploaded_file');
 
-        // --- الجزء الذي تم إصلاحه وتحديثه ---
-        // قم بإضافة جميع الحقول الأخرى (مثل Style و if_face) إلى FormData
+        // ---  المنطق السري الجديد الخاص بأداة التحسين ---
+        if (config.serviceName === 'enhancer') {
+            // القاعدة رقم 5: "ترجمة" إصدارات النموذج
+            const versionMap: { [key: string]: string } = {
+                'v1.4': 'v1.2',
+                'v2.1': 'v1.3',
+                'v3.0': 'v1.4',
+            };
+            const userVersion = fields.version?.[0] || 'v3.0'; 
+            const backendVersion = versionMap[userVersion] || 'v1.4'; 
+            formData.append('version', backendVersion);
+
+            // القاعدة رقم 4: تثبيت معامل التحسين
+            formData.append('scale', '2.0'); 
+
+            // حذف المعلمات الأصلية لمنع إرسالها
+            delete fields.version;
+            delete fields.scale;
+        }
+        // --- نهاية المنطق السري ---
+
         for (const key in fields) {
             const value = fields[key]?.[0];
             if (value) {
                 formData.append(key, value);
             }
         }
-        // --- نهاية الإصلاح ---
 
         const orchestratorResponse = await fetch(`${ORCHESTRATOR_BASE_URL}/${config.serviceName}`, {
             method: 'POST',
