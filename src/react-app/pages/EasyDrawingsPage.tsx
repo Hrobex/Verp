@@ -1,4 +1,4 @@
-import { useState, useRef, ChangeEvent, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const faqData = [
