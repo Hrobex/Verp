@@ -56,7 +56,7 @@ const compressImage = (file: File): Promise<Blob> => {
                     } else {
                         reject(new Error('Image compression failed.'));
                     }
-                }, 'image/jpeg'
+                }, 'image/jpeg' );
             };
             img.onerror = (error) => reject(error);
         };
