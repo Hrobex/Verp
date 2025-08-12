@@ -53,9 +53,9 @@ const checkStatus = async (taskId: string) => {
 };
 
 function ImageEnhancerPageArabic() {
-  const [originalFile, setOriginalFile] useState<File | null>(null);
-  const [originalPreviewUrl, setOriginalPreviewUrl] useState<string | null>(null);
-  const [enhancedImageUrl, setEnhancedImageUrl] useState<string | null>(null);
+  const [originalFile, setOriginalFile] = useState<File | null>(null);
+  const [originalPreviewUrl, setOriginalPreviewUrl] = useState<string | null>(null);
+  const [enhancedImageUrl, setEnhancedImageUrl] = useState<string | null>(null);
 
   const [selectedVersion, setSelectedVersion] = useState(versions[2]);
   const [selectedScale, setSelectedScale] = useState(scales[0]);
