@@ -1,4 +1,3 @@
-// الملف: TextToSpeechPage.tsx (النسخة المصححة والنهائية)
 import { useState, useEffect, ChangeEvent } from 'react';
 
 type Genders = { Male?: string[]; Female?: string[]; };
@@ -28,7 +27,6 @@ function TextToSpeechPage() {
         const data = await response.json();
         const fetchedVoices: LanguageData[] = data.voices;
         
-        // --- هذا هو السطر الذي كان مفقوداً وتمت إضافته ---
         setVoicesData(fetchedVoices); 
         
         const initialLang = fetchedVoices.find(lang => lang.code === 'en-US');
@@ -41,8 +39,6 @@ function TextToSpeechPage() {
     };
     fetchVoicesData();
   }, []);
-
-  // --- بقية الكود تبقى كما هي تماماً ---
 
   useEffect(() => {
     if (voicesData.length === 0) return;
@@ -109,11 +105,9 @@ function TextToSpeechPage() {
     }
   };
 
-  // --- FAQ and Utility Calculations (Can be dynamic) ---
   const totalVoices = voicesData.reduce((acc, lang) => acc + (lang.genders.Male?.length || 0) + (lang.genders.Female?.length || 0), 0);
   const totalLanguages = voicesData.length;
 
- // --- FAQ Data ---
 const faqData = [
   { question: 'Is this Text to Speech (TTS) tool really free?', answer: `Yes, completely. Our AI voice generator is 100% free for all users. There are no character limits, premium voices, or subscription fees.`},
   { question: 'How many languages and voices are available?', answer: `We offer a massive library of over ${totalVoices} natural-sounding voices across more than ${totalLanguages} languages and dialects, making it one of the most comprehensive free text to audio tools online.`},
@@ -135,13 +129,9 @@ const faqData = [
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
             "name": "Free AI Text to Speech Generator",
+            "description": "A free AI text-to-speech tool that converts text into natural-sounding audio.",
             "operatingSystem": "WEB",
             "applicationCategory": "MultimediaApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "2150"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -243,7 +233,6 @@ const faqData = [
             </div>
           </div>
 
-          {/* Content Sections */}
           <div className="mt-24">
             <section className="text-center">
     <h2 className="text-3xl font-bold mb-4">A Powerful AI Voice Generator at Your Fingertips</h2>
