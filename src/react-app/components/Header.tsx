@@ -3,6 +3,8 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/react-app/hooks/useLanguage';
 import SmartLink from './SmartLink';
 import { useLocation } from 'react-router-dom';
+import { UaeFlag } from './UaeFlag'; // <-- Import UAE Flag
+import { UsaFlag } from './UsaFlag'; // <-- Import USA Flag
 
 const translations = {
   logoAlt: { en: 'AI Convert Logo', ar: 'شعار AI Convert' },
@@ -13,8 +15,6 @@ const translations = {
   getStarted: { en: 'Get Started Free', ar: 'ابدأ مجانًا' },
   langSwitcher: { en: 'العربية', ar: 'English' },
   brandName: { en: 'AI Convert', ar: 'AI Convert' },
-  uaeFlagAlt: { en: 'UAE Flag', ar: 'علم الإمارات العربية المتحدة' },
-  usFlagAlt: { en: 'USA Flag', ar: 'علم الولايات المتحدة الأمريكية' },
 };
 
 const allTools = [
@@ -72,11 +72,11 @@ export default function Header() {
   
   const LanguageSwitcher = () => (
     <SmartLink href={languageSwitcherPath} className={`flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors ${isArabic ? 'flex-row-reverse' : ''}`}>
-      <img 
-        src={isArabic ? "/flags/us-flag.svg" : "/flags/uae-flag.svg"}
-        alt={isArabic ? translations.usFlagAlt[lang] : translations.uaeFlagAlt[lang]}
-        className="h-5 w-5 rounded-full object-cover"
-      />
+      {isArabic ? (
+        <UsaFlag className="h-5 w-5 rounded-full object-cover" />
+      ) : (
+        <UaeFlag className="h-5 w-5 rounded-full object-cover" />
+      )}
       <span>{translations.langSwitcher[lang]}</span>
     </SmartLink>
   );
