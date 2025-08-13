@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { Copy, Edit2, Download, XCircle, Send, Settings, Trash2, ArrowLeft } from 'lucide-react';
 
-// واجهة الرسالة لضمان التناسق
 interface Message {
   id: string;
   role: 'user' | 'assistant';
@@ -11,7 +10,6 @@ interface Message {
 }
 const generateUniqueId = () => `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-// --- المكونات المساعدة ---
 const ChatMessage = ({ message, onEdit }: { message: Message; onEdit: (id: string) => void }) => {
   const isUser = message.role === 'user';
   return (
@@ -57,9 +55,6 @@ const EditModal = ({ message, onSave, onClose }: { message: Message; onSave: (id
   );
 };
 
-// ---------------------------------------------------------------
-// --- المكون الرئيسي لواجهة الشات ---
-// ---------------------------------------------------------------
 function Llama4ChatPageAr() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -71,7 +66,6 @@ function Llama4ChatPageAr() {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // تحميل وحفظ المحادثة
   useEffect(() => {
     try { const saved = localStorage.getItem('llama4-chat-history-ar'); if(saved) setMessages(JSON.parse(saved)); } catch (e) {}
   }, []);
@@ -80,7 +74,6 @@ function Llama4ChatPageAr() {
     if(messagesToSave.length > 0) localStorage.setItem('llama4-chat-history-ar', JSON.stringify(messagesToSave));
   }, [messages]);
 
-  // التمرير للأسفل
   useEffect(() => {
     if (messages.length > 1) chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages.length]);
@@ -240,4 +233,4 @@ function Llama4ChatPageAr() {
   );
 }
 
-export default Llama4ChatPageAr;
+export default Llama4ChatPageAr;e5
