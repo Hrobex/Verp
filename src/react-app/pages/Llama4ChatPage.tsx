@@ -207,7 +207,7 @@ function Llama4ChatPage() {
               <button 
   type="submit" 
   class="p-3 bg-emerald-600 rounded-full" 
-  disabled="" 
+  disabled={isLoading || !input.trim()}
   aria-label="Send Message"
 >
   <Send size={24} />
