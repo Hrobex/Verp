@@ -206,7 +206,7 @@ function Llama4ChatPage() {
               <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask Llama-4 anything..." className="flex-1 p-3 bg-gray-700 border border-gray-600 rounded-full" disabled={isLoading}/>
               <button 
   type="submit" 
-  class="p-3 bg-emerald-600 rounded-full" 
+  className="p-3 bg-emerald-600 rounded-full" 
   disabled={isLoading || !input.trim()}
   aria-label="Send Message"
 >
