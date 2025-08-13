@@ -204,8 +204,15 @@ function Llama4ChatPage() {
           <div className="relative max-w-4xl mx-auto">
             <form onSubmit={handleSubmit} className="flex items-center gap-2">
               <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask Llama-4 anything..." className="flex-1 p-3 bg-gray-700 border border-gray-600 rounded-full" disabled={isLoading}/>
-              <button type="submit" className="p-3 bg-emerald-600 rounded-full" disabled={isLoading || !input.trim()}><Send size={24} /></button>
-            </form>
+              <button 
+  type="submit" 
+  class="p-3 bg-emerald-600 rounded-full" 
+  disabled="" 
+  aria-label="Send Message"
+>
+  <Send size={24} />
+</button>
+                      </form>
             <div className="absolute right-0 -bottom-10">
               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-gray-400 hover:text-white" title="Options">
                 <Settings size={20} />
