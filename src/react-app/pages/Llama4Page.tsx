@@ -67,7 +67,7 @@ function Llama4Page() {
             >
               Start Chatting for Free
             </Link>
-            <p className="mt-4 text-sm text-gray-500">No Signup Required.</p>
+            <p className="mt-4 text-sm text-gray-300">No Signup Required.</p>
           </div>
           
           <section className="text-center mb-24">
