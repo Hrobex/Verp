@@ -3,8 +3,8 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/react-app/hooks/useLanguage';
 import SmartLink from './SmartLink';
 import { useLocation } from 'react-router-dom';
-import { UaeFlag } from './UaeFlag'; // <-- Import UAE Flag
-import { UsaFlag } from './UsaFlag'; // <-- Import USA Flag
+import { UaeFlag } from './UaeFlag';
+import { UsaFlag } from './UsaFlag';
 
 const translations = {
   logoAlt: { en: 'AI Convert Logo', ar: 'شعار AI Convert' },
@@ -15,6 +15,8 @@ const translations = {
   getStarted: { en: 'Get Started Free', ar: 'ابدأ مجانًا' },
   langSwitcher: { en: 'العربية', ar: 'English' },
   brandName: { en: 'AI Convert', ar: 'AI Convert' },
+  uaeFlagAlt: { en: 'UAE Flag', ar: 'علم الإمارات العربية المتحدة' },
+  usFlagAlt: { en: 'USA Flag', ar: 'علم الولايات المتحدة الأمريكية' },
 };
 
 const allTools = [
@@ -98,8 +100,8 @@ export default function Header() {
                 <span>{translations.aiTools[lang]}</span>
                 <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
               </button>
-              <div className={`absolute top-full pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 invisible group-hover:visible ${isArabic ? 'left-0' : '-left-1/2'}`}>
-                <div className={`bg-white rounded-lg shadow-xl border border-gray-100 p-2 ${isArabic ? 'text-right' : 'text-left'}`}>
+              <div className={`absolute top-full pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 invisible group-hover:visible ${isArabic ? 'left-0' : 'right-0'}`}>
+                <div className={`bg-white rounded-lg shadow-xl border border-gray-100 p-2 w-96 ${isArabic ? 'text-right' : 'text-left'}`}>
                   <SmartLink
                     href={`${homeLink}#tools`}
                     onClick={(e) => handleSmartScroll(e, 'tools')}
@@ -222,4 +224,4 @@ export default function Header() {
       )}
     </>
   );
-}
+          }
