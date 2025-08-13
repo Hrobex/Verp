@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-// --- تمت إزالة كل المكتبات التي تسببت في الخطأ ---
 import { Copy, Edit2, Download, XCircle, Send, Settings, Trash2, ArrowLeft } from 'lucide-react';
 
-// واجهة الرسالة لضمان التناسق
 interface Message {
   id: string;
   role: 'user' | 'assistant';
@@ -12,7 +10,6 @@ interface Message {
 }
 const generateUniqueId = () => `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-// --- المكونات المساعدة (تم تبسيطها لتعمل بدون مكتبات خارجية) ---
 const ChatMessage = ({ message, onEdit }: { message: Message; onEdit: (id: string) => void }) => {
   const isUser = message.role === 'user';
   return (
@@ -22,7 +19,6 @@ const ChatMessage = ({ message, onEdit }: { message: Message; onEdit: (id: strin
         <ReactMarkdown
           components={{
             code({ children }) {
-              // --- عرض بسيط وموثوق للأكواد بدون تلوين ---
               return (
                 <pre className="bg-gray-800/50 p-3 my-2 rounded-md overflow-x-auto text-sm">
                   <code>{String(children)}</code>
@@ -59,9 +55,6 @@ const EditModal = ({ message, onSave, onClose }: { message: Message; onSave: (id
   );
 };
 
-// ---------------------------------------------------------------
-// --- المكون الرئيسي لواجهة الشات ---
-// ---------------------------------------------------------------
 function Llama4ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -73,7 +66,6 @@ function Llama4ChatPage() {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // تحميل وحفظ المحادثة
   useEffect(() => {
     try { const saved = localStorage.getItem('llama4-chat-history'); if(saved) setMessages(JSON.parse(saved)); } catch (e) {}
   }, []);
@@ -82,11 +74,9 @@ function Llama4ChatPage() {
     if(messagesToSave.length > 0) localStorage.setItem('llama4-chat-history', JSON.stringify(messagesToSave));
   }, [messages]);
 
-  // التمرير للأسفل
   useEffect(() => {
     if (messages.length > 1) chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages.length]);
-
 
   const handleSendMessage = useCallback(async (content: string, history: Message[]) => {
     if (isLoading || !content.trim()) return;
