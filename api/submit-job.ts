@@ -95,4 +95,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.error(`Error in submit-job handler for ${req.query.tool}:`, error.message);
         return res.status(500).json({ error: GENERIC_USER_FRIENDLY_ERROR });
     }
-}```
+}
