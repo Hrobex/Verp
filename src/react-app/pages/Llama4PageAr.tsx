@@ -35,13 +35,9 @@ function Llama4PageAr() {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
             "name": "Llama-4: شات ذكاء اصطناعي مجاني",
+            "description": "شات ذكاء اصطناعي مجاني وغير محدود مدعوم بنماذج متقدمة. يقدم Llama-4 قدرة فائقة على الاستدلال، ذاكرة سياق واسعة، وتجربة محادثة خاصة للكتابة، البرمجة، وحل المشكلات المعقدة.",
             "operatingSystem": "WEB",
             "applicationCategory": "ProductivityApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "ratingCount": "1820"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
