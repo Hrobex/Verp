@@ -67,7 +67,7 @@ function Llama4PageAr() {
             >
               ابدأ الدردشة الآن مجانًا
             </Link>
-            <p className="mt-4 text-sm text-gray-500">لا يتطلب أي تسجيل.</p>
+            <p className="mt-4 text-sm text-gray-300">لا يتطلب أي تسجيل.</p>
           </div>
 
           <section className="text-center mb-24">
