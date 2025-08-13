@@ -20,9 +20,9 @@ const translations = {
 };
 
 const allTools = [
-  { id: 'artigenv2', name: { en: 'AI Art Generator', ar: 'تصميم الفنون' } },
-  { id: 'generate-image-pro', name: { en: 'AI Image Generator', ar: 'توليد الصور' } },
-  { id: 'anime-ai', name: { en: 'AI Anime Generator', ar: 'إنشاء صور الأنمي' } },
+  { id: 'artigenv2', name: { en: 'Art Generator', ar: 'تصميم الفنون' } },
+  { id: 'generate-image-pro', name: { en: 'Image Generator', ar: 'توليد الصور' } },
+  { id: 'anime-ai', name: { en: 'Anime Generator', ar: 'إنشاء صور الأنمي' } },
   { id: 'image-to-sketch', name: { en: 'Photo to Sketch', ar: 'تحويل الصورة لاسكتش' } },
   { id: 'line-drawing', name: { en: 'Photo to Line Drawing', ar: 'تحويل الصورة لرسم رصاص' } },
   { id: 'ai-face-merge', name: { en: 'AI Face Swap', ar: 'تبديل ودمج الوجوه' } },
@@ -33,8 +33,8 @@ const allTools = [
   { id: 'cartoonify', name: { en: 'Cartoonify Yourself', ar: 'حوّل صورتك لكرتون' } },
   { id: 'cartoony-art', name: { en: 'Photo to Digital Art', ar: 'حوّل صورتك لفن رقمي' } },
   { id: 'ai-story-generator', name: { en: 'AI Story Generator', ar: 'مولد القصص من الصور' } },
-  { id: 'ai-photo-colorizer', name: { en: 'AI Photo Colorizer', ar: 'تلوين الصور' } },
-  { id: 'ai-image-enhancer', name: { en: 'AI Image Enhancer', ar: 'تحسين جودة الصور' } },
+  { id: 'ai-photo-colorizer', name: { en: 'Photo Colorizer', ar: 'تلوين الصور' } },
+  { id: 'ai-image-enhancer', name: { en: 'Image Enhancer', ar: 'تحسين جودة الصور' } },
   { id: 'restore-and-repair-old-photos', name: { en: 'Photo Restoration', ar: 'ترميم الصور القديمة' } },
   { id: 'remove-background', name: { en: 'Background Remover & Changer', ar: 'إزالة وتغيير الخلفية' } }
 ];
