@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/react-app/hooks/useLanguage';
 import SmartLink from './SmartLink';
 import { useLocation } from 'react-router-dom';
@@ -7,12 +7,33 @@ import { useLocation } from 'react-router-dom';
 const translations = {
   logoAlt: { en: 'AI Convert Logo', ar: 'شعار AI Convert' },
   aiTools: { en: 'AI Tools', ar: 'أدوات الذكاء الاصطناعي' },
+  allAiTools: { en: 'All AI Tools', ar: 'كل أدوات الذكاء الاصطناعي' },
   features: { en: 'Features', ar: 'المميزات' },
   about: { en: 'About', ar: 'حولنا' },
   getStarted: { en: 'Get Started Free', ar: 'ابدأ مجانًا' },
   langSwitcher: { en: 'العربية', ar: 'English' },
   brandName: { en: 'AI Convert', ar: 'AI Convert' }
 };
+
+const allTools = [
+  { id: 'artigenv2', name: { en: 'AI Art Generator', ar: 'مولد الفن' } },
+  { id: 'generate-image-pro', name: { en: 'AI Image Generator', ar: 'مولد الصور' } },
+  { id: 'anime-ai', name: { en: 'AI Anime Generator', ar: 'مولد صور الأنمي' } },
+  { id: 'image-to-sketch', name: { en: 'Photo to Sketch', ar: 'تحويل الصور لاسكتش' } },
+  { id: 'line-drawing', name: { en: 'Photo to Line Drawing', ar: 'تحويل الصور لرسم' } },
+  { id: 'ai-video-prompt-generator', name: { en: 'AI Video Prompt Generator', ar: 'مولد وصف الفيديو' } },
+  { id: 'prompt-generator', name: { en: 'Image to Prompt Generator', ar: 'مولد الأوصاف من الصور' } },
+  { id: 'remove-background', name: { en: 'Background Remover', ar: 'إزالة الخلفية' } },
+  { id: 'text-to-speech', name: { en: 'Text to Speech', ar: 'تحويل النص إلى صوت' } },
+  { id: 'ai-face-merge', name: { en: 'AI Face Swap', ar: 'تبديل ودمج الوجوه' } },
+  { id: 'llama-4', name: { en: 'Llama-4 AI Chat', ar: 'شات Llama-4' } },
+  { id: 'cartoonify', name: { en: 'Cartoonify Yourself', ar: 'حوّل صورتك لكرتون' } },
+  { id: 'cartoony-art', name: { en: 'Photo to Digital Art', ar: 'تحويل الصور لفن رقمي' } },
+  { id: 'ai-story-generator', name: { en: 'AI Story Generator', ar: 'مولد القصص' } },
+  { id: 'ai-photo-colorizer', name: { en: 'AI Photo Colorizer', ar: 'تلوين الصور' } },
+  { id: 'ai-image-enhancer', name: { en: 'AI Image Enhancer', ar: 'تحسين جودة الصور' } },
+  { id: 'restore-and-repair-old-photos', name: { en: 'Photo Restoration', ar: 'ترميم الصور القديمة' } },
+];
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,7 +44,6 @@ export default function Header() {
   const homeLink = isArabic ? '/ar' : '/';
 
   const navLinks = [
-    { name: translations.aiTools[lang], href: `${homeLink}#tools` },
     { name: translations.features[lang], href: `${homeLink}#features` },
     { name: 'About', href: isArabic ? '/ar/about' : '/about' }
   ];
@@ -46,6 +66,8 @@ export default function Header() {
     }
   };
 
+  const linkPathPrefix = isArabic ? '/ar/' : '/';
+
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
@@ -62,19 +84,39 @@ export default function Header() {
           </SmartLink>
 
           <nav className={`hidden lg:flex items-center ${isArabic ? 'space-x-reverse space-x-8' : 'space-x-8'}`}>
-            {navLinks.map((link) => {
-              const targetId = link.href.includes('#') ? link.href.split('#')[1] : null;
-              return (
-                <SmartLink 
-                  key={link.name} 
-                  href={link.href} 
-                  onClick={targetId ? (e) => handleSmartScroll(e, targetId) : undefined}
-                  className="text-gray-700 hover:text-purple-600 transition-colors"
-                >
-                  {link.name === 'About' ? translations.about[lang] : link.name}
-                </SmartLink>
-              );
-            })}
+            <div className="group relative">
+              <button className={`flex items-center gap-1 text-gray-700 hover:text-purple-600 transition-colors ${isArabic ? 'flex-row-reverse' : ''}`}>
+                <span>{translations.aiTools[lang]}</span>
+                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+              </button>
+              <div className={`absolute top-full pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 invisible group-hover:visible ${isArabic ? 'left-0' : 'right-0'}`}>
+                <div className={`bg-white rounded-lg shadow-xl border border-gray-100 w-64 ${isArabic ? 'text-right' : 'text-left'}`}>
+                    <SmartLink
+                      href={`${homeLink}#tools`}
+                      onClick={(e) => handleSmartScroll(e, 'tools')}
+                      className={`block px-4 py-3 font-semibold text-gray-800 hover:bg-gray-50 hover:text-purple-600 transition-colors ${isArabic ? 'border-b' : 'border-b'}`}
+                    >
+                      {translations.allAiTools[lang]}
+                    </SmartLink>
+                    <div className="max-h-80 overflow-y-auto">
+                        {allTools.map(tool => (
+                            <SmartLink
+                                key={tool.id}
+                                href={`${linkPathPrefix}${tool.id}`}
+                                className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-purple-600 transition-colors"
+                            >
+                                {tool.name[lang]}
+                            </SmartLink>
+                        ))}
+                    </div>
+                </div>
+              </div>
+            </div>
+            {navLinks.map((link) => (
+              <SmartLink key={link.name} href={link.href} className="text-gray-700 hover:text-purple-600 transition-colors">
+                {link.name === 'About' ? translations.about[lang] : link.name}
+              </SmartLink>
+            ))}
           </nav>
           
           <div className={`hidden lg:flex items-center ${isArabic ? 'space-x-reverse space-x-4' : 'space-x-4'}`}>
@@ -127,22 +169,36 @@ export default function Header() {
             </div>
             
             <div className={`p-6 space-y-4 ${isArabic ? 'text-right' : 'text-left'}`}>
-              {navLinks.map((link) => {
-                const targetId = link.href.includes('#') ? link.href.split('#')[1] : null;
-                return (
+                <SmartLink
+                    href={`${homeLink}#tools`}
+                    className="block text-gray-700 hover:text-purple-600 transition-colors py-2 text-lg font-bold"
+                    onClick={(e) => { handleSmartScroll(e, 'tools'); setIsMenuOpen(false); }}
+                >
+                    {translations.aiTools[lang]}
+                </SmartLink>
+                <div className="pl-4 border-l-2 border-gray-200">
+                    {allTools.map(tool => (
+                        <SmartLink
+                            key={tool.id}
+                            href={`${linkPathPrefix}${tool.id}`}
+                            className="block text-sm text-gray-600 hover:text-purple-600 transition-colors py-1.5"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            {tool.name[lang]}
+                        </SmartLink>
+                    ))}
+                </div>
+
+              {navLinks.map((link) => (
                   <SmartLink 
                     key={link.name} 
                     href={link.href} 
                     className="block text-gray-700 hover:text-purple-600 transition-colors py-2 text-lg"
-                    onClick={(e) => { 
-                      if (targetId) handleSmartScroll(e, targetId);
-                      setIsMenuOpen(false); 
-                    }}
+                    onClick={() => setIsMenuOpen(false)}
                   >
                     {link.name === 'About' ? translations.about[lang] : link.name}
                   </SmartLink>
-                );
-              })}
+              ))}
               <hr className="border-gray-200" />
               <SmartLink 
                 href={languageSwitcherPath} 
@@ -154,10 +210,7 @@ export default function Header() {
               <SmartLink 
                 href={getStartedLink} 
                 className="block w-full text-center mt-4 px-6 py-3 text-lg font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200"
-                onClick={(e) => { 
-                  handleSmartScroll(e, 'tools'); 
-                  setIsMenuOpen(false); 
-                }}
+                onClick={(e) => { handleSmartScroll(e, 'tools'); setIsMenuOpen(false); }}
               >
                 {translations.getStarted[lang]}
               </SmartLink>
