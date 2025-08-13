@@ -24,7 +24,7 @@ function Llama4Page() {
   return (
     <>
       <title>Llama-4: Free, Unlimited Online AI Chatbot Assistant</title>
-      <meta name="description" content="Meet Llama-4, a next-generation AI chat assistant. Ask complex questions, write content, and get instant answers from an advanced AI. Completely free, no signup required." />
+      <meta name="description" content="Meet Llama-4, a next-generation AI chat assistant. Ask complex questions, write content, and get instant answers. Completely free, no signup required." />
       <link rel="canonical" href="https://aiconvert.online/llama-4" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/llama-4" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/llama-4" />
@@ -35,13 +35,9 @@ function Llama4Page() {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
             "name": "Llama-4: Free Online AI Chatbot",
+            "description": "A free, unlimited AI chatbot assistant powered by advanced models. Llama-4 offers superior reasoning, vast context memory, and a private chat experience for writing, coding, and complex problem-solving.",
             "operatingSystem": "WEB",
             "applicationCategory": "ProductivityApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "ratingCount": "1820"
-            },
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -55,7 +51,6 @@ function Llama4Page() {
       <div className="pt-24 bg-gray-900 text-white min-h-screen font-sans">
         <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
 
-          {/* --- Hero Section --- */}
           <section className="text-center mb-12">
             <h1 className="text-4xl sm:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-amber-500">
               Llama-4: Free, Unlimited Online AI Chatbot
@@ -64,8 +59,7 @@ function Llama4Page() {
               Go beyond the ordinary. It's time for an AI assistant that truly understands you. Ask complex questions, generate creative content, and get instant, intelligent answers.
             </p>
           </section>
-
-          {/* --- Primary Call to Action (CTA) --- */}
+          
           <div className="text-center mb-20">
             <Link
               to="/llama-4/chat"
@@ -75,8 +69,7 @@ function Llama4Page() {
             </Link>
             <p className="mt-4 text-sm text-gray-500">No Signup Required.</p>
           </div>
-
-          {/* --- AI Features Section (Original) --- */}
+          
           <section className="text-center mb-24">
             <h2 className="text-3xl font-bold mb-4">An AI Assistant with Superpowers</h2>
             <p className="max-w-3xl mx-auto text-gray-400 mb-12">
@@ -106,7 +99,6 @@ function Llama4Page() {
             </div>
           </section>
 
-          {/* --- Interface Features Section (New) --- */}
           <section className="text-center mb-24">
             <h2 className="text-3xl font-bold mb-4">A Chat Experience Designed for You</h2>
             <p className="max-w-3xl mx-auto text-gray-400 mb-12">
@@ -136,7 +128,6 @@ function Llama4Page() {
             </div>
           </section>
 
-          {/* --- FAQ Section --- */}
           <section className="mt-20 max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-center mb-10">Have Questions? We Have Answers.</h2>
             <div className="space-y-6">
