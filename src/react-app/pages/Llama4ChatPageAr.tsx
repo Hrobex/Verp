@@ -204,8 +204,15 @@ function Llama4ChatPageAr() {
           <div className="relative max-w-4xl mx-auto">
             <form onSubmit={handleSubmit} className="flex items-center gap-2">
               <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="اسأل Llama-4 أي شيء..." className="flex-1 p-3 bg-gray-700 border border-gray-600 rounded-full" disabled={isLoading}/>
-              <button type="submit" className="p-3 bg-emerald-600 rounded-full" disabled={isLoading || !input.trim()}><Send size={24} /></button>
-            </form>
+              <button 
+  type="submit" 
+  className="p-3 bg-emerald-600 rounded-full" 
+  disabled={isLoading || !input.trim()}
+  aria-label="إرسال الرسالة"
+>
+  <Send size={24} />
+</button>
+                        </form>
             <div className="absolute left-0 -bottom-10">
               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-gray-400 hover:text-white" title="خيارات">
                 <Settings size={20} />
@@ -233,4 +240,4 @@ function Llama4ChatPageAr() {
   );
 }
 
-export default Llama4ChatPageAr;e5
+export default Llama4ChatPageAr;
