@@ -1,12 +1,10 @@
-// الملف: BlogPage.tsx
-import { blogPosts, BlogPost } from '@/data/blogPosts'; // 1. استيراد بيانات المقالات
-import SmartLink from '@/react-app/components/SmartLink'; // 2. استيراد الرابط الذكي
+import { blogPosts, BlogPost } from '@/data/blogPosts';
+import SmartLink from '@/react-app/components/SmartLink';
+import { Zap, ArrowRight } from 'lucide-react';
 
-// مكون بطاقة المقال (Post Card Component)
 const PostCard = ({ post }: { post: BlogPost }) => {
   return (
     <SmartLink href={`/blog/${post.slug}`} className="group flex flex-col overflow-hidden rounded-xl bg-gray-800/50 hover:bg-gray-800/80 transition-all duration-300 shadow-lg hover:shadow-cyan-500/10 transform hover:-translate-y-1">
-      {/* صورة المقال */}
       <div className="aspect-video overflow-hidden">
         <img 
           src={post.image} 
@@ -14,7 +12,6 @@ const PostCard = ({ post }: { post: BlogPost }) => {
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
         />
       </div>
-      {/* محتوى البطاقة */}
       <div className="flex flex-1 flex-col p-6">
         <div className="flex items-center justify-between text-sm text-gray-400">
           <p className="rounded-full bg-cyan-500/10 px-3 py-1 font-medium text-cyan-400">{post.category}</p>
@@ -36,11 +33,10 @@ const PostCard = ({ post }: { post: BlogPost }) => {
 
 
 export default function BlogPage() {
-  // فرز المقالات لعرض الأحدث أولاً
   const sortedPosts = blogPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   
-  const featuredPost = sortedPosts[0]; // المقال المميز هو أول مقال (الأحدث)
-  const latestPosts = sortedPosts.slice(1); // باقي المقالات
+  const featuredPost = sortedPosts[0];
+  const latestPosts = sortedPosts.slice(1);
 
   return (
     <>
@@ -49,12 +45,10 @@ export default function BlogPage() {
       <link rel="canonical" href="https://aiconvert.online/blog" />
       <link rel="alternate" hrefLang="en" href="https://aiconvert.online/blog" />
       <link rel="alternate" hrefLang="ar" href="https://aiconvert.online/ar/blog" />
-      
-      
+            
       <div className="bg-gray-900 text-gray-300 pt-32 pb-20">
         <main className="max-w-7xl mx-auto px-6 lg:px-8">
           
-          {/* قسم المقدمة */}
           <div className="text-center mb-16">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-white">
               AIConvert Blog
@@ -64,10 +58,8 @@ export default function BlogPage() {
             </p>
           </div>
 
-          {/* منطق العرض */}
-          {sortedPosts.length > 0 ? (
+          {sortedPosts.length > 0 && (
             <div className="space-y-16">
-              {/* المقال المميز (إذا كان هناك مقالات) */}
               {featuredPost && (
                 <section>
                   <h2 className="text-3xl font-bold text-white mb-8 border-l-4 border-amber-500 pl-4">Featured Post</h2>
@@ -99,7 +91,6 @@ export default function BlogPage() {
                 </section>
               )}
 
-              {/* أحدث المقالات (إذا كان هناك أكثر من مقال) */}
               {latestPosts.length > 0 && (
                 <section>
                   <h2 className="text-3xl font-bold text-white mb-8 border-l-4 border-cyan-500 pl-4">Latest Posts</h2>
@@ -111,23 +102,23 @@ export default function BlogPage() {
                 </section>
               )}
             </div>
-          ) : (
-            // الرسالة الترحيبية (إذا لم تكن هناك مقالات)
-            <div className="text-center bg-gray-800/50 rounded-2xl py-20 px-6">
-              <h2 className="text-3xl font-bold text-white">Welcome to the AIConvert Blog!</h2>
-              <p className="text-xl text-gray-400 mt-4 mb-8 max-w-2xl mx-auto">
-                We're currently brewing some exciting articles, tutorials, and insights for you. Please check back soon!
-              </p>
-              <SmartLink 
-                href="/#tools" 
-                className="inline-block bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold text-lg py-4 px-10 rounded-lg hover:shadow-xl hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300"
-              >
-                Explore Our Free AI Tools
-              </SmartLink>
-            </div>
           )}
+
+          <div className="text-center mt-24">
+            <a 
+              href="https://aiarabai.com/en/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="group inline-flex items-center space-x-2 px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105"
+            >
+              <Zap className="h-5 w-5" />
+              <span>Explore the Latest in AI News</span>
+              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </a>
+          </div>
+          
         </main>
       </div>
     </>
   );
-                                                                                                                     }
+}
