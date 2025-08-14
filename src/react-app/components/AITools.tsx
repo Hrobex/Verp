@@ -1,6 +1,6 @@
 import {
 Image, Scissors, Volume2, Sparkles, MessageSquare, Wand, ArrowRight, Zap, Wand2,
-Pencil, Palette, SprayCan, Drama, Smile, Film, Paintbrush
+Pencil, Palette, SprayCan, Drama, Smile, Film, Paintbrush, PaintBucket, PenTool, Quote, BookOpen
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import VercelImage from './VercelImage'; 
@@ -41,7 +41,7 @@ const tools = [
     id: 'image-to-sketch',
     title: 'ArtifyPro: Photo to Artistic Sketch',
     description: 'Convert your photos into detailed, hand-drawn sketches with rich shading and texture.',
-    icon: Paintbrush,
+    icon: PenTool,
     color: 'from-yellow-500 to-lime-600',
     features: ['Artistic Shading', 'Hand-Drawn Effect', 'Ideal for Artists'],
     image: '/images/artifypro-photo-to-sketch.webp',
@@ -71,7 +71,7 @@ const tools = [
     id: "prompt-generator",
     title: "Promptigen: Image to Prompt",
     description: "Reverse-engineer any image into a detailed, creative text prompt for AI art generators like Midjourney.",
-    icon: Pencil,
+    icon: Quote,
     color: "from-sky-500 to-violet-600",
     features: ["Reverse Engineer Images", "Expert-Level Prompts", "Free & Unlimited"],
     image: "/images/promptigen-image-to-prompt.webp",
@@ -123,7 +123,7 @@ const tools = [
     description: 'Instantly turn your photo into a fun, 2D-style cartoon with a single click. Perfect for profile pictures and social media!',
     icon: Smile,
     color: 'from-rose-400 to-purple-600',
-    features: ['Instant Conversion', 'Classic 2D Style', 'Free & Simple'],
+    features: ['One-Click Toon', 'Classic 2D Style', 'Free & Simple'],
     image: '/images/cartoonify-yourself.webp',
     alt: 'A before-and-after image of a woman being transformed into a cartoon by the Cartoonify tool.'
   },
@@ -141,7 +141,7 @@ const tools = [
     id: "ai-story-generator",
     title: "Storygen: AI Story Generator",
     description: "Unleash your creativity. Turn any picture into a unique, narrative-driven story with our advanced AI.",
-    icon: Pencil,
+    icon: BookOpen,
     color: "from-indigo-500 to-violet-600",
     features: ["Deep Narrative AI", "Multi-Lingual Writer", "Instant Inspiration"],
     image: "/images/ai-image-to-story-generator.jpg",
@@ -151,7 +151,7 @@ const tools = [
   id: 'ai-photo-colorizer',
   title: 'ColorifyPro: AI Photo Colorizer',
   description: 'Automatically add realistic color to black and white, sepia, or vintage photos, bringing your old memories back to life.',
-  icon: Image, // استبدل هذا بالأيقونة المناسبة من مكتبة الأيقونات لديك
+  icon: PaintBucket, 
   color: 'from-red-500 to-green-600',
   features: ['Colorize Old Photos', 'Realistic & Natural Colors', 'Bring Memories to Life'],
   image: '/images/ai-photo-colorizer-before-after.webp',
