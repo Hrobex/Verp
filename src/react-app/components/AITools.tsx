@@ -244,12 +244,13 @@ export default function AITools() {
           ))}
         </div>
         <div className="text-center mt-16">
-          <button className="group inline-flex items-center space-x-2 px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105">
-            <Zap className="h-5 w-5" />
-            <span>Access All Tools Now</span>
-            <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div>
+  <Link to="/blog" 
+    className="group inline-flex items-center space-x-2 px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105"  >
+    <Zap className="h-5 w-5" />
+    <span>Explore our Latest AI Insights</span>
+    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+  </Link>
+</div>
       </div>
     </section>
   );
