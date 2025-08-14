@@ -1,5 +1,3 @@
-// src/react-app/components/Hero.tsx
-
 import { Sparkles, ChevronsDown } from 'lucide-react';
 import { useLanguage } from '@/react-app/hooks/useLanguage';
 
@@ -11,6 +9,7 @@ const translations = {
   headline1: { en: 'Unleash Your', ar: 'أطلق العنان' },
   headlineHighlight: { en: 'Creative Potential', ar: 'لإمكانياتك الإبداعية' },
   headline2: { en: 'with AI Magic', ar: 'بسحر الذكاء الاصطناعي' },
+  signature: { en: 'by AI Convert', ar: 'بواسطة AI Convert' },
   subheadline: {
     en: 'Transform your creative workflow with our suite of cutting-edge AI tools. Generate stunning images, remove backgrounds instantly, convert text to speech, and enhance photos like never before.',
     ar: 'حوّل سير عملك الإبداعي مع مجموعتنا من أدوات الذكاء الاصطناعي المتطورة. أنشئ صورًا مذهلة، وأزل الخلفيات فورًا، وحوّل النصوص إلى كلام، وحسّن الصور كما لم يحدث من قبل.',
@@ -46,7 +45,7 @@ export default function Hero() {
           </div>
 
           {/* Headline */}
-          <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+          <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 mb-4 leading-tight">
             {translations.headline1[lang]}{' '}
             <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
               {translations.headlineHighlight[lang]}
@@ -55,12 +54,16 @@ export default function Hero() {
             {translations.headline2[lang]}
           </h1>
 
+          {/* Signature */}
+          <p className="text-lg lg:text-xl text-gray-500 font-serif italic mb-8">
+            {translations.signature[lang]}
+          </p>
+
           {/* Subheadline */}
           <p className="text-xl lg:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
             {translations.subheadline[lang]}
           </p>
-
-          {/* ========= بداية منطقة التعديل ========= */}
+          
           {/* CTA Button */}
           <div className="flex justify-center mb-16">
             <a 
@@ -71,7 +74,6 @@ export default function Hero() {
               <ChevronsDown className="h-5 w-5 group-hover:translate-y-1 transition-transform" />
             </a>
           </div>
-          {/* ========= نهاية منطقة التعديل ========= */}
 
           {/* Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-4xl mx-auto">
@@ -80,7 +82,7 @@ export default function Hero() {
               <div className="text-gray-600">{translations.stat1[lang]}</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">50K+</div>
+              <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">200K+</div>
               <div className="text-gray-600">{translations.stat2[lang]}</div>
             </div>
             <div className="text-center">
@@ -99,4 +101,4 @@ export default function Hero() {
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
     </section>
   );
-}
+            }
