@@ -243,12 +243,13 @@ export default function AIToolsArabic() {
           ))}
         </div>
         <div className="text-center mt-16">
-          <button className="group inline-flex items-center space-x-reverse space-x-2 px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105">
-            <Zap className="h-5 w-5" />
-            <span>الوصول إلى كل الأدوات الآن</span>
-            <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-          </button>
-        </div>
+  <Link to="/ar/blog" 
+    className="group inline-flex items-center space-x-reverse space-x-2 px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105">
+    <Zap className="h-5 w-5" />
+    <span>اطلع على مدونة الذكاء الاصطناعي</span>
+    <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+  </Link>
+</div>
       </div>
     </section>
   );
