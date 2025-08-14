@@ -1,8 +1,7 @@
-// الملف: src/react-app/pages/BlogPageAr.tsx
-import { blogPostsAr, BlogPostAr } from '@/data/blogPostsAr'; // سيتم إنشاء هذا الملف لاحقًا
+import { blogPostsAr, BlogPostAr } from '@/data/blogPostsAr';
 import SmartLink from '@/react-app/components/SmartLink';
+import { Zap, ArrowLeft } from 'lucide-react';
 
-// مكون بطاقة المقال (Post Card Component) باللغة العربية
 const PostCardAr = ({ post }: { post: BlogPostAr }) => {
   return (
     <SmartLink href={`/ar/blog/${post.slug}`} className="group flex flex-col overflow-hidden rounded-xl bg-gray-800/50 hover:bg-gray-800/80 transition-all duration-300 shadow-lg hover:shadow-cyan-500/10 transform hover:-translate-y-1">
@@ -58,7 +57,7 @@ export default function BlogPageAr() {
             </p>
           </div>
 
-          {sortedPosts.length > 0 ? (
+          {sortedPosts.length > 0 && (
             <div className="space-y-16">
               {featuredPost && (
                 <section>
@@ -71,7 +70,7 @@ export default function BlogPageAr() {
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex flex-col text-right">
                       <p className="text-sm text-gray-400">
                         <span className="rounded-full bg-amber-500/10 px-3 py-1 font-medium text-amber-400">{featuredPost.category}</span>
                          <span className="mx-2">&bull;</span>
@@ -102,20 +101,21 @@ export default function BlogPageAr() {
                 </section>
               )}
             </div>
-          ) : (
-            <div className="text-center bg-gray-800/50 rounded-2xl py-20 px-6">
-              <h2 className="text-3xl font-bold text-white">أهلاً بك في مدونة AIConvert!</h2>
-              <p className="text-xl text-gray-400 mt-4 mb-8 max-w-2xl mx-auto">
-                نعمل حاليًا على تحضير مقالات وشروحات شيقة لك. يرجى العودة قريبًا!
-              </p>
-              <SmartLink 
-                href="/ar#tools" 
-                className="inline-block bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold text-lg py-4 px-10 rounded-lg hover:shadow-xl hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300"
-              >
-                استكشف أدواتنا المجانية
-              </SmartLink>
-            </div>
           )}
+
+          <div className="text-center mt-24">
+            <a 
+              href="https://aiarabai.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="group inline-flex items-center space-x-2 px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105"
+            >
+              <Zap className="h-5 w-5 ml-2" />
+              <span>تصفح آخر أخبار الذكاء الاصطناعي</span>
+              <ArrowLeft className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+            </a>
+          </div>
+          
         </main>
       </div>
     </>
