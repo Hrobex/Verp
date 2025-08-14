@@ -1,6 +1,6 @@
 import {
   Image, Scissors, Volume2, Sparkles, ArrowLeft, MessageSquare, Zap, Wand, Wand2,
-  Pencil, Palette, SprayCan, Drama, Smile, Film, Paintbrush
+  Pencil, Palette, SprayCan, Drama, Smile, Film, Paintbrush, PaintBucket, PenTool, ImageDown, BookOpen
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import VercelImage from './VercelImage';
@@ -50,7 +50,7 @@ const toolsArabic = [
     id: 'image-to-sketch',
     title: 'ArtifyPro: تحويل الصور إلى اسكتش فني',
     description: 'حوّل صورك إلى اسكتشات فنية مفصلة، مع تظليل غني وملمس يحاكي الرسم اليدوي.',
-    icon: Paintbrush,
+    icon: PenTool,
     color: 'from-yellow-500 to-lime-600',
     features: ['تظليل فني واقعي', 'تأثير الرسم اليدوي', 'للفنانين والمبدعين'],
     image: '/images/artifypro-photo-to-sketch.webp',
@@ -70,7 +70,7 @@ const toolsArabic = [
     id: "prompt-generator",
     title: "Promptigen: تحويل الصورة إلى وصف نصي",
     description: "حوّل أي صورة إلى وصف نصي احترافي لاستخدامه في مولدات الصور بالذكاء الاصطناعي مثل ميدجورني.",
-    icon: Pencil,
+    icon: ImageDown,
     color: "from-sky-500 to-violet-600",
     features: ["هندسة عكسية للصور", "أوصاف نصية احترافية", "مجاني وغير محدود"],
     image: "/images/promptigen-image-to-prompt.webp",
@@ -140,7 +140,7 @@ const toolsArabic = [
     id: "ai-story-generator",
     "title": "Storygen: مولد القصص بالذكاء الاصطناعي",
     "description": "أطلق العنان لإبداعك. حوّل أي صورة إلى قصة فريدة قائمة على السرد باستخدام الذكاء الاصطناعي المتطور.",
-    "icon": Pencil,
+    "icon": BookOpen,
     "color": "from-indigo-500 to-violet-600",
     "features": ["سرد قصصي عميق", "كاتب متعدد اللغات", "إلهام فوري"],
     image: "/images/ai-image-to-story-generator.jpg",
@@ -150,7 +150,7 @@ const toolsArabic = [
     id: 'ai-photo-colorizer',
     title: 'ColorifyPro: تلوين الصور القديمة',
     description: 'أضف ألوانًا واقعية تلقائيًا إلى صورك بالأبيض والأسود، وأعد إحياء ذكرياتك القديمة من جديد.',
-    icon: Image,
+    icon: PaintBucket,
     color: 'from-red-500 to-green-600',
     features: ['تلوين الصور القديمة', 'ألوان طبيعية واقعية', 'إحياء الذكريات'],
     image: '/images/ai-photo-colorizer-before-after.webp',
