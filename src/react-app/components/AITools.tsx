@@ -1,6 +1,6 @@
 import {
 Image, Scissors, Volume2, Sparkles, MessageSquare, Wand, ArrowRight, Zap, Wand2,
-Pencil, Palette, SprayCan, Drama, Smile, Film, Paintbrush, PaintBucket, PenTool, Quote, BookOpen
+Pencil, Palette, SprayCan, Drama, Smile, Film, Paintbrush, PaintBucket, PenTool, ImageDown, BookOpen
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import VercelImage from './VercelImage'; 
@@ -71,7 +71,7 @@ const tools = [
     id: "prompt-generator",
     title: "Promptigen: Image to Prompt",
     description: "Reverse-engineer any image into a detailed, creative text prompt for AI art generators like Midjourney.",
-    icon: Quote,
+    icon: ImageDown,
     color: "from-sky-500 to-violet-600",
     features: ["Reverse Engineer Images", "Expert-Level Prompts", "Free & Unlimited"],
     image: "/images/promptigen-image-to-prompt.webp",
